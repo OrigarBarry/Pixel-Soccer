@@ -3,6 +3,8 @@
 The nightly run takes the top unticked item under "Next up". Barry and his chats edit this list. Anything under "Ask Barry first" is never built until Barry decides.
 
 ## Next up
+- [ ] **Merge the old list.** Before 24 Nov another chat kept a soccer to-do list at soccer/NIGHTLY-LIST.md inside the OrigarBarry/pixel-hockey repo. If you can open that repo, copy any of its open items that are missing here (keep their order, above the items below), then stop using it. If you can't open it, say so in the report and carry on.
+- [ ] **Glass screens on the default setting.** With Settings' glass option on "clear" (the default), see-through hockey glass is still drawn above the boards. A soccer ground has none: draw nothing there (or the ball-stop netting) for every option.
 - [ ] **Play-test added time and advantage** (added 24 Nov). In computer-vs-computer matches, record how long added time runs per half, how often the referee plays advantage, how often it's called back, and check no restart stalls around them. Report the numbers; tune `ADDED` / `ADV` in js/rules.js only if something is clearly broken (e.g. advantage almost every foul, or never).
 - [ ] **Head-to-head record leaves out draws.** js/season2.js around line 282, "Your record over them: w-l", should read wins-draws-losses like everywhere else.
 - [ ] **Today's Challenge scenarios that pull the keeper.** Keeper pulling is off in soccer, but some challenge scenarios still set `sc.pull`. Check each one still makes sense and can be won; reword or replace any that can't.

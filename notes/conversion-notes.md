@@ -2,13 +2,15 @@
 
 Built from Pixel Hockey (artifact 3850523d…, unchanged). Pixel Soccer artifact: d709d040-1b8c-484b-a6a5-32bd7e068c54. Own storage keys (ps*-, pixelsoccer-franchise), so saves never collide with hockey. Audit doc: https://claude.ai/artifact/Fb6bUdFtGvoRcsvGxneEgB.
 
-Barry knows hockey well but not soccer, and has given creative liberty on soccer rules and gameplay: pick what makes it most fun and explain it.
+The user knows hockey well but not soccer, and has given creative liberty on soccer rules and gameplay: pick what makes it most fun and explain it.
 
-Since 24 Nov 2026 the game has its own repository, OrigarBarry/Pixel-Soccer (game/ = copy of the page, NIGHTLY-LIST.md = to-do list, NIGHTLY.md = nightly reports). It no longer lives in the pixel-hockey repo.
+Nightly runs (from Nov 24): two a night, run 1 at 11:09 pm and run 2 at 4:09 am America/Dawson_Creek. Both prompts were rewritten on Nov 24 (about 10:15 Whitehorse) for the new repo below; they no longer mention the sin bin.
+
+Repository: **OrigarBarry/Pixel-Soccer** (Barry, Nov 24: Pixel Soccer should not depend on Pixel Hockey). It holds game/ (copy of the live page, synced at version 1795533811-0755), NIGHTLY-LIST.md (the to-do list), NIGHTLY.md (the nightly reports), notes/conversion-notes.md (this doc) and CLAUDE.md (working rules). Earlier on Nov 24 another chat had put a soccer/ folder inside OrigarBarry/pixel-hockey (commit 2e90712) with its own soccer/NIGHTLY-LIST.md; that folder is now retired. Its list couldn't be read from the chat that made the move (no access to pixel-hockey there), so its open items still need merging into the new NIGHTLY-LIST.md: a chat that can open pixel-hockey should copy any items missing from the new list, then mark soccer/ as moved.
 
 ## Design decisions
 - Stays 3-on-3 with rolling line changes (the AI, tactics and league are built around it). No offside.
-- Pitch = TL_L..TL_R × GL_TOP..GL_BOT inside the old rink walls; the strip beyond is run-off grass to the hoardings. Ball-stop nets replace the glass.
+- Pitch = TL_L..TL_R × GL_TOP..GL_BOT inside the old rink walls; the strip beyond is run-off grass to the hoardings. The default "clear" glass option still draws see-through screens above the boards (top of the nightly list); the "netting" option gives ball-stop nets.
 - Halves: the match starts in internal period 2 (1ST HALF); period 3 = 2ND HALF; 4+ = extra time. Labels via halfName().
 - Out of play: throw-in / corner / goal kick. The taker is pinned until he plays it; CPU corners are crossed, free kicks within 150 of goal are shot with bend.
 - Kickoffs go to the team that conceded; halves alternate.
@@ -56,21 +58,21 @@ Merged on top of round 5 (the other chat's added time / advantage / wording pass
   - Result in 1v1 tests from mid-range: chip about 40%, shot about 20–45% depending on angle; against a keeper who stays home the chip is claimed.
 - **Lofted balls land where aimed.** loftBall() now allows for air drag over the whole flight (it only allowed 3%, so long chips and crosses dropped about 9% short).
 - **Keepers come for crosses** that will drop in or near their six-yard box. They mostly collect on the bounce; few clean catches yet.
-- **Goal rate:** added time and the keeper changes together pushed goals to about 3.7 a match, so GK_REACH went 1.8 → 1.9 with GK.chal 26. In 22 CPU matches since: about 3.4 a match (small samples swing between 2.9 and 4.8). Season sim: 2.8 a game, points correct.
+- **Goal rate:** added time and the keeper changes together pushed goals to about 3.7 a match, so GK_REACH went 1.8 → 1.9 with GK.chal 26. In 22 CPU matches since: about 3.4 a match (small samples swing between 2.9 and 4.8). Season sim: 2.8 a game, points correct. These numbers were measured while the clock bug was still in (see the correction below). With full-length halves the nightly run measured about 5 goals a match.
 - **Wording:**
   - Sponsors: Puckstop → Kickstop, Slapshot → Screamer, with ball and boot board icons.
   - The memorabilia "stick" is now drawn as a boot, with BOOT, LACES and STUDS options (saved values are unchanged).
   - Crowd sign, "on the tape", "Goal guard, box man, presser", "Boots, shin pads, tape".
   - The pause-screen controls now show loft, bend and slide tackle, and no longer show pull or fight.
 - **Gear screen:** it only failed with no season loaded, which a player can't reach. A guard message has been added anyway.
-- Test note: launching a new match on top of a running one (without quitting) carries the clock over. That's a test-harness artifact; real play always quits first.
-
-## Round 7: nightly fixes (Nov 24, version 1795533811-0755)
-See NIGHTLY.md: half-time clock reset at match start, W-D-L on the results screen, "is a foul" help text, grass-pitch menu backdrop and Settings camera preview.
+- **Correction:** I called "a new match carries the clock over" a test-harness artifact. It was a real bug: matches after the first started their first half on 0:00. The nightly run fixed it on Nov 24 (version 1795533811-0755). It also means the round 6 goal-rate tuning ran mostly on short matches.
 
 ## Known leftovers / ideas
-The live to-do list is NIGHTLY-LIST.md. Background:
-- Goal rate: the 24 Nov nightly measured about 5 a match once the clock bug was fixed (target 2–3). Waiting on Barry. Levers: GK_REACH 1.9 → 2.0, shorter ADDED.
+The live to-do list is NIGHTLY-LIST.md in the Pixel-Soccer repo. Background:
+- Goal rate: about 5 a match with full-length halves (target 2–3). Waiting for Barry: bring it down now or after his playtest. The levers are GK_REACH (1.9), GK.chal (26, the 1v1 keeper depth), and the ADDED constants for added time.
+- Play-test round 5 in a browser: added-time length feels right? advantage triggering too often or rarely? (Tune ADDED / ADV.)
 - Keepers rarely catch crosses cleanly (they collect on the bounce); could tune the claim reach if crosses feel too strong.
 - fight.js is still loaded (other files call it) but never triggers.
 - Overload and Hold Out challenges keep 4v3 / 3v2 as optional arcade modes. Some daily scenarios still set sc.pull.
+- "The Hammer" award still counts "hits" (shoulder charges); fine, but could become "tackles".
+- Further fun ideas not built yet: keeper going up for a last-minute corner when trailing; a VAR-style penalty review moment; "golden goal" vs full extra time option.
