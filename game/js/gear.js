@@ -300,7 +300,8 @@ function arenaPreviewIce(c, w, hgt) {
     c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
     c.drawImage(rinkImg, wxa * K, wy0 * K, ww * K, wh * K, x0, sy, APV_RINK_W, sh);
     c.imageSmoothingEnabled = false;
-    if (led) { const keep = ctx; ctx = c; c.setTransform(z, 0, 0, z, x0 - wxa * z, sy - wy0 * z); try { drawBoardsLive(); } catch (e) {} finally { ctx = keep; c.setTransform(1, 0, 0, 1, 0, 0); } }
+    { const keep = ctx; ctx = c; c.setTransform(z, 0, 0, z, x0 - wxa * z, sy - wy0 * z);   // SOCCER: the ball-stop net (drawn live in a game), then LED boards
+      try { if (typeof drawBallStopNet === 'function') drawBallStopNet(c, ballStopNetCol(arenaCfg())); if (led) drawBoardsLive(true); } catch (e) {} finally { ctx = keep; c.setTransform(1, 0, 0, 1, 0, 0); } }
     c.restore();
   };
   slice(R.t - BOARD_FACE - 17, y0, endH, 2);
@@ -359,9 +360,9 @@ function arenaPreviewOverlays(cv, cfg, team) {
       const sc = 2, wx0 = R.l - 8, wy0 = R.t - 23, sh = 54, sy0 = hgt - sh, ww = x1 / sc, wh = sh / sc;
       c.save(); c.beginPath(); c.rect(0, sy0, x1, sh); c.clip();
       c.drawImage(rinkImg, wx0 * K, wy0 * K, ww * K, wh * K, 0, sy0, x1, sh);
-      if (boardStyleOf(cfg).led && typeof drawBoardsLive === 'function') {
+      if (typeof drawBoardsLive === 'function') {
         const keep = ctx; ctx = c; c.setTransform(sc, 0, 0, sc, -wx0 * sc, sy0 - wy0 * sc);
-        try { drawBoardsLive(); } finally { ctx = keep; c.setTransform(1, 0, 0, 1, 0, 0); }
+        try { if (typeof drawBallStopNet === 'function') drawBallStopNet(c, ballStopNetCol(cfg)); if (boardStyleOf(cfg).led) drawBoardsLive(true); } finally { ctx = keep; c.setTransform(1, 0, 0, 1, 0, 0); }
       }
       c.restore();
       c.fillStyle = 'rgba(5,6,13,.85)'; c.fillRect(2, sy0 + 2, pTextW('HOARDINGS AND NETS') + 6, 9); pText(c, 'HOARDINGS AND NETS', 5, sy0 + 4, '#ffd23f');

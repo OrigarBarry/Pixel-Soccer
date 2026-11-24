@@ -884,6 +884,7 @@ function checkOutOfPlay() {
   if (!side && !end) return;
   const lt = puck.lastTouch, last = lt ? lt.team : (puck.shotTeam != null ? puck.shotTeam : -1);
   if (end) {
+    { const sp = Math.hypot(puck.vx, puck.vy); if (end < 0 && sp > 3) BOARDFX.net = { x, t: S.t, big: sp > 6 }; }   // SOCCER: over the bar into the ball-stop net
     const gy = end < 0 ? GL_TOP : GL_BOT, def = ownGoalY(0) === gy ? 0 : 1;      // whose goal is at this end
     if (last === def) return callOut('corner', 1 - def, x < CX ? TL_L : TL_R, gy);
     return callOut('goalkick', def, x, gy);
@@ -4241,39 +4242,33 @@ function glassPanes() {
   return out;
 }
 function glassPath(c) { c.beginPath(); for (const p of glassPanes()) { const q = p.q; c.moveTo(q[0][0], q[0][1]); for (let i = 1; i < 4; i++) c.lineTo(q[i][0], q[i][1]); c.closePath(); } }
+// SOCCER: the ball-stop net behind the far goal. NET_UP tall, from BSN_X0 to BSN_X1, standing on the hoardings' rail.
+const BSN_UP = 22;
+function ballStopSpan() { const hw = Math.min(PEN_HW + 22, (R.r - R.l) / 2 - R.cr - 4); return [Math.round(CX - hw), Math.round(CX + hw)]; }
+function drawBallStopNet(c, col, bulge) {
+  const [x0, x1] = ballStopSpan(), yB = R.t - BOARD_FACE - 2, yT = yB - BSN_UP, nP = 6, step = (x1 - x0) / nP;
+  const sag = x => { const k = ((x - x0) / step) % 1; return 1.2 * Math.sin(Math.PI * k); };   // the top cable droops between posts
+  const bl = bulge || null, push = (x, y) => {                                                     // a shot in the net pushes it back (up, from this camera)
+    if (!bl) return 0; const d = Math.abs(x - bl.x) / 16; return d >= 1 ? 0 : -bl.a * (1 - d * d) * Math.min(1, (y - yT) / BSN_UP + 0.3); };
+  c.save();
+  c.beginPath(); c.moveTo(x0, yB + 1); for (let x = x0; x <= x1; x += 2) c.lineTo(x, yT + sag(x) + push(x, yT)); c.lineTo(x1, yT + sag(x1)); c.lineTo(x1, yB + 1); c.closePath();
+  c.fillStyle = 'rgba(10,14,22,0.18)'; c.fill(); c.clip();                                          // the faint shadow the mesh makes
+  c.strokeStyle = col; c.lineWidth = 0.3; c.beginPath();                                            // the mesh: a fine diamond lattice
+  for (let x = x0 - BSN_UP; x < x1 + BSN_UP; x += 2.5) { c.moveTo(x, yB + 1 + push(x, yB)); c.lineTo(x + BSN_UP + 1, yT - 1 + push(x + BSN_UP, yT)); c.moveTo(x + BSN_UP + 1, yB + 1 + push(x + BSN_UP, yB)); c.lineTo(x, yT - 1 + push(x, yT)); }
+  c.stroke(); c.restore();
+  for (let i = 0; i <= nP; i++) {                                                                   // the posts, and their shadows on the net
+    const x = Math.round(x0 + i * step);
+    c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(x + 0.6, yT + 1, 0.5, BSN_UP - 1);
+    c.fillStyle = '#4a5368'; c.fillRect(x - 0.4, yT - 0.8, 1, BSN_UP + 1.8);
+    c.fillStyle = '#7b859c'; c.fillRect(x - 0.4, yT - 0.8, 0.4, BSN_UP + 1.8);
+    c.fillStyle = '#9aa3b8'; c.fillRect(x - 0.6, yT - 1.2, 1.4, 0.6);                                 // the cap
+  }
+  c.strokeStyle = 'rgba(200,206,220,.55)'; c.lineWidth = 0.35; c.beginPath();                       // the top cable
+  for (let x = x0; x <= x1; x += 1) { const y = yT + sag(x) + push(x, yT); x === x0 ? c.moveTo(x, y) : c.lineTo(x, y); } c.stroke();
+}
 function drawBoardsStatic(c, AC, H0, H1, ads, adWords, tAds) {
-  const B = boardStyleOf(AC), netCol = AC.glass === 'tinted' ? 'rgba(15,18,26,.5)' : AC.glass === 'netting' ? 'rgba(255,214,120,.22)' : 'rgba(255,255,255,.2)', glass = 'netting', kick = B.kick || H0.trim, BF = BOARD_FACE, BU = BF - 6;   // SOCCER: no glass, ball-stop nets behind the hoardings (the arena option picks their colour)
-  // GLASS behind the far boards (seen from the camera angle): panes on posts that follow the boards round the corners
-  const panes = glassPanes();
-  if (glass === 'netting') {                                                      // retro: no glass, just the netting behind the ends
-    c.save(); glassPath(c); c.clip();
-    c.strokeStyle = netCol; c.lineWidth = 0.35; c.beginPath();
-    for (let x = R.l - 10; x < R.r + 10; x += 3) { c.moveTo(x, R.t - 26); c.lineTo(x + 18, R.t + 10); c.moveTo(x + 18, R.t - 26); c.lineTo(x, R.t + 10); }
-    c.stroke(); c.restore();
-  } else {
-    c.fillStyle = glass === 'tinted' ? 'rgba(40,60,95,0.38)' : 'rgba(170,210,255,0.13)'; glassPath(c); c.fill();
-    c.fillStyle = glass === 'tinted' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.18)';
-    for (const p of panes) {                                                       // a reflection streak across each pane
-      const [b0, b1, t1, t0] = p.q, w = b1[0] - b0[0], hA = b0[1] - t0[1]; if (Math.abs(w) < 4 || hA < 4) continue;
-      const u = 0.3, v = 0.45, L = (k, j) => [b0[0] + w * k, b0[1] + (b1[1] - b0[1]) * k - (hA + ((b1[1] - t1[1]) - hA) * k) * j];
-      const A1 = L(u, 0.15), A2 = L(u + 0.18, 0.95), A3 = L(u + 0.26, 0.95), A4 = L(u + 0.08, 0.15);
-      if (p.corner && hA < 7) continue;
-      c.beginPath(); c.moveTo(...A1); c.lineTo(...A2); c.lineTo(...A3); c.lineTo(...A4); c.fill(); void v;
-    }
-  }
-  // the posts between the panes, and the top edge of the glass
-  for (const p of panes) {
-    const [b0, , , t0] = p.q; if (b0[1] - t0[1] < 2.5) continue;
-    c.fillStyle = glass === 'netting' ? '#5d6480' : 'rgba(255,255,255,0.5)'; c.fillRect(b0[0] - 0.3, t0[1], 0.6, b0[1] - t0[1]);
-    if (glass !== 'netting') { c.fillStyle = 'rgba(0,0,0,0.18)'; c.fillRect(b0[0] + 0.3, t0[1], 0.4, b0[1] - t0[1]); }
-  }
-  c.strokeStyle = glass === 'netting' ? '#5d6480' : glass === 'tinted' ? 'rgba(180,200,230,.45)' : 'rgba(255,255,255,0.45)'; c.lineWidth = 0.5;
-  c.beginPath(); { const top = []; for (const p of panes) top.push(p.q[3], p.q[2]); top.sort((a, b) => a[0] - b[0]); top.forEach((q, i) => i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1])); } c.stroke();
-  if (glass !== 'netting') {
-    // the side glass, seen edge-on from above: a thin bright line along the outside of each rail
-    c.fillStyle = glass === 'tinted' ? 'rgba(120,150,200,.45)' : 'rgba(200,230,255,.4)';
-    c.fillRect(R.l - 7, R.t + R.cr - 4, 1, BENCH_Y[0] - R.t - R.cr - 2); c.fillRect(R.r + 6, R.t + R.cr - 4, 1, R.b - R.t - 2 * R.cr + 4);
-  }
+  const B = boardStyleOf(AC), netCol = AC.glass === 'tinted' ? 'rgba(15,18,26,.55)' : AC.glass === 'netting' ? 'rgba(255,214,120,.32)' : 'rgba(235,240,250,.34)', glass = 'netting', kick = B.kick || H0.trim, BF = BOARD_FACE, BU = BF - 6;   // SOCCER: no glass, ball-stop nets behind the hoardings (the arena option picks their colour)
+  // SOCCER: no glass. The ball-stop net behind the far goal is drawn live, in front of the crowd (drawBoardsLive)
   // BOARDS: the rail tops all round (outer edge, cap, inner lip)
   roundRectPath(c, R.l - 6, R.t - 8 - BU, R.r - R.l + 12, R.b - R.t + 18 + BU, R.cr + 6); c.fillStyle = B.edge; c.fill();
   roundRectPath(c, R.l - 6, R.t - 8 - BU, R.r - R.l + 12, R.b - R.t + 13 + BU, R.cr + 6); c.fillStyle = B.cap; c.fill();
@@ -4315,9 +4310,15 @@ function boardScuff(x, y, hit) {
   BOARDFX.scuffs.push({ x: side === 'l' ? R.l - 1.2 : side === 'r' ? R.r + 0.4 : x + rand(-1, 1), y: side === 't' ? R.t - rand(0.6, 2.4) : side === 'b' ? R.b + rand(0.3, 1.2) : y + rand(-1, 1), w: Math.min(2.6, 0.6 + hit * 0.25), a: Math.min(0.55, 0.18 + hit * 0.05), side });
 }
 function glassShake(x, y, big) { BOARDFX.shake = { x, y, t: S.t, big }; }
-function drawBoardsLive() {
-  if (!S.match) return;
+function ballStopNetCol(AC) { return AC.glass === 'tinted' ? 'rgba(15,18,26,.55)' : AC.glass === 'netting' ? 'rgba(255,214,120,.38)' : 'rgba(235,240,250,.4)'; }
+function drawBoardsLive(noNet) {
   const AC = typeof arenaCfg === 'function' ? arenaCfg() : {}, B = boardStyleOf(AC), glass = 'netting', t = S.t, c = ctx;   // SOCCER: nets, not glass
+  // SOCCER: the BALL-STOP NET behind the far goal, as at a football ground: a straight run of tall netting on posts,
+  // in front of the fans behind that goal. A shot that flies over the bar into it pushes it back for a moment.
+  if (!noNet) { const sh = BOARDFX.net, [nx0, nx1] = ballStopSpan(), age = sh ? t - sh.t : 99;
+    const hit = sh && age >= 0 && age < 34 && sh.x > nx0 - 6 && sh.x < nx1 + 6;
+    drawBallStopNet(c, ballStopNetCol(AC), hit ? { x: sh.x, a: (sh.big ? 3.2 : 2) * (1 - age / 34) * Math.abs(Math.cos(age * 0.35)) } : null); }
+  if (!S.match) return;
   c.save();
   // scuffs
   for (const sc of BOARDFX.scuffs) { c.fillStyle = `rgba(20,22,30,${sc.a})`; if (sc.side === 't' || sc.side === 'b') c.fillRect(sc.x, sc.y, sc.w, 0.5); else c.fillRect(sc.x, sc.y, 0.6, sc.w); }
@@ -5764,7 +5765,7 @@ function startMatch(cfg) {
   if (!cfg.demo) cvs.focus();
 }
 function newGame() {
-  makeTeams(); buildRink(); clearMarks(); BOARDFX.scuffs = []; BOARDFX.shake = null;
+  makeTeams(); buildRink(); clearMarks(); BOARDFX.scuffs = []; BOARDFX.shake = null; BOARDFX.net = null;
   S.kickFirst = Math.random() < 0.5 ? 0 : 1; S.kickNext = null; S.kickSaid = null;
   S.score = [0, 0]; S.sog = [0, 0]; S.period = 2; setEnds();   // SOCCER: two halves, numbered 2 (1ST HALF) and 3 (2ND HALF); 4+ is extra time
   S.clock = S.periodLen; S.saidMin = false; S.comm = null;
