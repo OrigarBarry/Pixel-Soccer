@@ -387,7 +387,8 @@ function interTick() {
       if (marksCtx) { marksCtx.save(); marksCtx.globalCompositeOperation = 'destination-out'; marksCtx.beginPath(); marksCtx.arc(bx, by, ZAM_W / 2, 0, Math.PI * 2); marksCtx.fill(); marksCtx.restore(); }
       if (wetCtx) {
         wetCtx.save(); roundRectPath(wetCtx, R.l, R.t, R.r - R.l, R.b - R.t, R.cr); wetCtx.clip();
-        wetCtx.fillStyle = 'rgba(20,80,20,0.05)';   // SOCCER: a freshly mown stripe wetCtx.beginPath(); wetCtx.arc(bx, by, ZAM_W / 2 - 1, 0, Math.PI * 2); wetCtx.fill(); wetCtx.restore();
+        wetCtx.fillStyle = 'rgba(20,80,20,0.05)';   // SOCCER: a freshly mown stripe
+        wetCtx.beginPath(); wetCtx.arc(bx, by, ZAM_W / 2 - 1, 0, Math.PI * 2); wetCtx.fill(); wetCtx.restore();
       }
     }
     if ((I.t & 3) === 0) particles.push({ x: Z.x - Z.dx * 6 + rand(-2, 2), y: Z.y - Z.dy * 6 - 10, vx: rand(-0.2, 0.2), vy: -rand(0.3, 0.7), life: rand(16, 30), color: Math.random() < 0.5 ? 'rgba(120,190,90,.85)' : 'rgba(80,150,60,.85)' });   // grass clippings

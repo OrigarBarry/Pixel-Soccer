@@ -16,7 +16,7 @@ const AWARD_DESC = {
   pmvp: 'The most valuable player of the playoffs.',
   improved: 'The biggest jump in overall rating since last season.',
   iron: 'Never missed a shift: the most games (and minutes) played.',
-  hammer: 'The league\'s heaviest hitter.',
+  hammer: 'The league\'s hardest tackler.',
   sport: 'Plays hard and clean: points with the fewest penalty minutes.',
   clutch: 'Biggest goals at the biggest moments.',
   comeback: 'Back from a lost season (injury or a lack of playing time) to play like this.',

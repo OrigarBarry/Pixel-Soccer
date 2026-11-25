@@ -9,11 +9,11 @@
 //  streak and a best streak; 7 daily wins unlock the Sunset Jersey.
 // ====================================================================
 const GAME_SCEN = {
-  pulled:  { name: 'Extra Attacker', desc: 'Down a goal with 0:45 left. Your keeper is already on the bench. Tie it.', score: [2, 3], clock: 45, pull: 0, goal: 'tie', hud: 'TIE IT' },
-  down1:   { name: 'Late Push', desc: 'Down a goal with 3:00 left in the third. Win it (extra time counts).', score: [1, 2], clock: 180, goal: 'win', hud: 'WIN IT' },
-  down2:   { name: 'Comeback Kids', desc: 'Down two with 6:00 left in the third. Win it (extra time counts).', score: [1, 3], clock: 360, goal: 'win', hud: 'WIN IT' },
-  protect: { name: 'Hold the Fort', desc: 'Up a goal with 2:00 left. They will pull their keeper. Don\'t let them tie it.', score: [3, 2], clock: 120, goal: 'hold', hud: 'HOLD THE LEAD' },
-  ot:      { name: 'Sudden Death', desc: 'Tied after three. Extra time, next goal wins.', score: [2, 2], ot: true, goal: 'win', hud: 'NEXT GOAL WINS' },
+  pulled:  { name: 'Last Gasp', desc: 'Down a goal with 1:00 left. Throw everything forward and tie it.', score: [2, 3], clock: 60, goal: 'tie', hud: 'TIE IT' },   // SOCCER: no pulled keeper (id kept for saves)
+  down1:   { name: 'Late Push', desc: 'Down a goal with 3:00 left in the second half. Win it (extra time counts).', score: [1, 2], clock: 180, goal: 'win', hud: 'WIN IT' },
+  down2:   { name: 'Comeback Kids', desc: 'Down two with 6:00 left in the second half. Win it (extra time counts).', score: [1, 3], clock: 360, goal: 'win', hud: 'WIN IT' },
+  protect: { name: 'Hold the Fort', desc: 'Up a goal with 2:00 left. They will throw everyone forward. Don\'t let them tie it.', score: [3, 2], clock: 120, goal: 'hold', hud: 'HOLD THE LEAD' },
+  ot:      { name: 'Sudden Death', desc: 'Level after 90 minutes. Extra time, next goal wins.', score: [2, 2], ot: true, goal: 'win', hud: 'NEXT GOAL WINS' },
   underdog:{ name: 'Giant Killer', desc: 'The weakest team against the strongest: one two-minute half, extra time if it\'s tied. Win it.', underdog: true, period: true, ot2: true, goal: 'win', hud: 'BEAT THE FAVOURITE' },
 };
 const SCEN_ORDER = ['pulled', 'down1', 'protect', 'ot', 'down2', 'underdog'];

@@ -848,14 +848,14 @@ function addedTimeTick(dtc) {
 }
 function clockText() { return addedLive() ? '+' + fmtClock(Math.max(0, S.added.left)) : fmtClock(S.clock); }
 
-//  ADVANTAGE: a foul in the fouled team's attacking half, with one of his teammates first to the loose ball, isn't
+//  ADVANTAGE: a foul anywhere but the fouled team's own defensive third, with a teammate at least as close to the loose ball as any opponent, isn't
 //  whistled: the referee waves PLAY ON (the yellow is still given). If the fouling team wins the ball back within
 //  ADV.callback frames, the advantage didn't come and play goes back for the free kick. Never for a penalty-box foul,
 //  a foul on the keeper, a straight red, or a man already on a yellow (a sending-off always stops play).
-const ADV = { callback: 90, window: 150, near: 55, margin: 8 };   // (near is scaled with RK() when used: tactics.js loads after this file)
+const ADV = { callback: 90, window: 150, near: 70, margin: 0 };   // (near is scaled with RK() when used: tactics.js loads after this file)
 function advantageCheck(kind, off, vic, fx, fy, straight) {
   const r = RS(); if (!r || S.adv || S.phase !== 'live' || S.so || straight || kind === 'interf') return false;
-  if ((vic.y - CY) * attackDir(vic.team) <= 0) return false;                     // only in their attacking half
+  if ((vic.y - CY) * attackDir(vic.team) < -(GL_BOT - GL_TOP) / 6) return false;   // anywhere but their own defensive third
   const prior = off.pl && r.cards && r.cards[off.pl.id] ? r.cards[off.pl.id].y : 0; if (prior >= 1) return false;
   const d = p => hyp(p.x - puck.x, p.y - puck.y);
   const o = puck.owner;
@@ -887,3 +887,48 @@ function advTick() {
     whistle('FREE KICK', 'NO ADVANTAGE · ' + FOUL_NAME[a.kind] + ' - ' + plTagPl(a.offPl), () => { S.kickNext = a.team; setupFaceoff(a.fx, a.fy); }, 90);
   }
 }
+
+//  KEEPER UP FOR A LAST-MINUTE CORNER (Barry said yes, 24 Nov): the losing side wins a corner late in the second half
+//  (the last 15% of it), in added time, or late in extra time, and its keeper sprints up into the other box. A computer
+//  taker waits for him (up to KUP.waitMax frames) and often aims the cross at him. He attacks it like a striker
+//  (aerialContact lets him head it). The moment the other side wins the ball, it goes back past halfway, or KUP.maxUp
+//  frames pass, he races back, and until he's home his goal is open. Movement bounds are lifted while p.kUp is set
+//  (engine.js); setupFaceoff() and endPeriod() clear it. Off in challenge modes and shootouts.
+const KUP = { lateFrac: 0.15, waitMax: 420, arrive: 22, maxUp: 600, homeDist: 24, aimAtHim: 0.45 };
+function kupLate() { return (typeof addedLive === 'function' && addedLive()) || S.clock <= Math.max(10, (S.periodLen || 100) * KUP.lateFrac); }
+function keeperUpCheck(team) {
+  if (!S.match || S.mode || S.so || S.period < 3 || S.score[team] >= S.score[1 - team] || !kupLate()) return false;
+  const g = goalies[team];
+  if (!g || g.on === false || g.ghost || g.kUp || (g === ctrl && !S.autoAI)) return false;
+  const gy = oppGoalY(team), dir = attackDir(team);
+  g.kUp = { st: 'up', t: S.t, x: CX + rand(-14, 14), y: gy - dir * (PEN_D * 0.5) };
+  g.fetch = null; g.roam = true;
+  floaters.push({ x: CX, y: CY - 30, text: "THE KEEPER'S GOING UP!", life: 130, big: true, color: '#ffd23f' });
+  say(["THE KEEPER IS COMING UP FOR THIS ONE!", "EVERYONE FORWARD, EVEN THE KEEPER!", "HERE COMES THE KEEPER! IT'S ALL OR NOTHING!"], 3);
+  excite(0.7);
+  if (typeof rsLog === 'function') rsLog(`Keeper up for a late corner: ${TEAM[team].abbr}`);
+  return true;
+}
+const keeperUpArrived = g => !!(g && g.kUp && g.kUp.st === 'up' && hyp(g.x - g.kUp.x, g.y - g.kUp.y) < KUP.arrive);
+// the computer corner-taker waits for his keeper to get into the box
+function keeperUpWait(team, wait) { const g = goalies[team]; return !!(g && g.kUp && g.kUp.st === 'up' && !keeperUpArrived(g) && wait < KUP.waitMax); }
+// ... and then often picks him out
+function keeperUpTarget(team) { const g = goalies[team]; return keeperUpArrived(g) && Math.random() < KUP.aimAtHim ? g : null; }
+// keepers who are up: they go for headers like outfield players (aerialContact)
+function keeperUpList() { return goalies.filter(g => g && g.kUp && g.kUp.st === 'up' && g.on !== false); }
+// called at the top of thinkGoalie (when he hasn't got the ball); true = this keeper is handled here
+function keeperUpThink(p) {
+  const k = p.kUp; if (!k) return false;
+  const t = p.team, sgn = attackDir(t);
+  if (k.st === 'up') {
+    const o = puck.owner;
+    if (S.phase === 'live' && ((o && o.team !== t) || (puck.y - CY) * sgn < 0 || S.t - k.t > KUP.maxUp)) {
+      k.st = 'back';
+      say(["HE'S GOT TO GET BACK! THE NET IS EMPTY!", 'THE KEEPER IS STRANDED UPFIELD!', 'NOBODY IN GOAL! BACK HE RUNS!'], 3);
+    } else { steerTo(p, k.x, k.y, 1, 4); p.fx = 0; p.fy = sgn; return true; }
+  }
+  const gl = ownGoalY(t), hx = CX, hy = gl + sgn * 8;
+  if (hyp(p.x - hx, p.y - hy) < KUP.homeDist) { p.kUp = null; p.roam = true; return false; }   // home: the normal keeper takes over
+  steerTo(p, hx, hy, 1, 6); p.fx = 0; p.fy = sgn; return true;
+}
+function keeperUpClear() { for (const g of goalies) if (g) g.kUp = null; }

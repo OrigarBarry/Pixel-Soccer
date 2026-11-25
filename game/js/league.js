@@ -1697,7 +1697,7 @@ function finishSeason(save) {
     ['bestd', 'Best Defender', sk.filter(isD), mvpScore, pid => reg(pid).gp >= 8, null],
     ['improved', 'Most Improved Player', all, pid => { const pv = prevSeason(pid); return pv ? ovrInt(P(save, pid)) - (pv.ovr || 0) + pts(pid) * 0.05 : -99; }, pid => reg(pid).gp >= 8 && !!prevSeason(pid), pid => { const pv = prevSeason(pid); return `Overall ${pv.ovr} → ${ovrInt(P(save, pid))}`; }],
     ['iron', 'Iron Man', sk, pid => reg(pid).gp * 10000 + reg(pid).toi, pid => reg(pid).gp >= 10, pid => `${reg(pid).gp} games, ${Math.round(reg(pid).toi / 60)} minutes on the pitch`],
-    ['hammer', 'The Hammer', sk, pid => reg(pid).hit * 10 + reg(pid).fw, pid => reg(pid).gp >= 8, pid => `${reg(pid).hit} hits` + (reg(pid).fw ? `, ${reg(pid).fw} scuffle${reg(pid).fw > 1 ? 's' : ''} won` : '')],
+    ['hammer', 'The Hammer', sk, pid => reg(pid).hit, pid => reg(pid).gp >= 8, pid => `${reg(pid).hit} tackle${reg(pid).hit === 1 ? '' : 's'}`],   // SOCCER: tackles (slide tackles + shoulder charges, the TKL stat)
     ['sport', 'Sportsmanship Award', sk, pid => -reg(pid).pim * 100 + pts(pid) * 3 + reg(pid).gp, pid => reg(pid).gp >= 12 && pts(pid) >= 5, pid => `${pts(pid)} points, ${Math.round(reg(pid).pim / (BAL.pen.len || 30))} card${Math.round(reg(pid).pim / (BAL.pen.len || 30)) === 1 ? '' : 's'}`],
     ['clutch', 'Clutch Performer', all, pid => reg(pid).cv, pid => reg(pid).gp >= 8 && reg(pid).cv > 0, null],
     ['comeback', 'Comeback Player', all, mvpScore, pid => { const pv = prevSeason(pid); return reg(pid).gp >= 10 && !!pv && (pv.gp || 0) < 12; }, null],

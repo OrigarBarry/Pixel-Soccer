@@ -580,7 +580,7 @@ function resetPuck(x, y) {
   puck.passed.clear(); S.prevPY = y;
 }
 function setupFaceoff(dx = CX, dy = CY) {
-  S.adv = null;
+  S.adv = null; if (typeof keeperUpClear === 'function') keeperUpClear();
   S.scrumHold = false; S.injWait = null; S.icing = null;   // (a waiting injury whistle or icing race is moot: play has stopped)
   S.fightGear = null;                          // the fighters skated off and took their gear with them
   S.fo = { x: dx, y: dy };
@@ -933,6 +933,7 @@ function setupRestart(kind, team, x, y) {
   taker.x = x - fx * 7; taker.y = y - fy * 7; taker.fx = fx; taker.fy = fy; taker.vx = taker.vy = 0; taker.mx = taker.x; taker.my = taker.y;
   resetPuck(x, y); puck.owner = taker; puck.lastTouch = taker;
   taker.restart = { kind, t: S.t, x: taker.x, y: taker.y };
+  if (kind === 'corner' && typeof keeperUpCheck === 'function' && keeperUpCheck(team) && team === 0 && !S.autoAI) floaters.push({ x: taker.x, y: taker.y - 60, text: 'YOUR KEEPER IS COMING UP: WAIT FOR HIM!', life: 150, color: '#ffd23f' });
   // the other side backs off
   for (const o of teamSkaters(1 - team)) { const d = hyp(o.x - x, o.y - y); if (d < 30) { const k = 30 / (d || 1); o.x = clamp(x + (o.x - x) * k, TL_L + 4, TL_R - 4); o.y = clamp(y + (o.y - y) * k + (d < 1 ? up * 30 : 0), GL_TOP + 4, GL_BOT - 4); } }
   if (team === 0 && !S.autoAI) { setCtrl(taker, true); if (kind !== 'throw') floaters.push({ x: taker.x, y: taker.y - 44, text: 'LOFT = CROSS · HOLD ACROSS = BEND', life: 110, color: '#ffd23f' }); }
@@ -945,10 +946,16 @@ function restartTick() {
     if (puck.owner !== p || S.phase !== 'live') { p.restart = null; continue; }
     p.x = p.restart.x; p.y = p.restart.y; p.vx = p.vy = 0;
     const human = p === ctrl && !S.autoAI, wait = S.t - p.restart.t;
+    if (p.restart.kind === 'corner' && typeof keeperUpWait === 'function' && keeperUpWait(p.team, wait)) {   // SOCCER: waiting for the keeper to come up
+      for (const o of teamSkaters(1 - p.team)) { const d = hyp(o.x - p.x, o.y - p.y); if (d < 30) { const k = 30 / (d || 1); o.x = clamp(p.x + (o.x - p.x) * k, TL_L + 4, TL_R - 4); o.y = clamp(p.y + (o.y - p.y) * k, GL_TOP + 4, GL_BOT - 4); } }   // (they keep their distance)
+      if (!human) continue;
+    }
     if (!human && wait > 30 && (p.restart.kind === 'corner' || p.restart.kind === 'free')) {
       const r = p.restart, gy = oppGoalY(p.team), dG = hyp(CX - p.x, gy - p.y);
       const box = teamSkaters(p.team).filter(m => m !== p && m.stun <= 0 && Math.abs(m.x - CX) < PEN_HW && Math.abs(m.y - gy) < PEN_D + 10);
       if (r.kind === 'free' && dG < 150 && Math.abs(p.x - CX) < PEN_HW && Math.random() < 0.6) { p.restart = null; p.fx = (CX - p.x) / dG; p.fy = (gy - p.y) / dG; shoot(p, 0.85); puck.curve = (Math.random() < 0.5 ? -1 : 1) * rand(0.006, 0.012); floaters.push({ x: p.x, y: p.y - 30, text: 'FREE KICK!', life: 34, color: '#ffd23f' }); continue; }
+      const kup = r.kind === 'corner' && typeof keeperUpTarget === 'function' ? keeperUpTarget(p.team) : null;
+      if (kup) { p.restart = null; crossTo(p, kup); puck.curve = (p.x < CX ? 1 : -1) * attackDir(p.team) * -0.004; continue; }
       if (box.length && (r.kind === 'corner' || dG < 220)) { p.restart = null; crossTo(p, box[(Math.random() * box.length) | 0]); puck.curve = (p.x < CX ? 1 : -1) * attackDir(p.team) * -0.004; continue; }
     }
     if (wait > (human ? 60 * 5 : 40 + (Math.random() * 30 | 0))) {
@@ -998,7 +1005,7 @@ function endPenalty() {
   const pt = S.pen.team; whistle('NO GOAL', '', () => { S.kickNext = 1 - pt; setupFaceoff(CX, CY); }, 70);
 }
 function endPeriod() {
-  S.adv = null;
+  S.adv = null; if (typeof keeperUpClear === 'function') keeperUpClear();
   sfx.buzzer();
   goalieRest(PLAY.gRestoreInter);
   if (typeof modeEndPeriod === 'function' && modeEndPeriod()) return;
@@ -1226,6 +1233,7 @@ function statGoal(team, penaltyShot) {
   if (scorerPl) {
     const sp = pst(scorerPl, team); sp.g++; sp.sog++;
     if (typeof addedLive === 'function' && addedLive()) { sp.addg = (sp.addg || 0) + 1; MS.lastGoal.added = true; floaters.push({ x: CX, y: CY + 40, text: 'IN ADDED TIME!', life: 110, color: '#5ee07a' }); }
+    if (goalies.some(g => g && g.kUp && g.pl === scorerPl)) { sp.kupg = (sp.kupg || 0) + 1; floaters.push({ x: CX, y: CY + 76, text: 'THE KEEPER SCORES!!!', life: 150, big: true, color: '#ffd23f' }); say(['THE KEEPER HAS SCORED! UNBELIEVABLE!', 'IT\'S THE GOALKEEPER! HE\'S HEADED IT IN!'], 4); excite(1); }
     if (S.adv && S.adv.team === team && !penaltyShot) { sp.advg = (sp.advg || 0) + 1; MS.lastGoal.adv = true; floaters.push({ x: CX, y: CY + 58, text: 'ADVANTAGE PAYS OFF!', life: 110, color: '#5ee07a' }); }
     if (puck.tipT != null && S.t - puck.tipT < 40 && puck.shooterPl && puck.shooterPl.id === scorerId) { sp.tip++; MS.lastGoal.tip = true; }
     if (!penaltyShot) {
@@ -2883,6 +2891,7 @@ function thinkGoalie(p) {
     if (p.covering) { p.inx = p.iny = 0; return; }
     return thinkGoalieAIPuck(p);
   }
+  if (typeof keeperUpThink === 'function' && keeperUpThink(p)) return;               // SOCCER: up for a late corner, or racing back
   if (goalieFetch(p)) return;                                                         // power play: out to stop their clear
   if (!puck.owner && puck.h > 6 && puck.vh < 1.5 && !(p.lobbed > S.t) && p.down <= 0 && p.stun <= 0 && S.phase === 'live') {   // SOCCER: a cross dropping into his six-yard box: he comes for it
     const tl = (puck.vh + Math.sqrt(puck.vh * puck.vh + 2 * AIR.grav * puck.h)) / AIR.grav;
@@ -3164,7 +3173,7 @@ function movePlayer(p) {
     }
   }
   pushOutOfNets(p, r - 1);
-  if (p.outroFree) { /* end-of-game lap: anywhere on the ice */ }
+  if (p.outroFree || (p.g && p.kUp)) { /* end-of-game lap, or a keeper up for a corner: anywhere */ }
   else if (p.g && (p.roam || p.fetch || (hasPuck(p) && p === ctrl))) {
     // your goalie skating with the puck: a limited area in front of the net (further out = less protection)
     const gl = ownGoalY(p.team), sgn = attackDir(p.team);
@@ -3801,7 +3810,7 @@ function aerialContact() {
   }
   if (h > AIR.headHi) return false;
   let best = null, bd = 1e9;
-  for (const p of skaters) {
+  for (const p of (typeof keeperUpList === 'function' ? skaters.concat(keeperUpList()) : skaters)) {   // (a keeper up for a corner goes for it too)
     if (p.stun > 0 || p.block > 0 || p.on === false) continue;
     if (cpuT(p.team) && S.cpuDelay > 0) continue;
     if (S.phase === 'penalty' && p !== S.pen.shooter) continue;
@@ -3901,7 +3910,7 @@ function update() {
     clearIn(); updateCamera(); drawMarks(); return;
   }
   if (S.phase === 'faceoff') {
-    if (S.spot && S.spot.active) tickSpotlight(); else if (!S.lineHold && !(typeof extraPickVisible === 'function' && extraPickVisible() && RS().pick.held) && !(typeof jbHolds === 'function' && jbHolds() && S.timer <= FO.cueT + 30) && !(S.timer <= FO.readyT + 1 && !refsSet())) S.timer--;
+    if (S.spot && S.spot.active) tickSpotlight(); else if (!S.lineHold && !(typeof extraPickVisible === 'function' && extraPickVisible() && RS().pick.held) && !(typeof jbHolds === 'function' && jbHolds() && S.timer <= FO.cueT + 30 && (S.fo.jbN = (S.fo.jbN || 0) + 1) < 60 * 12) && !(S.timer <= FO.readyT + 1 && !refsSet() && (S.fo.refN = (S.fo.refN || 0) + 1) < 60 * 3)) S.timer--;   // (the big screen, or a referee still getting set, can hold it a while, never for ever)
     if (!S.fo.readySaid && S.timer <= FO.readyT && !S.so && !S.demo && refs[0]) { S.fo.readySaid = true; floaters.push({ x: refs[0].x, y: refs[0].y - 30, text: 'READY?', life: 62, bubble: true }); }
     if (S.pendingFight && !(S.mode && /fight|spar/.test(S.mode.id || ''))) S.pendingFight = null;   // SOCCER: no fights
     if (S.pendingFight && S.timer < 128) {
@@ -3972,6 +3981,7 @@ function update() {
   for (const p of (flip ? players.slice().reverse() : players)) {
     if (p.g) { if (p === ctrl && !S.autoAI) thinkGoalieHuman(p); else thinkGoalie(p); }
     else if (p === ctrl && !S.autoAI) thinkHuman(p);
+    else if (p.restart && p.restart.kind === 'corner' && typeof keeperUpWait === 'function' && keeperUpWait(p.team, S.t - p.restart.t)) { p.inx = p.iny = 0; }   // SOCCER: the taker waits for his keeper
     else thinkAI(p, plans[p.team]);
   }
   clearIn();

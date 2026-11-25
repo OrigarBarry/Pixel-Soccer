@@ -10,13 +10,19 @@ Repository: **OrigarBarry/Pixel-Soccer** (Barry, Nov 24: Pixel Soccer should not
 
 ## Design decisions
 - Stays 3-on-3 with rolling line changes (the AI, tactics and league are built around it). No offside.
-- Pitch = TL_L..TL_R × GL_TOP..GL_BOT inside the old rink walls; the strip beyond is run-off grass to the hoardings. The default "clear" glass option still draws see-through screens above the boards (top of the nightly list); the "netting" option gives ball-stop nets.
+- Pitch = TL_L..TL_R × GL_TOP..GL_BOT inside the old rink walls; the strip beyond is run-off grass to the hoardings. Every glass option is drawn as netting (glass = 'netting' is forced in drawBoardsStatic / drawBoardsLive); another chat (page version 1795563851-4b63) is adding a proper ball-stop net behind the far goal (ballStopSpan / drawBallStopNet, BSN_UP).
 - Halves: the match starts in internal period 2 (1ST HALF); period 3 = 2ND HALF; 4+ = extra time. Labels via halfName().
 - Out of play: throw-in / corner / goal kick. The taker is pinned until he plays it; CPU corners are crossed, free kicks within 150 of goal are shot with bend.
 - Kickoffs go to the team that conceded; halves alternate.
 - Keepers never freeze the ball; they punt it upfield in the air. Icing, fights and pulling the keeper are off (canPull() returns false).
 - Goals: GOAL_HW 28, NET_H 16, NET_D 15. GK_REACH 1.9 (was 1.8 until round 6).
 - Keepers use the outfield body with a keeper kit and gloves.
+
+## Barry's decisions (24 Nov 2026, 16:38 Whitehorse)
+- Goals stay high (about 4–5 a match): arcade scoring is fine, don't tune it down.
+- Keeper goes up for a last-minute corner: yes (built in round 8).
+- No video-review moment for penalties.
+- Cup extra time stays: full extra time, then penalties (no golden goal).
 
 ## Round 4 systems (audit follow-up)
 - **Cards, no sin bin.** Fouls give a free kick and a yellow; a foul in the box gives a penalty kick. Second yellow or straight red (15% of fouls from behind, BAL.card.straightRed) sends the player off for the match, but his team is never a man down: the next man on the bench comes on (sendOff → refillIce). Only if no sub is left does the team play short. Cards are stored in the old PIM field (cards = pim / BAL.pen.len).
@@ -41,7 +47,7 @@ Deliberately kept: hat trick, glove save, hits the crossbar, empty net (all fine
 ## Round 5: match-flow rules (Nov 24, version 1795504071-a256)
 All new code is the "SOCCER MATCH FLOW" section at the end of rules.js; unit-tested in Node with a stubbed engine (19 checks). Round 6 ran it in browser CPU matches too: no errors.
 - **Added time.** When a half's clock hits 0, addedTimeTick() (called from the engine's clock check) starts added time: mins = clamp(1 + floor(0.5·goals + 0.5·fouls/cards + 1·penalties/injuries + coin flip), 1, 5). One added minute = max(3, periodLen/30) game seconds (+3 in a 100 s half ≈ 10 s). Board floater + commentary; HUD, scoreboards and pause screen show "+0:07" in green (clockText()). At zero the ref lets an attack near either box finish (addedAttackOn), for at most one more added minute. Clock is held at 0 meanwhile, so all "late game" logic stays on. Only real matches: off when S.mode (challenges, drills, daily), S.so. State keyed on S.match, so a new match starts clean. Tuning: ADDED constants.
-- **Advantage.** callFoul → advantageCheck(): a foul in the fouled team's attacking half, with a teammate first to the loose ball (within RK(55), 8 px closer than any opponent), is not whistled: "ADVANTAGE! PLAY ON", the yellow is still given at once. If the fouling team wins clean possession within ADV.callback (90 frames) it comes back for the free kick (advTick in rulesTick). Never for box fouls (penalty), fouls on the keeper, straight reds, or a man already on a yellow. S.adv is cleared by whistle(), setupFaceoff() and endPeriod().
+- **Advantage.** callFoul → advantageCheck(): a foul in the fouled team's attacking half, with a teammate first to the loose ball (within RK(55), 8 px closer than any opponent; loosened in round 8, see there), is not whistled: "ADVANTAGE! PLAY ON", the yellow is still given at once. If the fouling team wins clean possession within ADV.callback (90 frames) it comes back for the free kick (advTick in rulesTick). Never for box fouls (penalty), fouls on the keeper, straight reds, or a man already on a yellow. S.adv is cleared by whistle(), setupFaceoff() and endPeriod().
 - Goals flagged in the scorer's stat line: addg (added time), advg (during advantage), with "IN ADDED TIME!" / "ADVANTAGE PAYS OFF!" floaters.
 - **Achievements** that needed keeper pulling or long man advantages were replaced in place (same ids, same rewards): pp3 → Stoppage-Time Hero (score in added time), eng → Play On! (score during advantage), xatk → Last-Gasp Winner (win after an added-time goal). "Pull the keeper" removed from the in-game cheat sheet (already hidden on the controls screen).
 - Help: new ADVANTAGE and ADDED TIME entries; TIES rewritten as DRAWS & TIES (league draws, cups go to extra time + penalties).
@@ -67,12 +73,19 @@ Merged on top of round 5 (the other chat's added time / advantage / wording pass
 - **Gear screen:** it only failed with no season loaded, which a player can't reach. A guard message has been added anyway.
 - **Correction:** I called "a new match carries the clock over" a test-harness artifact. It was a real bug: matches after the first started their first half on 0:00. The nightly run fixed it on Nov 24 (version 1795533811-0755). It also means the round 6 goal-rate tuning ran mostly on short matches.
 
+## Round 8: keeper up, advantage tune, fixes (Nov 24 evening, version 1795564774-6935)
+Merged on top of the other chat's 1795563851-4b63 (ball-stop net work in engine.js and gear.js; three-way merge, no conflicts). First chat round with a real browser test harness: 48 full CPU matches plus targeted tests, zero page errors.
+- **Keeper up for a late corner** (KUP section at the end of rules.js). keeperUpCheck(team) runs in setupRestart for corners: losing side, S.period >= 3, last 15% of the half (min 10 s), added time or late extra time; not in modes/shootouts; never a keeper the human is steering. g.kUp = { st: 'up' | 'back', target }. thinkGoalie hands him to keeperUpThink (before goalieFetch); movement bounds are lifted while p.kUp is set (like outroFree). The corner waits up to KUP.waitMax 420 frames for him: restartTick holds the taker and pushes defenders 30 px away; the taker's thinkAI is skipped while waiting. Crosses go to him 45% of the time once he arrives; aerialContact lets an up-keeper head it like an outfield player. He turns back the moment the other side has the ball, the ball crosses halfway, or KUP.maxUp 600 frames pass, and the clamp returns once he is within 24 px of home. setupFaceoff and endPeriod clear it. Goal by an up-keeper: "THE KEEPER SCORES!!!" (stat kupg). Test: 16 corners, keeper arrived every time (about 3.7 s), trailing side equalised 5 times, conceded into the empty net once.
+- **Advantage loosened:** measured 1 advantage in 15 fouls (most fouls were in the fouled side's own half or the fouler was nearer the ball). Now: anywhere outside the fouled side's own defensive third ((vic.y - CY)·dir ≥ −pitch/6), a teammate within RK(70) and no further from the ball than the nearest opponent (ADV.near 70, margin 0). Now about 1 foul in 4; most are called back when the defenders win it straight back. Help text updated.
+- **Added time** in 48 matches: +1 to +4 a half; never froze a restart.
+- **Fixes:** half-time mower line joined onto a comment (wetCtx.save() with no restore every frame); drop-ball restarts could wait for ever on the big-screen replay or on a referee who never got set: capped at 12 s and 3 s (S.fo.jbN, S.fo.refN), like kickoffs already were.
+- **Small items:** head-to-head after a sim shows W-D-L (start.otl recorded); The Hammer = most tackles (the hit stat, shown as TKL); challenge "pulled" is now "Last Gasp" (no pulled keeper, 1:00, id kept for saves) and the other challenge texts say "second half" / "throw everyone forward" / "level after 90 minutes"; pixel soccer-ball tab icon (inline SVG in index.html).
+- **Test harness** (kept outside the repo in the chat's tools folder): serves game/, steps the loop directly (update / interTick / introTick / celebTick), presses continue at half-time, treats the outro as full time. The jumbotron runs on real time, so a fast-forward harness can see it hold a drop-ball restart longer than real play would.
+
 ## Known leftovers / ideas
 The live to-do list is NIGHTLY-LIST.md in the Pixel-Soccer repo. Background:
-- Goal rate: about 5 a match with full-length halves (target 2–3). Waiting for Barry: bring it down now or after his playtest. The levers are GK_REACH (1.9), GK.chal (26, the 1v1 keeper depth), and the ADDED constants for added time.
-- Play-test round 5 in a browser: added-time length feels right? advantage triggering too often or rarely? (Tune ADDED / ADV.)
+- Goal rate about 4–5 a match: Barry is happy with it (24 Nov). Levers if that changes: GK_REACH (1.9), GK.chal (26), ADDED.
 - Keepers rarely catch crosses cleanly (they collect on the bounce); could tune the claim reach if crosses feel too strong.
 - fight.js is still loaded (other files call it) but never triggers.
-- Overload and Hold Out challenges keep 4v3 / 3v2 as optional arcade modes. Some daily scenarios still set sc.pull.
-- "The Hammer" award still counts "hits" (shoulder charges); fine, but could become "tackles".
-- Further fun ideas not built yet: keeper going up for a last-minute corner when trailing; a VAR-style penalty review moment; "golden goal" vs full extra time option.
+- Overload and Hold Out challenges keep 4v3 / 3v2 as optional arcade modes.
+- The old soccer list in the pixel-hockey repo still needs merging (top of NIGHTLY-LIST.md).

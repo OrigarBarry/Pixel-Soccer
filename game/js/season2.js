@@ -257,7 +257,7 @@ function s2SimTo(target) {
   const save = UI.save, se = save.season, uid = us(save), t = save.teams[uid];
   const injN = () => rosterIds(t).map(Pl).filter(p => p && p.inj && p.inj.g > 0).length;
   const promN = () => rosterIds(t).map(Pl).reduce((a, p) => a + ((p && p.morale && p.morale.prom) || []).filter(x => !x.res && x.due != null && x.due - mDay(save) <= 1).length, 0);
-  const start = { pos: sortedStandings(save).indexOf(uid) + 1, w: myStand(save).w, l: myStand(save).l, offers: (save.tradeOffers || []).length, inj: injN(), prom: promN() };
+  const start = { pos: sortedStandings(save).indexOf(uid) + 1, w: myStand(save).w, otl: myStand(save).otl || 0, l: myStand(save).l, offers: (save.tradeOffers || []).length, inj: injN(), prom: promN() };
   let games = 0, stop = null;
   for (let guard = 0; guard < 400; guard++) {
     const day = currentDay(save);
@@ -276,10 +276,10 @@ function s2SimTo(target) {
     } else for (const id of day.gids) applyResult(save, id, simGame(save, se.games[id]));
   }
   Store.autosave(save);
-  const now = { pos: sortedStandings(save).indexOf(uid) + 1, w: myStand(save).w - start.w, l: myStand(save).l - start.l };
+  const now = { pos: sortedStandings(save).indexOf(uid) + 1, w: myStand(save).w - start.w, d: (myStand(save).otl || 0) - (start.otl || 0), l: myStand(save).l - start.l };
   go(scrHub);
   setTimeout(() => modal(close => h('div', null, h('h2', null, 'SIMULATED ' + games + ' GAME' + (games === 1 ? '' : 'S')),
-    h('div', { class: 'sub' }, 'Your record over them: ' + now.w + '-' + now.l + '. Now ' + ordinal(now.pos) + (now.pos !== start.pos ? ' (was ' + ordinal(start.pos) + ')' : '') + '.'),
+    h('div', { class: 'sub' }, 'Your record over them: ' + now.w + '-' + now.d + '-' + now.l + ' (W-D-L). Now ' + ordinal(now.pos) + (now.pos !== start.pos ? ' (was ' + ordinal(start.pos) + ')' : '') + '.'),
     stop ? h('div', { class: 'gold', style: { fontSize: '8px', margin: '6px 0' } }, 'STOPPED: ' + stop) : null,
     h('div', { class: 'row' }, h('button', { class: 'primary', onclick: close }, 'OK')))), 80);
 }
