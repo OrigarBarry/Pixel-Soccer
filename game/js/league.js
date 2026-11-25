@@ -5,7 +5,7 @@
 // ====================================================================
 const SAVE_FORMAT = 'pixelsoccer-franchise', LEGACY_FORMATS = ['breakaway-franchise'];   // storage keys keep their old names so existing saves load
 const isSaveFormat = f => f === SAVE_FORMAT || LEGACY_FORMATS.includes(f);
-const SAVE_VERSION = 6;
+const SAVE_VERSION = 7;   // 7 (Nov 23 in Pixel Hockey, ported Nov 24): compressed cloud sections + the vault (nothing is deleted any more)
 const GAME_VERSION = '2.0';
 const START_YEAR = 1998;
 
@@ -614,7 +614,7 @@ function logTx(save, kind, o) {
   const s = save.season ? save.season.num : save.seasonNum;
   save.tx = save.tx || [];
   save.tx.push([s, kind, o.pid || null, o.teamId || null, o.from || null]);
-  if (save.tx.length > 1500) save.tx.splice(0, save.tx.length - 1500);
+  if (save.tx.length > 1700) vaultPush(save, 'tx', save.tx.splice(0, save.tx.length - 1500));   // older entries move to the vault in batches (kept, just not shown)
   const p = o.pid && save.players[o.pid];
   if (p) { const e = [s, kind, o.teamId || null]; if (o.from || o.sal) e.push(o.from || null); if (o.sal) e.push(o.sal + 'x' + (o.yrs || 1)); (p.txh = p.txh || []).push(e); if (p.txh.length > 40) p.txh.splice(1, p.txh.length - 40); }
 }
@@ -1649,7 +1649,7 @@ function compactHistoryEntry(save, hs) {
   for (const st of hs.standings || []) { delete st.name; delete st.colors; delete st.emblem; delete st.rw; }
   if (hs.leaders) for (const k in hs.leaders) if (Array.isArray(hs.leaders[k])) hs.leaders[k] = hs.leaders[k].slice(0, 3);
   // old trophies of other teams keep their three key players
-  for (const t of save.trophies) if (t.season === hs.season && t.teamId !== u && t.keyPlayers && t.keyPlayers.length > 3) t.keyPlayers = t.keyPlayers.slice(0, 3);
+  for (const t of save.trophies) if (t.season === hs.season && t.teamId !== u && t.keyPlayers && t.keyPlayers.length > 3) { const V = save.vault = save.vault || {}; (V.keyPlayers = V.keyPlayers || {})[t.id] = t.keyPlayers.slice(); t.keyPlayers = t.keyPlayers.slice(0, 3); }
   hs.compact = true;
 }
 function finishSeason(save) {
@@ -1827,9 +1827,20 @@ function isNotable(save, p) {
 }
 // retired players are compacted: identity, career totals, honours; season detail only for notable careers
 const RETIRED_KEEP = ['id', 'first', 'last', 'pos', 'spos', 'hand', 'txh', 'num', 'age', 'arch', 'status', 'retired', 'lastTeamId', 'teamId', 'career', 'seasons', 'awards', 'look', 'attrs', 'pot',
-  'traits', 'leadStyles', 'capTitles', 'memo', 'fav', 'starsHist', 'starsN', 'hats', 'best', 'teamsPlayed', 'seasonsN', 'draft', 'joined', 'ufw', 'injN', 'retiredWhy', 'compact'];
+  'traits', 'leadStyles', 'capTitles', 'memo', 'fav', 'starsHist', 'starsN', 'hats', 'best', 'teamsPlayed', 'seasonsN', 'draft', 'joined', 'ufw', 'injN', 'retiredWhy', 'compact', 'vault'];
 function compactRetired(save, p) {
   if (p.compact >= 2) return;
+  const before = JSON.parse(JSON.stringify(p));                    // Nov 23: what compaction removes goes to p.vault, not the bin
+  compactRetired0(save, p);
+  const V = before.vault || {};
+  for (const k of Object.keys(before)) if (k !== 'compact' && k !== 'vault' && JSON.stringify(p[k]) !== JSON.stringify(before[k])) { if (!(k in V)) V[k] = before[k]; }
+  if (Object.keys(V).length) p.vault = V;
+}
+// THE VAULT: details the screens no longer show (a retired player's full record, old transactions and milestones,
+// full key-player lists) are kept here instead of deleted. The store writes it as its own section, compressed and
+// rarely rewritten. Restoring a retired player's full record: Object.assign({}, p, p.vault).
+function vaultPush(save, key, items) { if (!items || !items.length) return; const V = save.vault = save.vault || {}; (V[key] = V[key] || []).push(...items); }
+function compactRetired0(save, p) {
   const notable = isNotable(save, p);
   // career lines keep the record-book numbers only
   for (const c of CATS) if (p.career && p.career[c]) { const l = {}; for (const k of ARCH_KEYS) if (p.career[c][k]) l[k] = p.career[c][k]; p.career[c] = fullLine(l); }
@@ -1921,7 +1932,7 @@ function runOffseason(save) {
   const ut = save.teams[save.userTeamId];
   for (const p of autoLeaders(save, ut, true)) pushNews(save, `${p.first} ${p.last} takes over a vacant letter (${leaderOf(ut, p.id)}).`);
   if (save.draftHistory.length > 3000) save.draftHistory.splice(0, save.draftHistory.length - 3000);
-  if (save.milestones && save.milestones.length > 2500) save.milestones.splice(0, save.milestones.length - 2500);
+  if (save.milestones && save.milestones.length > 2700) vaultPush(save, 'milestones', save.milestones.splice(0, save.milestones.length - 2500));
   createDraftClass(save);
   if (typeof startOffseason === 'function') startOffseason(save);
 }
@@ -2061,6 +2072,7 @@ function packArch(l) { const G = !!(l.sa || l.sv || l.ga || l.sho), ks = G ? ARC
 function unpackArch(a) { const o = {}; if (typeof a[0] === 'string') { const ks = a[0] === 'G' ? ARCH_G : ARCH_S; for (let i = 1; i < a.length; i++) if (a[i]) o[ks[i - 1]] = a[i]; } else ARCH_KEYS.forEach((k, i) => { if (a[i]) o[k] = a[i]; }); return o; }
 function saveReplacer(k, v) {
   if (v && typeof v === 'object' && !Array.isArray(v) && CATS.includes(k) && isSeasonEntry(this)) return packArch(v);
+  if (typeof v === 'number' && !Number.isInteger(v) && isFinite(v)) return Math.round(v * 1000) / 1000;   // 48.136700000001355 -> 48.137 (no stored value needs more)
   return isStatLine(v) ? packLine(v) : v;
 }
 function serializeSave(save, pretty) { return JSON.stringify(save, saveReplacer, pretty ? 1 : 0); }
@@ -2070,6 +2082,7 @@ function hydrateSave(save) {
   for (const p of Object.values(save.players)) {
     p.career = fullCats(p.career); if (!p.traits) p.traits = []; if (!p.seasons) p.seasons = []; if (!p.awards) p.awards = [];
     for (const se of p.seasons) { for (const c of CATS) if (Array.isArray(se[c])) se[c] = unpackArch(se[c]); if (se.year == null) se.year = START_YEAR + se.s - 1; }
+    if (p.vault) { if (p.vault.career) p.vault.career = fullCats(p.vault.career); for (const se of p.vault.seasons || []) for (const c of CATS) if (Array.isArray(se[c])) se[c] = unpackArch(se[c]); }
   }
   const se = save.season;
   if (se) {
@@ -2101,6 +2114,8 @@ function migrateSave(save) {
   }
   for (const t of Object.values(save.teams || {})) teamLeaders(t);
   if ((save.version || 5) < 6) migrateV6(save);
+  save.vault = save.vault || {};
+  if (save.version < SAVE_VERSION) save.version = SAVE_VERSION;
   if (save.format !== SAVE_FORMAT && isSaveFormat(save.format)) save.format = SAVE_FORMAT;
   return save;
 }
