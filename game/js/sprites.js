@@ -169,42 +169,45 @@ function sockKit(C, G) {
   const so = G ? G.socks : 'team';
   return { so, col: so === 'dark' ? C.dark : so === 'white' ? '#eef1f6' : C.main, band: so === 'white' ? C.main : so === 'stripe' ? '#ffffff' : C.trim };
 }
+const LW = 3;   // SOCCER: leg width (slim), boots one wider
 function drawLegsKit(C, G, LK, legs, sockOver) {
   const sk = G ? gearCol(G, 'skates', C) : '#1d1f27', K = sockKit(C, G), sc = sockOver || K.col;
   const stripe = G ? gearCol(G, 'stick', C) : '#eef1f6', tape = G ? gearCol(G, 'tape', C) : null, pad = G ? gearCol(G, 'pads', C) : '#f2f2f2';
   for (const [lx, up] of legs) {
-    if (K.so === 'high') { ctx.fillStyle = sc; px(lx, -8 - up, 4, 6); ctx.fillStyle = K.band; px(lx, -8 - up, 4, 1); }      // over the knee
+    if (K.so === 'high') { ctx.fillStyle = sc; px(lx, -8 - up, LW, 6); ctx.fillStyle = K.band; px(lx, -8 - up, LW, 1); }      // over the knee
     else {
-      ctx.fillStyle = skinOf(LK); px(lx, -8 - up, 4, 2);                                                                      // knee
+      ctx.fillStyle = skinOf(LK); px(lx, -8 - up, LW, 2);                                                                      // knee
       if (K.so === 'rolled') {                                                                                                // rolled down: the shin pad shows
-        ctx.fillStyle = pad; px(lx, -6 - up, 4, 2); ctx.fillStyle = darker(pad, 0.25); px(lx + 3, -6 - up, 1, 2);
+        ctx.fillStyle = pad; px(lx, -6 - up, LW, 2); ctx.fillStyle = darker(pad, 0.25); px(lx + LW - 1, -6 - up, 1, 2);
         if (G && G.pads === 'stripes') { ctx.fillStyle = '#d9342b'; px(lx + 1, -6 - up, 1, 2); }
-        ctx.fillStyle = sc; px(lx, -4 - up, 4, 2); ctx.fillStyle = K.band; px(lx, -4 - up, 4, 1);
+        ctx.fillStyle = sc; px(lx, -4 - up, LW, 2); ctx.fillStyle = K.band; px(lx, -4 - up, LW, 1);
       } else {
-        ctx.fillStyle = sc; px(lx, -6 - up, 4, 4);
+        ctx.fillStyle = sc; px(lx, -6 - up, LW, 4);
         ctx.fillStyle = K.band;
-        if (K.so === 'hoops') { px(lx, -6 - up, 4, 1); px(lx, -4 - up, 4, 1); } else if (K.so === 'stripe') { px(lx, -5 - up, 4, 1); px(lx, -3 - up, 4, 1); } else px(lx, -6 - up, 4, 1);
+        if (K.so === 'hoops') { px(lx, -6 - up, LW, 1); px(lx, -4 - up, LW, 1); } else if (K.so === 'stripe') { px(lx, -5 - up, LW, 1); px(lx, -3 - up, LW, 1); } else px(lx, -6 - up, LW, 1);
       }
     }
-    if (tape && K.so !== 'rolled') { ctx.fillStyle = G.tape === 'candy' ? ((S.t >> 3) & 1 ? '#ffffff' : '#d9342b') : tape; px(lx, (K.so === 'high' ? -5 : -4) - up, 4, 1); }   // sock tape below the knee
+    if (tape && K.so !== 'rolled') { ctx.fillStyle = G.tape === 'candy' ? ((S.t >> 3) & 1 ? '#ffffff' : '#d9342b') : tape; px(lx, (K.so === 'high' ? -5 : -4) - up, LW, 1); }   // sock tape below the knee
     // the boot: upper, a lighter top edge, the stripes on its side, the sole
-    ctx.fillStyle = sk; px(lx, -2 - up, 5, 2);
-    ctx.fillStyle = G && G.skates === 'twotone' ? '#eef1f6' : darker(sk, -0.25); px(lx, -2 - up, 5, 1);
+    ctx.fillStyle = sk; px(lx, -2 - up, LW + 1, 2);
+    ctx.fillStyle = G && G.skates === 'twotone' ? '#eef1f6' : darker(sk, -0.25); px(lx, -2 - up, LW + 1, 1);
     if (stripe) { ctx.fillStyle = G && G.skates === 'retro' ? '#eef1f6' : stripe; px(lx + 1, -1 - up, 1, 1); px(lx + 3, -1 - up, 1, 1); }
     if (G && G.skates === 'gold' && ((S.t >> 4) & 1)) { ctx.fillStyle = '#fff6c0'; px(lx + 2, -2 - up, 1, 1); }
-    ctx.fillStyle = 'rgba(20,30,20,.35)'; px(lx, -up, 5, 1);                                                                    // studs / sole
+    ctx.fillStyle = 'rgba(20,30,20,.35)'; px(lx, -up, LW + 1, 1);                                                                    // studs / sole
   }
 }
-function drawShortsKit(C, G) {
+// how far the shirt comes in at row j (of h): full at the chest, 3 pixels in on each side at the waist (the shorts' width)
+const waistIn = (j, h) => Math.max(0, Math.min(3, Math.round((j - (h - 6)) * 0.75)));
+function drawShortsKit(C, G) {   // SOCCER: 8 wide (the slim waist), x -4..3, over the legs at -4..-2 and 1..3
   const st = G ? G.shorts : 'standard', pc = C.pants, pd = darker(C.pants, 0.3);
-  if (st === 'short') { ctx.fillStyle = pc; px(-6, -11, 12, 2); px(-6, -9, 5, 1); px(1, -9, 5, 1); }
-  else if (st === 'long') { ctx.fillStyle = pc; px(-6, -11, 12, 3); px(-6, -8, 5, 2); px(1, -8, 5, 2); ctx.fillStyle = pd; px(-6, -7, 5, 1); px(1, -7, 5, 1); }
+  if (st === 'short') { ctx.fillStyle = pc; px(-4, -11, 8, 2); px(-4, -9, 3, 1); px(1, -9, 3, 1); }
+  else if (st === 'long') { ctx.fillStyle = pc; px(-4, -11, 8, 3); px(-4, -8, 3, 2); px(1, -8, 3, 2); ctx.fillStyle = pd; px(-4, -7, 3, 1); px(1, -7, 3, 1); }
   else {
-    ctx.fillStyle = pc; px(-6, -11, 12, 3); px(-6, -8, 5, 1); px(1, -8, 5, 1);
-    if (st === 'cycling') { ctx.fillStyle = darker(pc, 0.5); px(-6, -7, 4, 1); px(2, -7, 4, 1); }                             // cycling shorts peeking out
+    ctx.fillStyle = pc; px(-4, -11, 8, 3); px(-4, -8, 3, 1); px(1, -8, 3, 1);
+    if (st === 'cycling') { ctx.fillStyle = darker(pc, 0.5); px(-4, -7, 3, 1); px(1, -7, 3, 1); }                             // cycling shorts peeking out
   }
-  ctx.fillStyle = pd; px(-6, -11, 12, 1);
-  ctx.fillStyle = C.trim; px(-6, -10, 1, 2); px(5, -10, 1, 2);
+  ctx.fillStyle = pd; px(-4, -11, 8, 1);
+  ctx.fillStyle = C.trim; px(-4, -10, 1, 2); px(3, -10, 1, 2);
 }
 // a keeper's shirt: his design (the old mask designs and their paint jobs, now shirts) or the plain keeper colour
 const KEEPER_STYLE = { bucket: 'shoulder', white: 'minimal', retro: 'classic', checkers: 'checker', wolf: 'yoke', skull: 'minimal', tiger: 'tiger', flame: 'flames', shark: 'zigzag', lightning: 'diagonal', star: 'stars', galaxy: 'galaxy', laststand: 'laststand', chrome: 'pinstripe', gold: 'goldsash' };
@@ -250,7 +253,7 @@ function drawSkaterBody(p, K) {   // K: a keeper's kit ({ C, glove, hands }): th
   if (stickBehind) drawStick(p, pokeBoost, geo);
   // SOCCER: boots, long socks, bare knees, shorts (the kicking foot lifts as he winds up a shot)
   const kick = geo && geo.wind > 0.3 ? 2 : 0;
-  drawLegsKit(C, G, LK, [[-5 + la, 0], [1 - la, kick]]);
+  drawLegsKit(C, G, LK, [[-4 + la, 0], [1 - la, kick]]);   // slim legs, 3 wide: x -4..-2 and 1..3
   drawShortsKit(C, G);
   // SOCCER: no stick in his hands: arms swing as he runs, and go out for balance as he winds up a kick
   let armHands = K && K.hands ? K.hands(ln) : geo && geo.wind > 0.3 ? [{ x: -12 + ln, y: -17 }, { x: 11 + ln, y: -16 }] : [{ x: -9 + ln, y: -13 + la }, { x: 8 + ln, y: -13 - la }];
@@ -265,8 +268,8 @@ function drawSkaterBody(p, K) {   // K: a keeper's kit ({ C, glove, hands }): th
   if (back && !celeb && !(windUp && !geo.behindUs)) drawArms(C, G, ln, armHands, 0, true);
   // jersey
   const fit = G ? G.jersey : 'standard', jTop = -20 + (fit === 'tuck' ? 1 : 0), jH = fit === 'loose' ? 10 : fit === 'tuck' ? 8 : 9;
-  for (let j = 0; j < jH; j++) for (let i = 0; i < 14; i++) { ctx.fillStyle = jerseyColor(C, i, j, 14, jH); ctx.fillRect(-7 + ln + i, jTop + j, 1, 1); }
-  ctx.fillStyle = 'rgba(0,0,0,.12)'; px(-7 + ln, jTop, 1, jH); px(6 + ln, jTop, 1, jH);     // a little shading at the sides
+  for (let j = 0; j < jH; j++) { const t = waistIn(j, jH); for (let i = t; i < 14 - t; i++) { ctx.fillStyle = jerseyColor(C, i, j, 14, jH); ctx.fillRect(-7 + ln + i, jTop + j, 1, 1); }
+    ctx.fillStyle = 'rgba(0,0,0,.12)'; px(-7 + ln + t, jTop + j, 1, 1); px(6 + ln - t, jTop + j, 1, 1); }     // SOCCER: tapered to the waist; a little shading at the sides
   if (back) {
     ctx.save(); ctx.translate(ln, 0);
     // shoulder yoke and shoulder caps over the arms, then the number
@@ -852,8 +855,7 @@ function drawBenchieRaw(x, y, T, pl, bob, cheer, faceLeft) {
   const hy = pose === 'slump' ? 3 : 0;
   ctx.save(); ctx.translate(0, 3);
   const fit = G ? G.jersey : 'standard', jTop = -20 + (fit === 'tuck' ? 1 : 0), jH = Math.min(fit === 'loose' ? 10 : fit === 'tuck' ? 8 : 9, 8);
-  for (let j = 0; j < jH; j++) for (let i = 0; i < 14; i++) { ctx.fillStyle = jerseyColor(C, i, j, 14, jH); ctx.fillRect(-7 + i, jTop + j, 1, 1); }
-  R(-7, jTop, 1, jH, 'rgba(0,0,0,.12)'); R(6, jTop, 1, jH, 'rgba(0,0,0,.12)');
+  for (let j = 0; j < jH; j++) { const t = waistIn(j, jH); for (let i = t; i < 14 - t; i++) { ctx.fillStyle = jerseyColor(C, i, j, 14, jH); ctx.fillRect(-7 + i, jTop + j, 1, 1); } R(-7 + t, jTop + j, 1, 1, 'rgba(0,0,0,.12)'); R(6 - t, jTop + j, 1, 1, 'rgba(0,0,0,.12)'); }   // SOCCER: tapered to the waist
   drawCrest(C, -4, -19, 8);
   const ti = TEAM.indexOf(T), lu = ti >= 0 && S.match && S.match.lineups ? S.match.lineups[ti] : null, cap = pl && lu && lu.leaders ? lu.leaders[pl.id] : null;
   if (cap) { ctx.fillStyle = numColor(C); const L2 = cap === 'C' ? ['111', '100', '111'] : ['010', '111', '101']; L2.forEach((row, j) => [...row].forEach((b, i) => { if (b === '1') px(4 + i, -19 + j, 1, 1); })); }

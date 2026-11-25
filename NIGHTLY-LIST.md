@@ -35,6 +35,7 @@ The nightly run takes the top unticked item under "Next up". Barry and his chats
 - 24 Nov 2026: main-menu backdrop and Settings camera preview still showed an ice rink. Fixed (grass pitch).
 
 ## Done
+- [x] **Slimmer waist** (Barry, 24 Nov): the shirt tapers from the chest to an 8-pixel waist, with slimmer shorts and legs. Keepers too. (24 Nov night, version 1795581487-cef7)
 - [x] **Taller, slimmer players** (Barry, 24 Nov): every player, keeper, referee and bench player is about 12% taller and 14% slimmer. Keepers have the same build as the outfield players, just with gloves. (24 Nov night, version 1795580776-74a0)
 - [x] **Football kit and gear overhaul** (24 Nov evening, version 1795579059-7bca):
   - Player cards show footballers' heads: hair on top (eight styles), a headband or keeper cap if worn. No more hockey helmets, visors, cages or goalie masks.

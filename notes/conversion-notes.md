@@ -118,6 +118,9 @@ Compared file by file with the hockey page (version 1795563867-b742; read throug
 - Cost: about 1 to 3 ms a frame in headless tests (14.3 ms becomes 15.8 to 17 ms). A first attempt that snapped every rectangle to the pixel grid cost about 15 ms and was dropped.
 - Also: the Lucky Orange Tape unlock is described as sock tape, Victory Boot became Victory Stripes (boot stripes), and the legend screen says "Keeper shirt:" instead of "Mask:".
 
+## Round 14: slim waist (Nov 24 night, version 1795581487-cef7)
+- Barry: "still too thick in the waist". The shirt now tapers: waistIn(j, h) brings each side in by up to 3 pixels over the bottom rows (14 wide at the chest, 8 at the waist). drawShortsKit is 8 wide (x -4..3). Legs are LW = 3 wide at x -4..-2 and 1..3, with boots one pixel wider. The bench players' shirt uses the same taper. The sliding, lying and dive poses are unchanged.
+
 ## Known leftovers / ideas
 The live to-do list is NIGHTLY-LIST.md in the Pixel-Soccer repo. Background:
 - Goal rate about 4–5 a match: Barry is happy with it (24 Nov). Levers if that changes: GK_REACH (1.9), GK.chal (26), ADDED.

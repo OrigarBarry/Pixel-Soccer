@@ -2,6 +2,13 @@
 
 The two reports below were written before this repository existed and were first kept in the Claude project (claude/pixel-soccer-nightly.md). From 25 Nov 2026 the nightly run writes here.
 
+## 24 Nov 2026, later still (Pixel Soccer project chat, not a nightly run)
+
+**Short version:** slimmer waists, as Barry asked. The shirt now tapers from the chest to a narrow waist, and the shorts and legs are slimmer too, so players have an athletic V shape. Keepers match. Published, zero errors.
+- [Before (top) and after (bottom)](nightly/2026-11-24/slim-waist.png).
+- Tested: 4 computer-vs-computer matches, a real-time match with intro, goal card and three stars, a season sim, and the gear screens: no page errors.
+- Page versions: started from **1795580776-74a0**, published **1795581487-cef7**. To roll back, republish 1795580776-74a0.
+
 ## 24 Nov 2026, late night (Pixel Soccer project chat, not a nightly run)
 
 **Short version:** as Barry asked, players are now a little taller and slimmer, and keepers have exactly the same build, just with gloves. Referees and bench players match. The pixels stay sharp. Published, zero errors.
