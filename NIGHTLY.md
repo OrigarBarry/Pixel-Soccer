@@ -2,6 +2,32 @@
 
 The two reports below were written before this repository existed and were first kept in the Claude project (claude/pixel-soccer-nightly.md). From 25 Nov 2026 the nightly run writes here.
 
+## 24 Nov 2026, night (Pixel Soccer project chat, not a nightly run)
+
+**Short version:** every player and all the customisation are now football kit. Player cards show footballers instead of hockey helmets and goalie masks. The gear menus offer boots, socks, shorts, shirts, shin pads, sock tape and extras, and keepers get shirt designs (52 of them) instead of masks. Published, zero errors.
+
+### What I did
+- **Player cards:** a footballer's head with his hairstyle, plus a headband, keeper cap or snood if he wears one. Keepers wear their own shirt. [Portraits](nightly/2026-11-24/portraits.png).
+- **Player Gear & Look:** Boots (11 colours, gold boots unlocked by the Golden Boot award), Boot stripes, Shin pads, Sock tape and Extras (wristbands, taped wrists, snood, long undershirt, keeper cap, armband). [Boots page](nightly/2026-11-24/gear-boots.png).
+- **Team kit (Team Look > Uniforms):** shirt fit (long or short sleeves, polo or laced collar), shorts colour and style (retro short-shorts, long and baggy, cycling shorts under), socks (rolled down showing the shin pads, over the knee, hoops, stripes), gloves and headbands.
+- **Keepers:** the Mask Studio is now the **Keeper Shirt Studio**: 52 shirt designs (tiger, shark teeth, galaxy, hornet, camo, flames and more) with the same shop, legendary unlocks and paint shop. Keepers also pick glove colours and glove designs. [Keeper Shirt Studio](nightly/2026-11-24/keeper-shirt-studio.png).
+- **Hair:** three new hairstyles: mohawk, man bun and shaved.
+- **Variety:** every player now wears his own boots, stripes, sock tape and extras, the same every season.
+- [All the kit options on players](nightly/2026-11-24/kit-options.png).
+- Old saves load fine: any old hockey item turns into the football default.
+
+### Health
+- 4 computer-vs-computer matches, a real-time match with intro, goal card and three-stars outro, a 115-game season sim, every menu screen, and the gear, keeper shirt and uniform screens: no page errors.
+- Found, already there before tonight: the Dream Builder screen errors if opened directly without a player. The normal menus always open it with one.
+
+### What Barry should check
+- Season > Gear & Look: step through the parts for an outfield player and for a keeper.
+- Team Look > Uniforms: try the shorts and socks styles.
+- Look at a few player cards (roster, draft).
+
+### Page versions
+- Started from **1795577594-2097**, published **1795579059-7bca**. To roll back, republish 1795577594-2097.
+
 ## 24 Nov 2026, later evening (Pixel Soccer project chat, not a nightly run)
 
 **Short version:** the commentary no longer sounds like hockey. I read every commentary line and big-screen ad and rewrote about 25 that still did, plus a few menu labels. I also fixed the in-match report button, which was covering the middle of the scoreboard. Published, zero errors.

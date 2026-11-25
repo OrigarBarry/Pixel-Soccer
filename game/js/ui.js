@@ -732,7 +732,7 @@ const HUB_ICONS = {
   brush:   ['......##', '.....###', '....###.', '...###..', '..###...', '.##.....', '###.....', '##......'],
   medal:   ['##....##', '.##..##.', '..####..', '.######.', '.##..##.', '.##..##.', '.######.', '..####..'],
   cup:     ['########', '#.####.#', '#.####.#', '.######.', '..####..', '...##...', '..####..', '.######.'],
-  helmet:  ['..####..', '.######.', '########', '###..###', '##....##', '##.##.##', '##.##.##', '##....##'],
+  helmet:  ['###..###', '########', '########', '.######.', '.######.', '.######.', '.######.', '.######.'],   // SOCCER: a shirt (the GEAR & LOOK tile)
   arena:   ['...##...', '..####..', '.######.', '########', '#.#.#.##', '########', '#.#.#.##', '########'],
   dollar:  ['...##...', '.######.', '##.##...', '.#####..', '...##.##', '######..', '...##...', '...##...'],
   paper:   ['######..', '#....##.', '#.###.##', '#......#', '#.####.#', '#......#', '#.###..#', '########'],
@@ -2160,7 +2160,7 @@ function kitEditor(id, getSel, setSel, redraw) {
   const set = patch => { const S0 = store(); if (sel === 'home') Object.assign(S0.home, patch); else if (sel === 'away') Object.assign(S0.away, patch); else Object.assign(S0.alts[+sel.slice(3)], patch); redraw(); };
   const pickRow = (lab, k) => h('div', { class: 'kitrow' }, h('span', { class: 'gold' }, lab),
     ['p', 's', 'a'].map(c => id.colors[c]).concat(['#eef1f6', '#141832']).map(c => h('span', { class: 'sw' + (String(cur[k]).toLowerCase() === c.toLowerCase() ? ' on' : ''), title: c, style: { background: c }, onclick: () => set({ [k]: c }) })),
-    h('input', { type: 'color', value: cur[k], oninput: e => set({ [k]: e.target.value }), style: { width: '34px', height: '20px', verticalAlign: 'middle' } }));
+    h('input', { type: 'color', value: cur[k] || (k === 'pants' ? shade(id.colors.s, -0.35) : '#000000'), oninput: e => set({ [k]: e.target.value }), style: { width: '34px', height: '20px', verticalAlign: 'middle' } }));
   const sel2 = (lab, k, opts) => h('label', { class: 'kitrow' }, h('span', { class: 'gold' }, lab), h('select', { onchange: e => set({ [k]: e.target.value }) }, opts.map(([v, n]) => h('option', { value: v, selected: cur[k] === v }, n))));
   const styles = JERSEY_STYLES.filter(s2 => own(s2.cos) || s2.id === cur.style).map(s2 => [s2.id, s2.name]);
   const helmets = Object.entries(GEAR_OPTS.helmet).filter(([v]) => !gearLocked(v, 'helmet') || v === cur.helmet).map(([v, n]) => [v, n.replace(' ★', '')]);
@@ -2171,8 +2171,8 @@ function kitEditor(id, getSel, setSel, redraw) {
       h('button', { class: 'small', title: 'Design another alternate uniform', onclick: () => { const S0 = store(); const base = K.alts[0]; S0.alts.push(Object.assign({}, base, { name: 'Alternate ' + (S0.alts.length + 1), main: id.colors.a, dark: id.colors.p, trim: id.colors.s })); setSel('alt' + (S0.alts.length - 1)); redraw(); } }, '+ ALTERNATE'),
       /^alt/.test(sel) && S1.length > 1 ? h('button', { class: 'small ghost', onclick: () => { const S0 = store(); S0.alts.splice(+sel.slice(3), 1); setSel('home'); redraw(); } }, 'DELETE') : null),
     /^alt/.test(sel) ? h('label', { class: 'kitrow' }, h('span', { class: 'gold' }, 'NAME'), h('input', { type: 'text', value: cur.name, maxLength: 16, onchange: e => set({ name: e.target.value.trim() || cur.name }) })) : null,
-    pickRow('JERSEY', 'main'), pickRow('SECOND', 'dark'), pickRow('TRIM', 'trim'),
-    h('div', { class: 'kitgrid' }, sel2('PATTERN', 'style', styles), sel2('HEADBANDS', 'helmet', helmets), sel2('GLOVES', 'gloves', gloves),
-      sel2('SOCKS', 'socks', Object.entries(GEAR_OPTS.socks)), sel2('FIT', 'fit', Object.entries(GEAR_OPTS.jersey))),
-    h('div', { class: 'hint', 'data-help': 'Every player wears the same uniform: headbands, gloves, socks and fit come from the kit. Boots, shin pads, tape and keeper gear stay personal. Pick tonight\'s kit on the pre-game screen.' }, 'The whole team wears it alike · pick tonight\'s kit before each game.'));
+    pickRow('SHIRT', 'main'), pickRow('SECOND', 'dark'), pickRow('TRIM', 'trim'), pickRow('SHORTS', 'pants'),
+    h('div', { class: 'kitgrid' }, sel2('STYLE', 'style', styles), sel2('BANDS', 'helmet', helmets), sel2('GLOVES', 'gloves', gloves),
+      sel2('SOCKS', 'socks', Object.entries(GEAR_OPTS.socks)), sel2('SHIRT', 'fit', Object.entries(GEAR_OPTS.jersey)), sel2('SHORTS', 'shorts', Object.entries(GEAR_OPTS.shorts))),
+    h('div', { class: 'hint', 'data-help': 'Every player wears the same kit: shirt, shorts, socks, headbands and gloves come from it. Boots, boot stripes, shin pads, sock tape, extras and the keeper\'s shirt and gloves stay personal. Pick tonight\'s kit on the pre-game screen.' }, 'The whole team wears it alike · pick tonight\'s kit before each game.'));
 }

@@ -15,9 +15,9 @@ const COSMETICS = {
   jersey_heritage:{ name: 'Heritage Laces Jersey', kind: 'jersey', style: 'heritage', desc: 'A vintage lace-up jersey style.' },
   gold_trim:      { name: 'Gold Jersey Trim', kind: 'trim', desc: 'Gold trim option for your jerseys.' },
   emblem_laurel:  { name: 'Laurel Emblem', kind: 'emblem', emblem: 'laurel', desc: 'The champions\' laurel crest.' },
-  chrome_gear:    { name: 'Chrome Headband', kind: 'gear', desc: 'A mirror-chrome headband for your players.' },
+  chrome_gear:    { name: 'Silver Headband', kind: 'gear', desc: 'A shining silver headband for your players.' },
   gold_gear:      { name: 'Gold Gear', kind: 'gear', desc: 'Gold headbands, gloves, boots, shin pads and tape.' },
-  star_mask:      { name: 'All-Star Mask', kind: 'gear', desc: 'A star-studded keeper mask.' },
+  star_mask:      { name: 'All-Star Keeper Shirt', kind: 'gear', desc: 'A star-studded keeper shirt.' },
   arena_show:     { name: 'Arena Light Show', kind: 'arena', desc: 'Disco lighting and fireworks for your home arena.' },
   emblem_inv:     { name: 'Invitational Torch Emblem', kind: 'emblem', emblem: 'torch', hint: 'Win the Opening Invitational.', desc: 'The torch of the Opening Invitational.' },
   emblem_classic: { name: 'Winged Ball Emblem', kind: 'emblem', emblem: 'wingpuck', hint: 'Win the Midseason Classic.', desc: 'The winged ball of the Midseason Classic.' },
@@ -26,14 +26,14 @@ const COSMETICS = {
   emblem_toc:     { name: 'Knight Helm Emblem', kind: 'emblem', emblem: 'knight', hint: 'Win the Tournament of Champions.', desc: 'The helm of the Tournament of Champions.' },
   emblem_po:      { name: 'Champion Ring Emblem', kind: 'emblem', emblem: 'ring', hint: 'Win the League Championship.', desc: 'The ring of a League Champion.' },
   palace_qp:      { name: 'Grand Soccer Palace (Quick Play)', kind: 'arena', desc: 'Play Quick Play games in the Grand Soccer Palace.' },
-  gold_visor:     { name: 'Gold Visor', kind: 'gear', desc: 'A mirrored gold visor.' },
-  gold_stick:     { name: 'Golden Boot', kind: 'gear', desc: 'A gleaming gold boot.' },
+  gold_visor:     { name: 'Gold Wristbands', kind: 'gear', desc: 'Gleaming gold wristbands.' },
+  gold_stick:     { name: 'Golden Boots', kind: 'gear', desc: 'A pair of gleaming gold boots.' },
   flame_helmet:   { name: 'Flame Headband Decal', kind: 'gear', desc: 'Hot-rod flames down the sides of the headband.' },
-  galaxy_mask:    { name: 'Galaxy Mask', kind: 'gear', desc: 'A deep-space keeper mask full of stars.' },
+  galaxy_mask:    { name: 'Galaxy Keeper Shirt', kind: 'gear', desc: 'A deep-space keeper shirt full of stars.' },
   jersey_galaxy:  { name: 'Galaxy Jersey', kind: 'jersey', style: 'galaxy', desc: 'A night-sky jersey style that twinkles.' },
   jersey_flames:  { name: 'Flames Jersey', kind: 'jersey', style: 'flames', desc: 'A jersey style with flames licking up from the hem.' },
   emblem_phoenix: { name: 'Phoenix Emblem', kind: 'emblem', emblem: 'phoenix', desc: 'The crest of a team that never stays down.' },
-  laststand_mask: { name: 'Last Stand Mask', kind: 'gear', desc: 'Battle-scarred iron, blood-red cracks and gold rivets. For keepers who never break.' },
+  laststand_mask: { name: 'Last Stand Keeper Shirt', kind: 'gear', desc: 'Black, blood-red and gold. For keepers who never break.' },
   jersey_laststand: { name: 'Last Stand Jersey', kind: 'jersey', style: 'laststand', desc: 'Iron grey with a crimson-and-gold shield chevron.' },
   golden_horn:    { name: 'Golden Fanfare', kind: 'presentation', desc: 'A golden trumpet fanfare after your home goals.' },
 };
@@ -224,7 +224,7 @@ const ACHIEVEMENTS = [
 const ACH_BY_ID = Object.fromEntries(ACHIEVEMENTS.map(a => [a.id, a]));
 const MEMO_KINDS = {
   banner: { name: 'Championship Banner', icon: 'banner' }, ring: { name: 'Dynasty Ring', icon: 'ring' }, plaque: { name: 'MVP Award Display', icon: 'plaque' },
-  mask: { name: 'Legendary Keeper Mask', icon: 'mask' }, stick: { name: 'Game-Used Boot', icon: 'stick' }, jersey: { name: 'Commemorative Jersey', icon: 'jersey' },
+  mask: { name: 'Legendary Keeper Shirt', icon: 'mask' }, stick: { name: 'Game-Used Boot', icon: 'stick' }, jersey: { name: 'Commemorative Jersey', icon: 'jersey' },
   gloves: { name: 'Golden Keeper Gloves', icon: 'gloves' }, puck: { name: 'Golden Goal Ball', icon: 'puck' }, capstick: { name: "The Captain's Boot", icon: 'stick' },
 };
 // the player a piece of memorabilia honours (attribution survives retirement: name, id, number, seasons, team)

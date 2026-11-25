@@ -44,7 +44,7 @@ const fullName = t => t.city + ' ' + t.nick;
 // user's club can design all of them and add as many alternates as it likes (identity.kits); every other club gets
 // sensible defaults built from its colours. Players never mix: the team's uniform overrides individual helmet, glove,
 // sock and jersey-fit choices (goalie masks, pads and personal equipment like sticks and skates stay personal).
-const UNI_DEFAULT = { helmet: 'team', gloves: 'team', socks: 'team', fit: 'standard' };
+const UNI_DEFAULT = { helmet: 'team', gloves: 'team', socks: 'team', fit: 'standard', shorts: 'standard' };
 const ALT_STYLES = ['shoulder', 'bands', 'yoke', 'hoops', 'chevron', 'diagonal', 'checker', 'split'];   // (no unlockable styles)
 function hashTeam(t) { let h = 7; for (const c of String(t.id || t.nick || '')) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; }
 // the kit list for a team (defaults filled in, the user's own designs on top)
@@ -63,11 +63,11 @@ function kitByKey(t, key) { const K = teamKits(t); return key === 'away' ? K.awa
 function teamPalette(t, away) {
   const key = typeof away === 'string' ? away : away ? 'away' : 'home', kit = kitByKey(t, key);
   const base = { id: t.id, city: t.city, nick: t.nick, abbr: t.abbr, emblem: t.emblem, style: kit.style || t.style, colors: t.colors, logo: t.logo || null, away: key !== 'home', kit: key, kitName: kit.name,
-    uni: { helmet: kit.helmet || 'team', gloves: kit.gloves || 'team', socks: kit.socks || 'team', jersey: kit.fit || 'standard' } };
+    uni: { helmet: kit.helmet || 'team', gloves: kit.gloves || 'team', socks: kit.socks || 'team', jersey: kit.fit || 'standard', shorts: kit.shorts || 'standard' } };
   const gold = (kit.gold != null ? kit.gold : t.trim === 'gold') ? '#f2c230' : null;                 // account unlock: gold jersey trim
   const M = kit.main, D = kit.dark;
   const trim = gold || (colorDist(kit.trim, M) < 40 ? (lum(M) > 0.5 ? (colorDist(D, M) > 60 ? D : '#141832') : '#ffffff') : kit.trim);
-  return Object.assign(base, { main: M, dark: D, trim, pants: shade(kit.pants || t.colors.s, -0.35), helm: D });
+  return Object.assign(base, { main: M, dark: D, trim, pants: kit.pants || shade(t.colors.s, -0.35), helm: D });   // SOCCER: a kit can set its own shorts colour
 }
 // number colour that contrasts with the jersey
 function numColor(C) {
@@ -100,6 +100,9 @@ function jerseyColor(C, i, j, w, h) {
     case 'laststand': { const d = Math.abs(u - 0.5) * 2; if (Math.abs(v - (0.2 + (1 - d) * 0.32)) < 0.09) return '#c8a03a'; if (Math.abs(v - (0.2 + (1 - d) * 0.32)) < 0.16) return '#b3202a'; return j === h - 1 ? '#c8a03a' : (i % 4 === 0 && j % 4 === 2 ? '#4a4e5a' : '#2a2d35'); }
     case 'checker':   return (v > 0.38 && v < 0.66) ? (((i >> 1) + (j >> 1)) & 1 ? C.trim : C.dark) : (j === h - 1 ? C.dark : C.main);
     case 'aurora': {  const wv = v + 0.12 * Math.sin(u * 6.3 + ((typeof S !== 'undefined' ? S.t : 0) >> 6) * 0.5); return wv < 0.22 ? '#2ee6a6' : wv < 0.34 ? '#1fb3b8' : wv < 0.44 ? '#7b4fd6' : (j === h - 1 ? C.dark : '#0e1a3a'); }
+    case 'tiger':     { const d = (i + Math.round(j * 0.6)) % 5; return j === h - 1 ? C.dark : (d === 0 || (d === 1 && j % 3 === 0)) ? C.trim : C.main; }   // SOCCER: keeper shirts
+    case 'zigzag':    { const zy = Math.round((h - 1) * 0.45) + ((i % 4) < 2 ? (i % 2) : 1 - (i % 2)); return j === zy ? C.trim : j === zy + 1 ? '#ffffff' : (j === h - 1 ? C.dark : (j < zy ? C.dark : C.main)); }
+    case 'stars':     return j === h - 1 ? C.dark : ((i * 5 + j * 3) % 11 === 0 ? '#ffd23f' : (j === 0 ? C.trim : C.main));
     case 'flames': {  const fh = 0.55 + 0.18 * Math.sin(i * 1.9) + 0.08 * Math.sin(i * 4.3); return v > fh + 0.22 ? '#ff6a1f' : v > fh ? '#ffd23f' : (j === 0 ? C.trim : C.main); }
   }
   return C.main;
@@ -594,101 +597,66 @@ function drawPortrait16(c, p, team, x, y, ps, opts = {}) {   // (the old 16 x 16
 // each portrait pixel is ps / 2). Shaded face, eyes, brows, nose; his hairstyle and facial hair; helmet with shine,
 // vents, rim and chinstrap (visor / ear guards); goalies in their painted mask and cage; jersey with yoke and collar.
 function drawPortrait(c, p, team, x, y, ps, opts = {}) {
+  // SOCCER (Nov 24): a footballer's head: his hair on top (no helmet), a headband or a keeper's cap if he wears one,
+  // and a keeper in his own shirt design (no mask)
   const L = lookOf(p), sk = SKIN[L.skin], hc = HAIR[L.hair], q = ps / 2;
-  const col = team && team.colors ? { m: team.colors.p, d: team.colors.s, t: team.colors.a } : team ? { m: team.main, d: team.dark, t: team.trim } : { m: '#4a5070', d: '#2a2e45', t: '#c9ced8' };
-  let helm = col.m;
-  try { if (typeof gearOf === 'function' && typeof gearCol === 'function') { const uni = team && team.colors && typeof teamPalette === 'function' ? teamPalette(team, false).uni : null, gc = gearCol(p.pos !== 'G' && uni ? Object.assign({}, gearOf(p), uni) : gearOf(p), 'helmet', { main: col.m, dark: col.d, trim: col.t, helm: col.m }); if (gc) helm = gc; } } catch (e) {}
+  let col = team && team.colors ? { m: team.colors.p, d: team.colors.s, t: team.colors.a } : team ? { m: team.main, d: team.dark, t: team.trim } : { m: '#4a5070', d: '#2a2e45', t: '#c9ced8' };
+  const goalie = p.pos === 'G';
+  let G = null, pal = { main: col.m, dark: col.d, trim: col.t, helm: col.d };
+  try { if (typeof gearOf === 'function') { const P2 = team && team.colors && typeof teamPalette === 'function' ? teamPalette(team, false) : null; if (P2) pal = P2; G = gearOf(p); if (!goalie && P2 && P2.uni) G = Object.assign({}, G, P2.uni); } } catch (e) {}
   const s0 = sk[0], s1 = sk[1], s2 = shade(sk[1], -0.2), sL = shade(sk[0], 0.07), hD = shade(hc, -0.3), hL = shade(hc, 0.22);
   const r = (i, j, w, h, k) => { c.fillStyle = k; c.fillRect(x + i * q, y + j * q, w * q, h * q); };
-  const goalie = p.pos === 'G';
   // background: the team's dark colour, a darker frame
   const bg = opts.bg || shade(col.d, -0.35);
   r(0, 0, 32, 32, bg); r(0, 0, 32, 1, shade(bg, -0.3)); r(0, 31, 32, 1, shade(bg, -0.3)); r(0, 0, 1, 32, shade(bg, -0.3)); r(31, 0, 1, 32, shade(bg, -0.3));
   r(1, 1, 30, 14, shade(bg, 0.06));
-  // shoulders and jersey: trim yoke over the shoulders, a V collar, shading toward his left
+  if (goalie && typeof keeperShirt === 'function') { try { const k = keeperShirt(G, pal, 0); col = { m: k.main, d: k.dark, t: k.trim }; } catch (e) {} }
+  // shoulders and shirt: trim yoke over the shoulders, a V collar, shading toward his left
   const jm = col.m, jD = shade(col.m, -0.2), jL = shade(col.m, 0.1);
   r(3, 26, 26, 6, jm); r(2, 27, 28, 5, jm); r(1, 28, 1, 4, jm); r(30, 28, 1, 4, jD); r(5, 25, 22, 1, jm);
   r(23, 26, 7, 6, jD); r(2, 27, 5, 5, jL);
   r(5, 25, 22, 2, col.t); r(3, 26, 3, 2, col.t); r(26, 26, 3, 2, col.t);
   r(13, 25, 6, 1, col.d); r(14, 26, 4, 1, col.d); r(15, 27, 2, 1, col.d);
-  if (goalie) { r(1, 27, 5, 5, '#eef1f6'); r(26, 27, 5, 5, '#dfe3ec'); r(1, 27, 5, 1, '#c9ced8'); r(26, 27, 5, 1, '#c9ced8'); }
+  if (G && G.jersey === 'polo' && !goalie) { r(11, 24, 4, 2, col.t); r(17, 24, 4, 2, col.t); }
   // neck
   r(12, 22, 8, 4, s1); r(12, 22, 3, 3, s0); r(12, 25, 8, 1, s2);
-  let realMask = null;
-  if (goalie && typeof drawGoalieMask === 'function' && typeof document !== 'undefined' && typeof gearOf === 'function') {
-    // his real mask (the exact in-game design and paint), each mask pixel two portrait pixels
-    try {
-      const pal = team && typeof teamPalette === 'function' && team.colors ? teamPalette(team, false) : { main: col.m, dark: col.d, trim: col.t };
-      const tmp = document.createElement('canvas'); tmp.width = 14; tmp.height = 14; const keep = ctx;
-      try { ctx = tmp.getContext('2d'); drawGoalieMask(gearOf(p), pal, 2, 3); } finally { ctx = keep; }
-      realMask = tmp;
-    } catch (e) { realMask = null; }
+  if (G && G.visor === 'snood') { r(11, 21, 10, 5, '#22252e'); r(11, 21, 10, 1, '#3a3e4a'); }
+  // the top of his head (skin), the face: ears, rounded jaw, shading on his left side and under the chin
+  r(11, 3, 10, 1, s0); r(9, 4, 14, 5, s0); r(21, 4, 2, 5, s1);
+  r(8, 12, 1, 5, s1); r(23, 12, 1, 5, s2); r(8, 13, 1, 2, s0);
+  r(9, 9, 14, 11, s0); r(10, 20, 12, 1, s0); r(11, 21, 10, 1, s0); r(13, 22, 6, 1, s1);
+  r(21, 9, 2, 11, s1); r(20, 20, 2, 1, s1); r(19, 21, 2, 1, s1); r(10, 10, 2, 6, sL);
+  // HAIR by style: 0 short, 1 mullet, 2 curly, 3 long, 4 buzz, 5 mohawk, 6 man bun, 7 shaved
+  const st = L.style || 0;
+  const cap = () => { r(11, 3, 10, 1, hc); r(9, 4, 14, 2, hc); r(8, 6, 16, 3, hc); r(21, 4, 2, 5, hD); r(23, 6, 1, 3, hD); r(11, 4, 4, 1, hL); r(9, 6, 2, 1, hL); r(9, 9, 2, 1, hc); r(21, 9, 2, 1, hD); };
+  if (st === 7) { c.globalAlpha = 0.18; r(9, 4, 14, 5, hc); c.globalAlpha = 1; r(12, 4, 3, 1, shade(s0, 0.08)); }
+  else if (st === 4) { c.globalAlpha = 0.55; cap(); c.globalAlpha = 1; }
+  else if (st === 5) { c.globalAlpha = 0.2; r(9, 4, 14, 5, hc); c.globalAlpha = 1; r(14, 0, 4, 9, hc); r(17, 0, 1, 9, hD); r(14, 0, 2, 1, hL); }
+  else {
+    cap();
+    if (st === 0) { r(8, 9, 1, 3, hc); r(23, 9, 1, 3, hD); }
+    if (st === 1) { r(8, 10, 1, 3, hc); r(23, 10, 1, 3, hD); r(7, 15, 2, 9, hc); r(23, 15, 2, 9, hD); r(9, 22, 3, 3, hc); r(20, 22, 3, 3, hD); }   // mullet
+    if (st === 2) { r(10, 2, 3, 1, hc); r(15, 1, 3, 2, hc); r(20, 2, 2, 2, hD); r(7, 6, 2, 7, hc); r(23, 6, 2, 7, hD); r(7, 9, 1, 1, hL); r(16, 1, 1, 1, hL); }   // curly
+    if (st === 3) { r(7, 7, 2, 15, hc); r(23, 7, 2, 15, hD); r(7, 8, 1, 5, hL); }                                                                // long
+    if (st === 6) { r(13, 0, 6, 3, hc); r(18, 0, 1, 3, hD); r(14, 0, 2, 1, hL); }                                                              // man bun
   }
-  if (goalie && realMask) {
-    r(1, 25, 7, 3, shade(col.m, 0.12)); r(24, 25, 7, 3, shade(col.m, -0.1));
-    c.save(); c.beginPath(); c.rect(x, y, 32 * q, 32 * q); c.clip(); c.imageSmoothingEnabled = false;
-    c.globalAlpha = 0.35; c.drawImage(realMask, x + 3 * q, y - 3 * q, 28 * q, 28 * q); c.globalAlpha = 1;
-    c.drawImage(realMask, x + 2 * q, y - 4 * q, 28 * q, 28 * q); c.restore();
-  } else if (goalie) {
-    // GOALIE MASK: the painted shell over the whole head, the cage over his face
-    // painted in his own mask design: team split (left half in the team colour), classic white, bucket, or a team-colour shell
-    let gm = 'team'; try { if (typeof gearOf === 'function') gm = gearOf(p).mask || 'team'; } catch (e) {}
-    const mk = gm === 'white' || gm === 'team' ? '#eef1f6' : gm === 'retro' ? '#d8c79a' : gm === 'bucket' ? helm : gm === 'chrome' ? '#c9d2de' : gm === 'gold' ? '#e8c04a' : col.m, mD = shade(mk, -0.22);
-    r(11, 1, 10, 1, mk); r(9, 2, 14, 1, mk); r(8, 3, 16, 17, mk); r(9, 20, 14, 2, mk); r(11, 22, 10, 1, mk);
-    if (gm === 'team') { r(9, 2, 6, 1, col.m); r(8, 3, 7, 17, col.m); r(9, 20, 6, 2, col.m); r(11, 22, 4, 1, col.m); r(11, 1, 4, 1, col.m); }
-    r(21, 3, 3, 17, mD); r(20, 20, 3, 2, mD); r(9, 21, 14, 1, mD);
-    if (gm !== 'white' && gm !== 'bucket') { r(10, 2, 12, 2, gm === 'team' ? col.t : shade(mk, 0.15)); r(15, 1, 2, 21, col.t); }
-    else r(15, 1, 2, 9, col.m);
-    // chunky shoulder pads under the jersey (goalies are wide)
-    r(1, 25, 7, 3, shade(col.m, 0.12)); r(24, 25, 7, 3, shade(col.m, -0.1));
-    r(10, 4, 3, 1, 'rgba(255,255,255,.6)');
-    r(10, 10, 12, 10, '#262a36');
-    r(11, 12, 3, 1, '#e9ecf2'); r(18, 12, 3, 1, '#e9ecf2'); r(12, 12, 1, 1, '#20222b'); r(19, 12, 1, 1, '#20222b');
-    c.fillStyle = '#d0d5df';
-    for (const yy of [10, 13, 16, 19]) c.fillRect(x + 10 * q, y + yy * q, 12 * q, Math.max(1, q * 0.7));
-    for (const xx of [11, 14, 17, 20]) c.fillRect(x + xx * q, y + 10 * q, Math.max(1, q * 0.7), 10 * q);
-  } else {
-    // ears, the face (rounded jaw), shading on his left side and under the chin
-    r(8, 12, 1, 5, s1); r(23, 12, 1, 5, s2); r(8, 13, 1, 2, s0);
-    r(9, 9, 14, 11, s0); r(10, 20, 12, 1, s0); r(11, 21, 10, 1, s0); r(13, 22, 6, 1, s1);
-    r(21, 9, 2, 11, s1); r(20, 20, 2, 1, s1); r(19, 21, 2, 1, s1); r(10, 10, 2, 6, sL);
-    // hair below the helmet
-    if (L.style === 1) { r(8, 10, 1, 3, hc); r(23, 10, 1, 3, hD); r(7, 15, 2, 9, hc); r(23, 15, 2, 9, hD); r(9, 22, 3, 3, hc); r(20, 22, 3, 3, hD); }   // mullet
-    else if (L.style === 2) { r(7, 9, 2, 4, hc); r(23, 9, 2, 4, hD); r(7, 9, 1, 1, hL); r(8, 13, 1, 1, hc); r(23, 13, 1, 1, hD); r(7, 11, 1, 1, hL); }   // curly
-    else if (L.style === 3) { r(7, 9, 2, 13, hc); r(23, 9, 2, 13, hD); r(7, 9, 1, 5, hL); }                                                       // long
-    else if (L.style === 0) { r(8, 9, 1, 3, hc); r(23, 9, 1, 3, hD); }                                                                           // short
-    else { r(8, 9, 1, 2, shade(hc, 0.1)); r(23, 9, 1, 2, hD); }                                                                                 // buzz
-    // brows, eyes, nose, mouth
-    r(10, 11, 4, 1, hc); r(18, 11, 4, 1, hc); r(13, 11, 1, 1, hD); r(18, 11, 1, 1, hD);
-    if (L.eyes) { r(10, 13, 4, 1, '#f1f1ee'); r(18, 13, 4, 1, '#f1f1ee'); r(12, 13, 1, 1, '#20222b'); r(19, 13, 1, 1, '#20222b'); r(11, 13, 1, 1, '#5a4a3a'); r(20, 13, 1, 1, '#5a4a3a'); }
-    else { r(11, 13, 3, 1, '#f1f1ee'); r(18, 13, 3, 1, '#f1f1ee'); r(12, 13, 1, 1, '#20222b'); r(19, 13, 1, 1, '#20222b'); }
-    r(10, 14, 4, 1, s1); r(18, 14, 4, 1, s1);
-    r(15, 13, 2, 4, s0); r(16, 14, 1, 3, s1); r(14, 17, 4, 1, s2); r(15, 16, 1, 1, sL);
-    r(13, 19, 6, 1, '#7a3b2e'); r(14, 20, 4, 1, shade(s1, -0.06)); r(13, 18, 1, 1, s1); r(18, 18, 1, 1, s1);
-    // facial hair: stubble, moustache, full beard, goatee
-    if (L.beard === 1) { c.globalAlpha = 0.3; r(10, 17, 12, 4, hc); r(11, 21, 10, 1, hc); r(13, 22, 6, 1, hc); c.globalAlpha = 1; }
-    else if (L.beard === 2) { r(12, 18, 8, 1, hc); r(12, 19, 1, 1, hc); r(19, 19, 1, 1, hD); }
-    else if (L.beard === 3) { r(9, 14, 1, 6, hc); r(22, 14, 1, 6, hD); r(10, 17, 12, 4, hc); r(11, 21, 10, 1, hc); r(13, 22, 6, 1, hD); r(12, 18, 8, 1, hc); r(13, 19, 6, 1, '#7a3b2e'); r(20, 17, 2, 4, hD); }
-    else if (L.beard === 4) { r(13, 20, 6, 2, hc); r(14, 22, 4, 1, hD); r(12, 18, 8, 1, hc); }
-    // HELMET: dome with a shine, two vents, the rim across his forehead, chinstrap (or ear guards / visor)
-    const hD2 = shade(helm, -0.25), hL2 = shade(helm, 0.3), hDD = shade(helm, -0.4);
-    r(11, 1, 10, 1, helm); r(9, 2, 14, 1, helm); r(8, 3, 16, 6, helm); r(8, 9, 16, 1, hD2);
-    r(21, 2, 2, 7, hD2); r(23, 4, 1, 5, hDD);
-    r(10, 2, 4, 1, hL2); r(9, 3, 2, 2, hL2); r(11, 3, 1, 1, 'rgba(255,255,255,.45)');
-    r(14, 3, 1, 2, hDD); r(17, 3, 1, 2, hDD);
-    r(8, 8, 16, 1, shade(helm, -0.12));
-    if (L.helmet === 2) { r(7, 9, 2, 7, helm); r(23, 9, 2, 7, hD2); r(7, 9, 2, 1, hL2); }
-    else { r(8, 10, 1, 7, '#2a2c34'); r(23, 10, 1, 7, '#2a2c34'); r(9, 17, 1, 3, '#2a2c34'); r(22, 17, 1, 3, '#2a2c34'); }
-    let vz = null; try { if (typeof gearOf === 'function') vz = gearOf(p).visor; } catch (e) {}
-    if (vz === 'cage') {                                                        // full cage: wire frame, a bar between the eyes, chin cup
-      const m1 = '#e6ebf3', m2 = '#b8c0cc';
-      r(8, 10, 16, 1, m1); r(8, 10, 1, 12, m1); r(23, 10, 1, 12, m1);
-      r(15, 11, 2, 10, m2); r(9, 16, 14, 1, m2); r(9, 19, 14, 1, m2);
-      r(10, 22, 12, 1, m1); r(12, 23, 8, 1, m2);
-    } else if (L.helmet === 1) {
-      c.globalAlpha = 0.4; r(8, 9, 16, 5, '#cfe6ff'); c.globalAlpha = 1;
-      r(8, 9, 16, 1, 'rgba(255,255,255,.7)'); r(9, 10, 4, 1, 'rgba(255,255,255,.45)'); r(8, 13, 16, 1, 'rgba(110,140,180,.55)');
-    }
+  // brows, eyes, nose, mouth
+  r(10, 11, 4, 1, hc); r(18, 11, 4, 1, hc); r(13, 11, 1, 1, hD); r(18, 11, 1, 1, hD);
+  if (L.eyes) { r(10, 13, 4, 1, '#f1f1ee'); r(18, 13, 4, 1, '#f1f1ee'); r(12, 13, 1, 1, '#20222b'); r(19, 13, 1, 1, '#20222b'); r(11, 13, 1, 1, '#5a4a3a'); r(20, 13, 1, 1, '#5a4a3a'); }
+  else { r(11, 13, 3, 1, '#f1f1ee'); r(18, 13, 3, 1, '#f1f1ee'); r(12, 13, 1, 1, '#20222b'); r(19, 13, 1, 1, '#20222b'); }
+  r(10, 14, 4, 1, s1); r(18, 14, 4, 1, s1);
+  r(15, 13, 2, 4, s0); r(16, 14, 1, 3, s1); r(14, 17, 4, 1, s2); r(15, 16, 1, 1, sL);
+  r(13, 19, 6, 1, '#7a3b2e'); r(14, 20, 4, 1, shade(s1, -0.06)); r(13, 18, 1, 1, s1); r(18, 18, 1, 1, s1);
+  // facial hair: stubble, moustache, full beard, goatee
+  if (L.beard === 1) { c.globalAlpha = 0.3; r(10, 17, 12, 4, hc); r(11, 21, 10, 1, hc); r(13, 22, 6, 1, hc); c.globalAlpha = 1; }
+  else if (L.beard === 2) { r(12, 18, 8, 1, hc); r(12, 19, 1, 1, hc); r(19, 19, 1, 1, hD); }
+  else if (L.beard === 3) { r(9, 14, 1, 6, hc); r(22, 14, 1, 6, hD); r(10, 17, 12, 4, hc); r(11, 21, 10, 1, hc); r(13, 22, 6, 1, hD); r(12, 18, 8, 1, hc); r(13, 19, 6, 1, '#7a3b2e'); r(20, 17, 2, 4, hD); }
+  else if (L.beard === 4) { r(13, 20, 6, 2, hc); r(14, 22, 4, 1, hD); r(12, 18, 8, 1, hc); }
+  // a keeper's cap, or a headband
+  if (G && G.visor === 'cap') { const cc = shade(col.d, -0.1); r(10, 2, 12, 1, cc); r(9, 3, 14, 5, cc); r(21, 3, 2, 5, shade(cc, -0.25)); r(7, 8, 18, 1, shade(cc, -0.35)); r(11, 3, 4, 1, shade(cc, 0.2)); }
+  else if (G && G.helmet && G.helmet !== 'team' && typeof gearCol === 'function') {
+    let band = col.m; try { band = gearCol(G, 'helmet', pal) || col.m; } catch (e) {}
+    r(8, 7, 16, 2, band); r(8, 8, 16, 1, shade(band, -0.22)); if (G.helmet === 'stripe') r(14, 7, 4, 2, col.t); if (G.helmet === 'retro') r(8, 7, 16, 1, band);
   }
   // number and captaincy on the jersey, favourite star
   if (opts.num != null) drawDigits(c, opts.num, x + 24 * q, y + 28 * q - 1, Math.max(1, q / 1.25), numColor({ main: col.m, trim: col.t, dark: col.d }));

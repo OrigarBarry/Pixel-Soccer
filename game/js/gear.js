@@ -4,23 +4,28 @@
 //  Nothing here changes attributes. Prestige items are account-wide unlocks earned through achievements;
 //  arena and trophy-room options are bought with franchise funds.
 // ====================================================================
+// SOCCER (Nov 24): every part is football kit. The keys stay the hockey ones so old saves load (gearOf maps any old value
+// a part no longer has to that part's default): helmet = headband, visor = extras, skates = boots, stick = boot stripe,
+// tape = sock tape, pads = shin pads, jersey = shirt, mask = keeper shirt design, gloves / blocker = gloves.
 const GEAR_OPTS = {
-  helmet: { team: 'Team colour', black: 'Black', white: 'White', stripe: 'Centre stripe', retro: 'Retro (no ear guards)', chrome: 'Chrome ★', gold: 'Gold ★', flame: 'Flame decal ★' },
-  visor: { clear: 'Clear visor', tinted: 'Tinted visor', none: 'No visor', cage: 'Full cage', gold: 'Gold visor ★' },
-  gloves: { team: 'Team colour', black: 'Black', white: 'White', brown: 'Vintage brown', twotone: 'Two-tone', gold: 'Gold ★' },
-  skates: { black: 'Black', white: 'White', red: 'Red', blue: 'Blue', retro: 'Retro tan', gold: 'Gold ★' },
-  stick: { wood: 'Wood', black: 'Black', white: 'White', carbon: 'Carbon grey', red: 'Red', blue: 'Blue', green: 'Neon green', twotone: 'Two-tone', gold: 'Gold ★' },
-  tape: { black: 'Black tape', white: 'White tape', blue: 'Blue tape', pink: 'Pink tape', red: 'Red tape', green: 'Green tape', candy: 'Candy cane', gold: 'Gold tape ★' },
-  jersey: { standard: 'Standard', tuck: 'Tucked in', loose: 'Loose fit', elbow: 'Elbow patches', rolled: 'Sleeves rolled', laces: 'Laced collar' },
-  socks: { team: 'Team socks', dark: 'Dark socks', white: 'White socks', stripe: 'Striped socks', hoops: 'Hooped socks' },
-  mask: { team: 'Team split', bucket: 'Headband & cage', white: 'Classic white', retro: 'Retro headband', checkers: 'Checkered headband', wolf: 'Wolf headband', skull: 'Skull', tiger: 'Tiger stripes', flame: 'Flames', shark: 'Shark', lightning: 'Lightning', star: 'All-Star ★', galaxy: 'Galaxy ★', laststand: 'Last Stand ★', chrome: 'Chrome ★', gold: 'Gold ★' },
-  catcher: { classic: 'Classic T-trap', pro: 'Pro single-T', hweb: 'H-web', stripe: 'Racing stripe', retro: 'Vintage leather' },
-  blocker: { classic: 'Classic', pro: 'Pro curved', logo: 'Team badge', split: 'Two-tone split', retro: 'Vintage leather' },
-  gstick: { classic: 'Classic paddle', pro: 'Pro graphics', carbon: 'Carbon', flag: 'Team colours', retro: 'Vintage wood' },
+  helmet: { team: 'No headband', teamband: 'Team headband', black: 'Black headband', white: 'White headband', stripe: 'Striped headband', retro: 'Thin Alice band', chrome: 'Silver headband ★', gold: 'Gold headband ★', flame: 'Flame headband ★' },
+  visor: { none: 'Nothing extra', wrist: 'Wristbands', tapewrist: 'Taped wrists', snood: 'Snood', under: 'Long undershirt', cap: 'Keeper cap', armband: 'Black armband', gold: 'Gold wristbands ★' },
+  gloves: { team: 'No gloves', black: 'Black gloves', white: 'White gloves', brown: 'Brown gloves', twotone: 'Two-tone gloves', neon: 'Neon gloves', gold: 'Gold gloves ★' },
+  skates: { black: 'Black boots', white: 'White boots', red: 'Red boots', blue: 'Blue boots', neon: 'Neon green', pink: 'Hot pink', orange: 'Blaze orange', cyan: 'Ice blue', twotone: 'Black & white', retro: 'Classic leather', gold: 'Gold boots ★' },
+  stick: { white: 'White stripes', black: 'Black stripes', team: 'Team colour', red: 'Red stripes', blue: 'Blue stripes', green: 'Neon stripes', none: 'Plain, no stripes', gold: 'Gold stripes ★' },
+  tape: { none: 'No sock tape', white: 'White tape', black: 'Black tape', team: 'Team colour', blue: 'Blue tape', pink: 'Pink tape', red: 'Red tape', green: 'Green tape', candy: 'Candy stripe', gold: 'Gold tape ★' },
+  jersey: { standard: 'Standard', tuck: 'Tucked in', loose: 'Untucked & baggy', elbow: 'Long sleeves', rolled: 'Short sleeves', laces: 'Laced collar (retro)', polo: 'Polo collar' },
+  shorts: { standard: 'Standard', short: 'Retro short-shorts', long: 'Long & baggy', cycling: 'Cycling shorts under' },
+  socks: { team: 'Team socks', dark: 'Dark socks', white: 'White socks', stripe: 'Striped tops', hoops: 'Hooped socks', rolled: 'Rolled down (pads show)', high: 'Pulled over the knee' },
+  mask: { team: 'Plain keeper shirt', bucket: 'Shoulder panels', white: 'All white', retro: 'Vintage tan', checkers: 'Checkerboard', wolf: 'Storm grey', skull: 'Bone white', tiger: 'Tiger stripes', flame: 'Flames', shark: 'Shark teeth', lightning: 'Lightning', star: 'All-Star ★', galaxy: 'Galaxy ★', laststand: 'Last Stand ★', chrome: 'Silver ★', gold: 'Gold ★' },
+  catcher: { classic: 'Flat palm', pro: 'Roll finger', hweb: 'Negative cut', stripe: 'Finger saves', retro: 'Vintage cotton' },
+  blocker: { classic: 'Plain backs', pro: 'Stripe backs', logo: 'Team badge', split: 'Two-tone', retro: 'Vintage' },
+  gstick: { classic: 'Classic', pro: 'Pro', carbon: 'Carbon', flag: 'Team colours', retro: 'Vintage' },
   pads: { white: 'White shin pads', team: 'Team shin pads', black: 'Black shin pads', brown: 'Vintage brown', retro: 'Retro tan', stripes: 'Racing stripe', gold: 'Gold shin pads ★' },
 };
+const GEAR_DEFAULT = { helmet: 'team', visor: 'none', gloves: 'team', skates: 'black', stick: 'white', tape: 'none', jersey: 'standard', shorts: 'standard', socks: 'team', mask: 'team', pads: 'white', catcher: 'classic', blocker: 'classic', gstick: 'classic' };
 // option -> account unlock (part-specific first)
-const GEAR_LOCK = { chrome: 'chrome_gear', gold: 'gold_gear', star: 'star_mask', 'visor:gold': 'gold_visor', 'stick:gold': 'gold_stick', 'helmet:flame': 'flame_helmet', 'mask:galaxy': 'galaxy_mask', 'mask:laststand': 'laststand_mask' };
+const GEAR_LOCK = { chrome: 'chrome_gear', gold: 'gold_gear', star: 'star_mask', 'visor:gold': 'gold_visor', 'skates:gold': 'gold_stick', 'helmet:flame': 'flame_helmet', 'mask:galaxy': 'galaxy_mask', 'mask:laststand': 'laststand_mask' };   // SOCCER: the Golden Boot award unlocks gold boots
 const gearLockId = (part, v) => GEAR_LOCK[part + ':' + v] || GEAR_LOCK[v] || null;
 // how to unlock a cosmetic, for the locked silhouettes
 function unlockHint(cos) {
@@ -30,15 +35,28 @@ function unlockHint(cos) {
   return a ? `LOCKED · ${what}. Unlock it with the achievement "${a.name}": ${a.desc}` : hint ? `LOCKED · ${what}. ${hint}` : `LOCKED · ${what}.`;
 }
 // a skater's personal equipment (helmet, gloves, socks and jersey fit are the team uniform: TEAM LOOK > UNIFORMS)
-const GEAR_PARTS_S = ['visor', 'skates', 'stick', 'tape'];
-const GEAR_NAMES_G = { gstick: 'Boot style', stick: 'Boot colour', gloves: 'Glove colour', catcher: 'Catcher', blocker: 'Glove' };
-const GEAR_PARTS_G = ['mask', 'pads', 'catcher', 'blocker', 'gloves', 'gstick', 'stick', 'tape', 'skates'];
-const LOOK_PARTS = { skin: 6, hair: 6, style: 5, beard: 5 };
+const GEAR_PARTS_S = ['skates', 'stick', 'pads', 'tape', 'visor'];
+const GEAR_NAMES = { skates: 'Boots', stick: 'Boot stripes', pads: 'Shin pads', tape: 'Sock tape', visor: 'Extras', mask: 'Keeper shirt', gloves: 'Glove colour', blocker: 'Glove backs', catcher: 'Glove cut', helmet: 'Headband', jersey: 'Shirt', shorts: 'Shorts', socks: 'Socks' };
+const GEAR_NAMES_G = GEAR_NAMES;
+const GEAR_PARTS_G = ['mask', 'gloves', 'blocker', 'visor', 'skates', 'stick', 'pads', 'tape'];
+const LOOK_PARTS = { skin: 6, hair: 6, style: 8, beard: 5 };   // SOCCER: hairstyles 5-7 (mohawk, man bun, shaved) added
 const LOOK_NAMES = { skin: 'Skin tone', hair: 'Hair colour', style: 'Hairstyle', beard: 'Facial hair' };
 const gearLocked = (v, part) => { const id = gearLockId(part, v); return !!id && !(typeof hasCosmetic === 'function' && hasCosmetic(id)); };
 // goalies on other teams who never picked a mask wear one of their own (masks.js aiMaskFor: seeded, so it stays his)
+// SOCCER: every player picks his own boots: seeded by the player, so he keeps them season to season (anything set by hand wins)
+const AI_BOOTS = ['black', 'black', 'black', 'white', 'white', 'neon', 'orange', 'pink', 'cyan', 'red', 'blue', 'twotone', 'retro'];
+const AI_STRIPES = ['white', 'white', 'black', 'team', 'none', 'green'];
+const AI_TAPE = ['none', 'none', 'none', 'white', 'white', 'black', 'team'];
+const AI_EXTRA = ['none', 'none', 'none', 'none', 'none', 'none', 'wrist', 'tapewrist', 'snood'];
+function aiKitFor(pl) {
+  let hh = 2166136261; for (const ch of 'kit|' + String(pl.id) + (pl.last || '')) hh = Math.imul(hh ^ ch.charCodeAt(0), 16777619) >>> 0;
+  const pick = (arr, sh) => arr[(((hh >>> sh) ^ (hh >>> (sh + 11))) >>> 0) % arr.length];
+  return { skates: pick(AI_BOOTS, 0), stick: pick(AI_STRIPES, 5), tape: pick(AI_TAPE, 9), visor: pl.pos === 'G' ? 'none' : pick(AI_EXTRA, 13) };
+}
 const gearOf = pl => {
-  const g = Object.assign({ helmet: 'team', visor: 'clear', gloves: 'team', skates: 'black', stick: 'wood', tape: 'black', jersey: 'standard', socks: 'team', mask: 'team', pads: 'white', catcher: 'classic', blocker: 'classic', gstick: 'classic' }, (pl && pl.gear) || {});
+  const g = Object.assign({}, GEAR_DEFAULT, (pl && pl.gear) || {});
+  for (const k of Object.keys(GEAR_DEFAULT)) if (GEAR_OPTS[k] && !(g[k] in GEAR_OPTS[k])) g[k] = GEAR_DEFAULT[k];   // an old (hockey) value: the football default
+  if (pl && pl.id) { const own = pl.gear || {}, ai = aiKitFor(pl); for (const k in ai) if (!(k in own) || !(own[k] in GEAR_OPTS[k])) g[k] = ai[k]; }   // his own boots, stripes, tape and extras unless picked
   if (pl && pl.pos === 'G' && pl.id && !(pl.gear && pl.gear.mask) && typeof aiMaskFor === 'function' && !(typeof UI !== 'undefined' && UI && UI.save && pl.teamId === UI.save.userTeamId)) g.mask = aiMaskFor(pl);
   return g;
 };
@@ -49,13 +67,14 @@ function uniformGear(G, C, isG) { if (!G || !C || !C.uni || isG) return G; retur
 // colour of a gear part for the sprite (C = team palette)
 function gearCol(gear, part, C) {
   const v = gear[part];
-  const base = { team: C.main, black: '#1b1c22', white: '#eef1f6', chrome: '#c8d0dc', gold: '#e6b800', brown: '#7a4a1b', dark: C.dark, carbon: '#4a4f5c', red: '#c0392b', wood: '#9a6a35', blue: '#2f6fe8', pink: '#ff7ab8', green: '#3ad15a', twotone: '#1b1c22', retro: '#a8875a', candy: '#d9342b', stripes: '#f2f2f2' };
-  if (part === 'helmet') return v === 'team' || v === 'stripe' ? C.helm : v === 'retro' ? '#7a4a1b' : v === 'flame' ? '#1b1c22' : base[v];
+  const base = { team: C.main, black: '#1b1c22', white: '#eef1f6', chrome: '#c8d0dc', gold: '#e6b800', brown: '#7a4a1b', dark: C.dark, carbon: '#4a4f5c', red: '#c0392b', wood: '#9a6a35', blue: '#2f6fe8', pink: '#ff4fa8', green: '#3ad15a', twotone: '#1b1c22', retro: '#a8875a', candy: '#d9342b', stripes: '#f2f2f2',
+    neon: '#9cff2e', orange: '#ff8a1f', cyan: '#6fd6ff', teamband: C.main };
+  if (part === 'helmet') return v === 'stripe' ? C.helm : v === 'retro' ? '#1b1c22' : v === 'flame' ? '#1b1c22' : base[v] || C.helm;   // a headband
   if (part === 'gloves' && v === 'twotone') return C.dark;
   if (part === 'gloves') return v === 'team' ? C.dark : base[v];
-  if (part === 'skates') return base[v] || '#1d1f27';
-  if (part === 'stick') return base[v] || '#9a6a35';
-  if (part === 'tape') return v === 'black' ? '#18191f' : base[v] || '#18191f';
+  if (part === 'skates') return v === 'retro' ? '#141418' : base[v] || '#1d1f27';                  // boots (classic leather: black, white stripes)
+  if (part === 'stick') return v === 'none' ? null : v === 'team' ? (C.trim || C.main) : base[v] || '#eef1f6';   // the boot stripes
+  if (part === 'tape') return v === 'none' ? null : v === 'team' ? C.main : v === 'black' ? '#18191f' : base[v] || '#eef1f6';
   if (part === 'pads') return v === 'team' ? C.main : base[v] || '#f2f2f2';
   if (part === 'socks') return v === 'dark' ? C.dark : C.main;
   return base[v] || C.main;
@@ -73,7 +92,7 @@ function scrGear(pid) {
   const render = () => {
     body.innerHTML = '';
     const p = Pl(sel), g = gearOf(p), L = lookOf(p), parts = p.pos === 'G' ? GEAR_PARTS_G : GEAR_PARTS_S;
-    const cats = parts.map(k => ({ k, kind: 'gear', name: ((p.pos === 'G' && GEAR_NAMES_G[k]) || k).toUpperCase() })).concat(Object.keys(LOOK_PARTS).map(k => ({ k, kind: 'look', name: LOOK_NAMES[k].toUpperCase() })));
+    const cats = parts.map(k => ({ k, kind: 'gear', name: (GEAR_NAMES[k] || k).toUpperCase() })).concat(Object.keys(LOOK_PARTS).map(k => ({ k, kind: 'look', name: LOOK_NAMES[k].toUpperCase() })));
     let ci = Math.max(0, cats.findIndex(c => c.k === UI.gearPart)); if (!cats[ci]) ci = 0; UI.gearPart = cats[ci].k;
     const cat = cats[ci];
     // left: the player
@@ -85,7 +104,7 @@ function scrGear(pid) {
     const left = h('div', { class: 'panel gearleft' },
       h('div', { class: 'row', style: { gap: '6px', flexWrap: 'nowrap' } }, h('button', { class: 'small', onclick: () => step(-1), title: 'Previous player' }, '◀'), pick, h('button', { class: 'small', onclick: () => step(1), title: 'Next player' }, '▶')),
       h('div', { style: { margin: '10px 0 6px' } }, cv),
-      p.pos !== 'G' ? h('div', { class: 'muted', style: { fontSize: '7px', textAlign: 'center' } }, 'Headband, gloves, socks and fit: the team uniform (TEAM LOOK > UNIFORMS).') : null,
+      p.pos !== 'G' ? h('div', { class: 'muted', style: { fontSize: '7px', textAlign: 'center' } }, 'Headband, gloves, shirt, shorts and socks: the team kit (TEAM LOOK > UNIFORMS).') : null,
       h('div', { class: 'muted gearnote', style: { fontSize: '7px', lineHeight: 1.5 } }, 'Cosmetic only. Hover a dark silhouette to see how to unlock it.'),
       h('div', { class: 'grouplab' }, 'PRESETS'),
       h('div', { class: 'row', style: { gap: '6px', flexWrap: 'nowrap' } }, presetSel,
@@ -117,7 +136,7 @@ function scrGear(pid) {
         drawFigureOn(cvl, teamPalette(teamIdentity(team), false), [fakeSkater({ pl: pr, num: p.num, g: p.pos === 'G', fy: 1, px: 27, py: 88, hand: p.hand || 'L' })], 3);
         const sw = k === 'skin' ? SKIN_COL[i2] : k === 'hair' ? (typeof HAIR !== 'undefined' && HAIR[i2]) : null;
         return h('button', { class: 'small gearopt' + (L[k] === i2 ? ' sel' : ''), onclick: () => { p.look = Object.assign({}, lookOf(p), { [k]: i2 }); Store.autosave(save); render(); } },
-          cvl, sw ? h('div', { style: { height: '10px', background: sw, border: '2px solid #141832', margin: '0 8px' } }) : h('div', null, (k === 'style' ? ['SHORT', 'MULLET', 'CURLY', 'LONG', 'BUZZ'] : ['CLEAN', 'STUBBLE', 'MOUSTACHE', 'GOATEE', 'FULL BEARD'])[i2] || String(i2 + 1)));
+          cvl, sw ? h('div', { style: { height: '10px', background: sw, border: '2px solid #141832', margin: '0 8px' } }) : h('div', null, (k === 'style' ? ['SHORT', 'MULLET', 'CURLY', 'LONG', 'BUZZ', 'MOHAWK', 'MAN BUN', 'SHAVED'] : ['CLEAN', 'STUBBLE', 'MOUSTACHE', 'GOATEE', 'FULL BEARD'])[i2] || String(i2 + 1)));
       });
     }
     const right = cat.k === 'mask' && typeof maskStudio === 'function' ? h('div', { class: 'panel gearright' }, head, menu, maskStudio(p, team, render))
@@ -133,8 +152,11 @@ function scrGear(pid) {
 // one option, shown on the player himself (a dark silhouette while it is still locked)
 function gearOptionCanvas(pl, team, part, v, locked) {
   const cv = h('canvas', { width: 54, height: 96, class: 'px', style: { width: '54px', height: '96px', display: 'block', margin: '0 auto 3px' } });
-  const C = teamPalette(teamIdentity(team), false), pr = Object.assign({}, pl, { gear: Object.assign(gearOf(pl), { [part]: v }) });
-  drawFigureOn(cv, C, [fakeSkater({ pl: pr, num: pl.num, g: pl.pos === 'G', fy: 1, px: 27, py: 88, hand: pl.hand || 'L' })], 3);
+  let C = teamPalette(teamIdentity(team), false); const pr = Object.assign({}, pl, { gear: Object.assign(gearOf(pl), { [part]: v }) });
+  // SOCCER: small kit is shown close up: the legs for boots, stripes, shin pads (socks rolled down so they show) and sock tape; the upper body for extras
+  const legs = ['skates', 'stick', 'pads', 'tape'].includes(part), top = part === 'visor';
+  if (part === 'pads') { C = Object.assign({}, C, { uni: Object.assign({}, C.uni, { socks: 'rolled' }) }); pr.gear.socks = 'rolled'; }
+  drawFigureOn(cv, C, [fakeSkater({ pl: pr, num: pl.num, g: pl.pos === 'G', fy: 1, px: 27, py: legs ? 92 : top ? 150 : 88, hand: pl.hand || 'L' })], legs ? 6 : top ? 4.5 : 3);
   if (locked) silhouette(cv);
   return cv;
 }
@@ -667,15 +689,15 @@ function drawRecordsBoard(c, x, y, team, save) {
 //  New prestige content: account cosmetics and the achievements that unlock them
 // ====================================================================
 Object.assign(COSMETICS, {
-  gold_gear: { name: 'Golden Gear', kind: 'gear', desc: 'Gold headbands, gloves, boots, shin pads and tape for your players.' },
-  chrome_gear: { name: 'Chrome Headbands', kind: 'gear', desc: 'Mirror-chrome headbands.' },
-  star_mask: { name: 'All-Star Keeper Mask', kind: 'gear', desc: 'The star-studded keeper mask.' },
+  gold_gear: { name: 'Golden Gear', kind: 'gear', desc: 'Gold headbands, gloves, boots, boot stripes, shin pads and sock tape for your players.' },
+  chrome_gear: { name: 'Silver Headbands', kind: 'gear', desc: 'Shining silver headbands.' },
+  star_mask: { name: 'All-Star Keeper Shirt', kind: 'gear', desc: 'The star-studded keeper shirt.' },
   arena_show: { name: 'Arena Light Show', kind: 'arena', desc: 'Light-show lighting, goal fireworks and pyro jets for your arena.' },
   the_works: { name: 'The Works', kind: 'arena', desc: 'The full light show for your arena: lasers, pitch projection, pyro, mirror ball.' },
   led_boards: { name: 'Digital LED Hoardings', kind: 'arena', desc: 'Animated LED hoardings that cycle your sponsors and flash GOAL!' },
   premium_ads: { name: 'Premium Sponsors', kind: 'arena', desc: 'Big-name (made-up) sponsors on your hoardings.' },
   emblem_tiger: { name: 'Tiger Emblem', kind: 'emblem', emblem: 'tiger', desc: 'A roaring tiger crest.' },
-  emblem_mask: { name: 'Keeper Mask Emblem', kind: 'emblem', emblem: 'mask', desc: 'A classic cage-and-mask crest.' },
+  emblem_mask: { name: 'Keeper Gloves Emblem', kind: 'emblem', emblem: 'mask', desc: 'A pair of keeper gloves on your crest.' },
   logo_star: { name: 'Star-Burst Logo Shape', kind: 'logo', desc: 'A star-burst badge shape for your team logo.' },
   logo_studs: { name: 'Studded Logo Border', kind: 'logo', desc: 'Gold studs around your team logo.' },
   logo_sunburst: { name: 'Sunburst Logo Background', kind: 'logo', desc: 'Sun rays behind your team emblem.' },

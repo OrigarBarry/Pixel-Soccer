@@ -9,8 +9,8 @@ The nightly run takes the top unticked item under "Next up". Barry and his chats
   - [x] **Smaller saves that never lose anything:** *(done 24 Nov, version 1795570913-2b76: saves about 5x smaller; round-trip, old-save and storage tests pass in this browser; the account-storage path is hockey's, untested here)* season saves compressed (about 5 times smaller), and old records go to a "vault" instead of being deleted (store.js, league.js). Old saves must still load.
   - [x] **Highlights kept until you delete them:** *(done 24 Nov, version 1795571007-98ff)* with DELETE and SELECT in League History > Highlights (legacy.js, present.js, league.js).
   - [x] **"While you were away" card:** *(done 24 Nov, version 1795571054-dfe0)* everything that happened since you last looked, biggest moments first (ui2.js).
-  - [ ] **Taken (24 Nov 20:45, Pixel Soccer project chat: football kit and gear overhaul; skip unless this line says it stopped unfinished).** **Jersey backs:** a player's shirt back with his name and number on cards, captions and the scoreboard; each kit picks its number style (plain, shadow, outline) and colour (clubjersey.js, sprites.js, art.js, scenery.js, broadcast.js, present.js).
-  - [ ] **Taken (24 Nov 20:45, Pixel Soccer project chat: football kit and gear overhaul; skip unless this line says it stopped unfinished).** **The Look Studio:** *(also: hockey gear is still in the cosmetics: keeper masks and cages, visors, e.g. the "Gold Visor" challenge reward)* one screen for everything your team wears (identity, colours, kits, player gear, saved looks with share codes), replacing three editors. Needs soccer gear (boots, shin pads, keeper gloves) instead of sticks, skates and goalie masks (studio.js, a big job).
+  - [ ] **Jersey backs:** a player's shirt back with his name and number on cards, captions and the scoreboard; each kit picks its number style (plain, shadow, outline) and colour (clubjersey.js, sprites.js, art.js, scenery.js, broadcast.js, present.js).
+  - [ ] **The Look Studio:** *(the football gear part is DONE 24 Nov, version 1795579059-7bca: no sticks, skates, helmets or masks anywhere; see Done. Still open: hockey's single "Look Studio" screen that puts identity, colours, kits, gear and saved looks with share codes in one place)*
   - [ ] **Broadcast desk:** hockey's PUCK TALK show has grown a lot (much more banter and audio). Check what soccer's desk shows today and port what fits, rewritten for soccer (desk.js, deskaudio.js, deskbanter.js, a big job).
   - Skipped (hockey only): fight changes (players fired up / rattled after a fight).
 
@@ -35,6 +35,13 @@ The nightly run takes the top unticked item under "Next up". Barry and his chats
 - 24 Nov 2026: main-menu backdrop and Settings camera preview still showed an ice rink. Fixed (grass pitch).
 
 ## Done
+- [x] **Football kit and gear overhaul** (24 Nov evening, version 1795579059-7bca):
+  - Player cards show footballers' heads: hair on top (eight styles), a headband or keeper cap if worn. No more hockey helmets, visors, cages or goalie masks.
+  - Gear is all football: boots (11 colours), boot stripes, shin pads, sock tape, and extras (wristbands, taped wrists, snood, undershirt, keeper cap, armband).
+  - Team kit: shirt fit (long or short sleeves, polo or laced collar), shorts colour and style (short, baggy, cycling), socks (rolled down showing shin pads, over the knee, hoops), gloves, headbands.
+  - Keepers: the 52 mask designs are now keeper shirts. The Mask Studio is now the Keeper Shirt Studio, with the same shop, legends and paint shop. Keepers also get glove colours and glove-back designs.
+  - Three new hairstyles: mohawk, man bun, shaved.
+  - Every player has his own seeded boots, stripes, tape and extras.
 - [x] **Commentary that still read like hockey:** a full sweep of every commentary line and the big-screen ads. About 25 lines rewritten (e.g. "blue paint", "pad save", "lost the handle", "what a snipe", the Winter Classic, "sharper every shift"), plus menu labels (PP/PK challenge, organ, harder punches, odd-man rushes). The broadcast desk's chat is left for its own item. (24 Nov evening, version 1795577594-2097)
 - [x] **Hoardings:** square corners, a dark steel frame round the ad panels, no hockey kickplate; Arena option renamed "Steel frame" (24 Nov evening, version 1795575974-d33a).
 - [x] 24 Nov 2026: Merged the old soccer list from the pixel-hockey repo (its soccer/ folder has since been removed there).

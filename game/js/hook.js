@@ -377,8 +377,8 @@ function clubLookPanel(c) {
           sel('HEADBAND', c.uni.helmet || 'team', gearOpts('helmet'), v => { c.uni.helmet = v; }),
           sel('GLOVES', c.uni.gloves || 'team', gearOpts('gloves'), v => { c.uni.gloves = v; }),
           sel('SOCKS', c.uni.socks || 'team', gearOpts('socks'), v => { c.uni.socks = v; }),
-          ...['visor', 'stick', 'tape', 'skates'].map(k => sel(k.toUpperCase(), c.gear[k] || gearOf(null)[k], gearOpts(k), v => { c.gear[k] = v; })),
-          ...['mask', 'pads', 'stick'].map(k => sel('KEEPER ' + k.toUpperCase(), c.ggear[k] || gearOf(null)[k], gearOpts(k), v => { c.ggear[k] = v; })))),
+          ...['skates', 'stick', 'tape', 'visor'].map(k => sel(((typeof GEAR_NAMES !== 'undefined' && GEAR_NAMES[k]) || k).toUpperCase(), c.gear[k] || gearOf(null)[k], gearOpts(k), v => { c.gear[k] = v; })),
+          ...['mask', 'gloves', 'pads'].map(k => sel('KEEPER ' + (k === 'mask' ? 'SHIRT' : ((typeof GEAR_NAMES !== 'undefined' && GEAR_NAMES[k]) || k).toUpperCase()), c.ggear[k] || gearOf(null)[k], gearOpts(k), v => { c.ggear[k] = v; })))),
       h('div', { style: { textAlign: 'center' } }, cvS, h('div', { class: 'modetxt' }, '\u{1F512} = locked: pick it to see how to earn it.'),
         h('button', { class: 'small ghost', onclick: () => go(() => scrLocker(scrClub)) }, 'THE LOCKER'))));
     setTimeout(() => {

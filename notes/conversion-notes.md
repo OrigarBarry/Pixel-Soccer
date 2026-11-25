@@ -101,6 +101,16 @@ Compared file by file with the hockey page (version 1795563867-b742; read throug
 - Deliberately left: lines that can't fire any more (offside, icing "long ball", pulling the keeper, keeper freezing the ball); move names Dangle/Feint; "hat trick", "shootout", "breakaway", "rebound".
 - devlog.js: the report button's x used c.width (the sharp-screen backing size), which put it on the scoreboard label; it now uses the 640-unit layout scale, 62 units right of centre.
 
+## Round 12: football kit and gear overhaul (Nov 24 evening, version 1795579059-7bca)
+- **Save keys unchanged.** Each gear part keeps its hockey key with a football meaning: helmet = headband, visor = extras, skates = boots, stick = boot stripes, tape = sock tape, pads = shin pads, jersey = shirt fit, mask = keeper shirt design, gloves = gloves, blocker = keeper glove backs. New part: shorts (team kit). gearOf() maps any value a part no longer has (e.g. visor 'cage', stick 'wood') to the default, so old saves load. GEAR_DEFAULT holds the defaults.
+- **Personal vs kit.** The team kit (C.uni, set in TEAM LOOK > UNIFORMS) covers headband, gloves, socks, shirt fit and shorts style, plus a shorts colour (kit.pants, used as is). Each player's own gear covers boots, boot stripes, shin pads, sock tape and extras; keepers also have their shirt, glove colour and glove backs.
+- **Seeded kit.** aiKitFor(pl) gives every player seeded boots, stripes, tape and extras for any part he hasn't set by hand.
+- **Drawing (sprites.js).** drawLegsKit / drawShortsKit / keeperShirt() are shared helpers. Socks rolled down show the shin pads. A keeper's shirt is his mask design's colours (maskSpec, including paint jobs) on a jersey pattern (KEEPER_STYLE, or a seeded one from KEEPER_STYLE_POOL). New jersey patterns: tiger, zigzag, stars. Hair styles 5 mohawk, 6 man bun, 7 shaved (LOOK_PARTS.style 8).
+- **Portraits (art.js drawPortrait).** Rewritten with no helmet and no mask: hair by style, a headband, keeper cap or snood, keepers in their shirt colours. drawPortrait16 (unused) still has the old helmet.
+- **Masks to keeper shirts (masks.js).** drawMaskAt draws a flat keeper shirt (drawKeeperShirtIcon), so the Studio, cabinet and memorabilia show shirts. The paint shop keeps only the shirt slots (SHIRT, SECOND, TRIM, accents). The built-in names and unlock names are rewritten. The 'mask' crest emblem is now a pair of keeper gloves.
+- **Previews.** Gear option previews zoom in on the legs (boots, stripes, pads with socks rolled, tape) and the upper body (extras).
+- **Known, not changed:** the Dream Builder screen errors when opened without a player (it was already like that); the dropdown text "Shoulder Strip..." is cut off on the kit editor.
+
 ## Known leftovers / ideas
 The live to-do list is NIGHTLY-LIST.md in the Pixel-Soccer repo. Background:
 - Goal rate about 4–5 a match: Barry is happy with it (24 Nov). Levers if that changes: GK_REACH (1.9), GK.chal (26), ADDED.

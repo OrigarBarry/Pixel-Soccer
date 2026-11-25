@@ -64,7 +64,7 @@ const MEMO_OPTS = {
   jersey: [['style', 'STYLE', ['home', 'away', 'throwback']], ['main', 'BODY', 'col'], ['second', 'STRIPES', 'col'], ['trim', 'NUMBER', 'col'], ['letter', 'LETTER', ['none', 'C', 'A']], ['sig', 'AUTOGRAPH', ['on', 'off']], ['frame', 'FRAME', ['oak', 'black', 'gold']]],
   stick: [['shaft', 'BOOT', ['wood', 'carbon', 'white', 'team', 'gold']], ['art', 'GRAPHIC', ['solid', 'two-tone', 'stripes', 'flames']], ['acc', 'GRAPHIC COLOUR', 'col'], ['tape', 'LACES', ['white', 'black', 'candy', 'gold', 'team']], ['knob', 'STUDS', ['white', 'black', 'red', 'team']], ['sig', 'AUTOGRAPH', ['on', 'off']], ['mount', 'MOUNT', ['plaque', 'rack', 'none']]],
   capstick: [['shaft', 'BOOT', ['wood', 'carbon', 'white', 'team', 'gold']], ['art', 'GRAPHIC', ['solid', 'two-tone', 'stripes', 'flames']], ['acc', 'GRAPHIC COLOUR', 'col'], ['tape', 'LACES', ['white', 'black', 'candy', 'gold', 'team']], ['knob', 'STUDS', ['white', 'black', 'red', 'team']], ['sig', 'AUTOGRAPH', ['on', 'off']], ['mount', 'MOUNT', ['plaque', 'rack', 'none']]],
-  mask: [['design', 'DESIGN', 'mask'], ['L', 'LEFT HALF', 'col'], ['R', 'RIGHT HALF', 'col'], ['ridge', 'STRIPE', 'col'], ['sig', 'AUTOGRAPH', ['on', 'off']], ['stand', 'STAND', ['oak', 'black', 'gold', 'case']]],
+  mask: [['design', 'DESIGN', 'mask'], ['L', 'SHIRT', 'col'], ['R', 'SECOND', 'col'], ['ridge', 'TRIM', 'col'], ['sig', 'AUTOGRAPH', ['on', 'off']], ['stand', 'STAND', ['oak', 'black', 'gold', 'case']]],
   puck: [['finish', 'FINISH', ['gold', 'silver', 'black']], ['case', 'CASE', ['glass', 'none']], ['base', 'BASE', ['oak', 'black', 'marble']], ['sig', 'AUTOGRAPH', ['on', 'off']]],
   banner: [['main', 'BANNER', 'col'], ['second', 'BAND', 'col'], ['trim', 'TRIM', 'col'], ['emblem', 'EMBLEM', ['star', 'cup', 'crown', 'puck']], ['metal', 'HARDWARE', ['gold', 'silver']]],
   ring: [['band', 'BAND', ['gold', 'silver', 'rose', 'black']], ['stone', 'STONE', 'col'], ['halo', 'DIAMOND HALO', ['on', 'off']], ['num', 'NUMBER', ['on', 'off']]],
@@ -353,7 +353,7 @@ function memoQuote(k, v, per) {
   if (k === 'sig') return v === 'on' ? 'Pass me a marker. I\'ll sign it.' : 'No autograph. Let it speak for itself.';
   if (k === 'num') return v === 'on' ? 'My number on it. Obviously.' : 'Leave the number off.';
   if (k === 'halo') return v === 'on' ? 'Diamonds all the way round.' : 'No diamonds. Just the stone.';
-  if (k === 'design') return 'That\'s the one. That\'s my mask.';
+  if (k === 'design') return 'That\'s the one. That\'s my shirt.';
   if (col) return per === 'tough' ? 'That colour. Yeah. Mean.' : per === 'flashy' ? 'Ooh. That one pops.' : 'That colour works.';
   return byVal[v] || 'Sure. I like that.';
 }
@@ -365,7 +365,7 @@ function memoCustomizeDlg(it, onDone) {
   const o = memoCustomOf(it), opts = MEMO_OPTS[memoKindOf(it)] || [];
   let line = it.custom ? (it.customLine || PERSONA_LINE[per]) : PERSONA_LINE[per], salt = 1;
   const TC = memoTeamCols(it);
-  const what = { gloves: 'HIS GLOVES', jersey: 'HIS JERSEY', stick: 'HIS BOOT', capstick: 'HIS CAPTAIN\'S BOOT', mask: 'HIS MASK', puck: 'THE BALL', banner: 'THE BANNER', ring: 'THE RING', plaque: 'HIS MVP DISPLAY' }[memoKindOf(it)] || 'THE PIECE';
+  const what = { gloves: 'HIS GLOVES', jersey: 'HIS JERSEY', stick: 'HIS BOOT', capstick: 'HIS CAPTAIN\'S BOOT', mask: 'HIS KEEPER SHIRT', puck: 'THE BALL', banner: 'THE BANNER', ring: 'THE RING', plaque: 'HIS MVP DISPLAY' }[memoKindOf(it)] || 'THE PIECE';
   modal(close => {
     const box = h('div', { class: 'memodlg' });
     const draw = () => {

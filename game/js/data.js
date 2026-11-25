@@ -372,8 +372,8 @@ const EMBLEMS = {
   tiger:   { name:'Tiger', sym:true, cos:'emblem_tiger', rows:[
     '........', '.kk.....', 'kook....', 'kooookkk', 'koookooo', 'kooooooo', 'kkoooooo', 'koowkooo',
     'koooooko', 'kooooooo', '.kowwwww', '.kowwwkk', '..kowwww', '...kkwww', '.....kkk', '........'] },
-  mask:    { name:'Keeper Mask', sym:true, cos:'emblem_mask', rows:[
-    '........', '...kkkkk', '..kwwwww', '.kwwwwww', '.kwaaaaa', 'kwwwwwww', 'kwkkkwww', 'kwkkkwww', 'kwwwwwww', 'kwkgkgkg', 'kwkgkgkg', '.kkgkgkg', '.kgggggg', '..kkgkgk', '...kkkkk', '........'] },
+  mask:    { name:'Keeper Gloves', sym:true, cos:'emblem_mask', rows:[   // SOCCER: a pair of keeper gloves (was a goalie mask)
+    '........', '..k.k...', '.kwkwk..', '.kwkwkk.', '.kwkwkwk', '.kwwwwwk', 'kkwwwwwk', 'kwkwwwwk', 'kwwwwwwk', '.kwwwwwk', '..kaaaak', '..kaaaak', '..kkkkkk', '........', '........', '........'] },
   snake: { name:'Snake', rows:[
     '.........kkkk...', '........kaaaak..', '.......kaayaaak.', '.......kaaaaakrr', '........kkaak..r', '...kkkkkkkaak...', '..kaasasaaaak...', '.kaakkkkkkkk....', '.kak............', '.kaakkkkkkkk....', '..kaasasaaaakk..', '...kkkkkkkkaaak.', '...........kak..', '..kkkkkkkkkaak..', '.kaasasaaaaak...', '..kkkkkkkkkk....'] },
   hornet: { name:'Hornet', rows:[

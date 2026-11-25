@@ -43,9 +43,9 @@ const MASKS_X = {
     paint(D, M, E, s) { E((x, y) => (x + (y % 2 ? 1 : 0)) % 3 === 0 && !(x >= 4 && x <= 5 && y <= 3) ? s.a : null); } },
   racing: { name: 'Checkered Flag', tier: 'common', price: 350, team: true, spec: C => ({ b: 'split', L: '#f4f4f4', R: C.main, ridge: '#e0302a', a: '#1b1c22' }),
     paint(D, M, E, s) { E((x, y) => x < 4 && (x + y) % 2 ? s.a : null); D(s.ridge, 4, 0, 1, 10); } },
-  blackout: { name: 'Blackout Cage', tier: 'common', price: 200, spec: () => ({ b: 'bucket', L: '#1b1c22', R: '#1b1c22', ridge: '#3a3d46', shell: '#2a2c34', cage: '#5a606e', eye: '#e8ecf2' }),
+  blackout: { name: 'Blackout', tier: 'common', price: 200, spec: () => ({ b: 'bucket', L: '#1b1c22', R: '#1b1c22', ridge: '#3a3d46', shell: '#2a2c34', cage: '#5a606e', eye: '#e8ecf2' }),
     paint() {} },
-  probucket: { name: 'Pro Headband & Cage', tier: 'common', price: 150, team: true, spec: C => ({ b: 'bucket', L: C.main, R: C.main, ridge: C.trim || '#ffffff', shell: '#f4f6fa', cage: '#d4d9e2' }),
+  probucket: { name: 'Pro Panels', tier: 'common', price: 150, team: true, spec: C => ({ b: 'bucket', L: C.main, R: C.main, ridge: C.trim || '#ffffff', shell: '#f4f6fa', cage: '#d4d9e2' }),
     paint(D, M, E, s) { M(s.ridge, 1, 2, 1, 1); } },
   // ---------------- RARE
   panther: { name: 'Panther', tier: 'rare', price: 700, spec: () => ({ b: 'split', L: '#1b1c22', R: '#121318', ridge: '#2a2c36', a: '#ffd23f', a2: '#eef1f6', eye: '#ffd23f' }),
@@ -107,7 +107,7 @@ const MASKS_X = {
     paint(D, M, E, s) { D(s.a, 1, 2, 2, 1); D(s.a, 1, 3, 1, 1); D(s.a, 0, 4, 1, 2); D(s.a, 1, 6, 1, 1); D(s.a2, 7, 1, 1, 1); D(s.a2, 7, 2, 2, 1); D(s.a2, 8, 3, 1, 1); D(s.a2, 9, 5, 1, 1); D(s.a2, 8, 6, 1, 1); D('#ffffff', 1, 2); D('#ffffff', 8, 2); D(s.a, 3, 9, 2, 1); D(s.a2, 5, 9, 2, 1); } },
 };
 for (const k of Object.keys(MASKS_X)) MASK_KEEP.add(k);
-const MASK_BASE_NAMES = { split: 'Team Split', bucket: 'Headband & Cage', white: 'Classic White', retro: 'Retro Headband', checkers: 'Checkered', wolf: 'Wolf Headband', skull: 'Skull', tiger: 'Tiger', flame: 'Flames',
+const MASK_BASE_NAMES = { split: 'Plain Keeper', bucket: 'Shoulder Panels', white: 'All White', retro: 'Vintage Tan', checkers: 'Checkerboard', wolf: 'Storm Grey', skull: 'Bone White', tiger: 'Tiger', flame: 'Flames',
   shark: 'Shark', lightning: 'Lightning', star: 'All-Star', galaxy: 'Galaxy', laststand: 'Last Stand', chrome: 'Chrome', gold: 'Gold' };
 // every design in shop order (standard, then common ... legendary)
 const MASK_ORDER = (() => { const all = Object.keys(MASK_BASE_INFO).concat(Object.keys(MASKS_X)), rank = { free: 0, common: 1, rare: 2, epic: 3, legend: 4 };
@@ -137,12 +137,23 @@ function aiMaskFor(pl) {
 
 // ---------- close-up: the real in-game mask, drawn big (each mask pixel is s screen pixels), with a soft drop shadow.
 // The canvas is 14 x 14 mask pixels: the mask sits at (2, 3) so horns, ears and crests have room above it.
+// SOCCER: a keeper shirt laid flat (14 x 14 cells): body, sleeves, collar, number
+function drawKeeperShirtIcon(c2, G, C) {
+  const K = typeof keeperShirt === 'function' ? keeperShirt(G, C, 0) : { main: C.main, dark: C.dark, trim: C.trim, style: 'minimal' };
+  const KC = Object.assign({}, C, { main: K.main, dark: K.dark, trim: K.trim, style: K.style });
+  const P = (x, y, col) => { c2.fillStyle = col; c2.fillRect(x, y, 1, 1); };
+  for (let j = 0; j < 11; j++) for (let i = 0; i < 10; i++) P(2 + i, 2 + j, jerseyColor(KC, i, j, 10, 11));                // body
+  for (let j = 0; j < 4; j++) { const sc = sleeveColor(KC, j); P(0, 3 + j, sc); P(1, 2 + j, sc); P(1, 3 + j, sc); P(12, 2 + j, sc); P(12, 3 + j, sc); P(13, 3 + j, sc); }   // sleeves
+  P(0, 7, darker(KC.main, 0.3)); P(13, 7, darker(KC.main, 0.3));
+  c2.clearRect(6, 2, 2, 1); P(5, 2, K.trim); P(8, 2, K.trim); P(6, 3, K.trim); P(7, 3, K.trim);                                 // the collar
+  c2.fillStyle = 'rgba(0,0,0,.14)'; c2.fillRect(11, 3, 1, 10);
+}
 function drawMaskAt(c, G, C, s, ox, oy) {
   const keep = ctx;
   try {
     ctx = c; c.imageSmoothingEnabled = false;
     const tmp = document.createElement('canvas'); tmp.width = 14; tmp.height = 14;
-    ctx = tmp.getContext('2d'); drawGoalieMask(G, C, 2, 3);
+    ctx = tmp.getContext('2d'); drawKeeperShirtIcon(tmp.getContext('2d'), G, C);   // SOCCER: the design is a keeper shirt now
     ctx = c; c.save(); c.imageSmoothingEnabled = false;
     // shadow: the silhouette, one mask pixel down and right
     const sh = document.createElement('canvas'); sh.width = 14; sh.height = 14; const sc = sh.getContext('2d');
@@ -172,16 +183,16 @@ function maskState(team, m) {
 
 // ---------- account unlocks for the legendary masks, and the achievements that earn them
 if (typeof COSMETICS !== 'undefined') Object.assign(COSMETICS, {
-  mask_fibre:   { name: 'Old-Time Fibreglass Mask', kind: 'gear', desc: 'A moulded fibreglass mask from the days before cages. Eye holes and courage.' },
-  mask_monster: { name: 'Monster Jaws Mask', kind: 'gear', desc: 'A red mask with a mouthful of teeth around the cage.' },
-  mask_robot:   { name: 'Mech Mask', kind: 'gear', desc: 'Riveted steel and a glowing red visor.' },
-  mask_royal:   { name: 'Royal Crown Mask', kind: 'gear', desc: 'Royal purple with a jewelled gold crown.' },
-  mask_phoenix: { name: 'Phoenix Mask', kind: 'gear', desc: 'Fire wings sweep up both sides; a flame crest rises off the top.' },
-  mask_target:  { name: 'Bullseye Mask', kind: 'gear', desc: 'Go on. Try to hit it.' },
-  mask_kraken:  { name: 'Kraken Mask', kind: 'gear', desc: 'Tentacles curl up out of the deep around the cage.' },
-  mask_viking:  { name: 'Viking Mask', kind: 'gear', desc: 'Steel, a gold band and a pair of horns.' },
-  mask_dragon:  { name: 'Dragon Mask', kind: 'gear', desc: 'Green scales, fire eyes, ivory horns.' },
-  mask_cyber:   { name: 'Cyber Circuit Mask', kind: 'gear', desc: 'Neon circuitry on a jet-black shell.' },
+  mask_fibre:   { name: 'Old-Time Wool Keeper Jersey', kind: 'gear', desc: 'A thick wool jersey from the days before sponsors. Roll-neck and courage.' },
+  mask_monster: { name: 'Monster Jaws Keeper Shirt', kind: 'gear', desc: 'A red shirt with a mouthful of teeth across the chest.' },
+  mask_robot:   { name: 'Mech Keeper Shirt', kind: 'gear', desc: 'Riveted steel panels and a glowing red stripe.' },
+  mask_royal:   { name: 'Royal Crown Keeper Shirt', kind: 'gear', desc: 'Royal purple with a jewelled gold crown.' },
+  mask_phoenix: { name: 'Phoenix Keeper Shirt', kind: 'gear', desc: 'Fire wings sweep up both sides.' },
+  mask_target:  { name: 'Bullseye Keeper Shirt', kind: 'gear', desc: 'Go on. Try to hit it.' },
+  mask_kraken:  { name: 'Kraken Keeper Shirt', kind: 'gear', desc: 'Tentacles curl up out of the deep across the shirt.' },
+  mask_viking:  { name: 'Viking Keeper Shirt', kind: 'gear', desc: 'Steel grey, a gold band and a pair of horns on the crest.' },
+  mask_dragon:  { name: 'Dragon Keeper Shirt', kind: 'gear', desc: 'Green scales and fire.' },
+  mask_cyber:   { name: 'Cyber Circuit Keeper Shirt', kind: 'gear', desc: 'Neon circuitry on jet black.' },
 });
 if (typeof ACHIEVEMENTS !== 'undefined') {
   const give = (id, cos) => { const a = ACH_BY_ID[id]; if (a) { a.reward = Object.assign({}, a.reward || {}); if (!a.reward.cosmetic) a.reward.cosmetic = cos; } };
@@ -216,15 +227,15 @@ function maskStudio(p, team, rerender) {
   const tile = k => {
     const i = maskInfo(k), st = maskState(team, k), on = k === cur, tier = MASK_TIERS[i.tier] || MASK_TIERS.free;
     const g2 = Object.assign({}, G, { mask: k });
-    const cv = maskCanvas(g2, C, 52); if (st === 'locked') cv.style.opacity = '.45';
+    const cv = maskCanvas(g2, C, 52); if (st === 'locked') cv.style.opacity = '.45';   // (a keeper shirt)
     const status = on ? 'WEARING' : st === 'own' ? 'OWNED' : st === 'shop' ? fmtM(i.price) : '🔒 EARN IT';
     return h('button', { class: 'masktile' + (on ? ' sel' : '') + (st === 'locked' ? ' locked' : '') + (st === 'shop' ? ' shop' : ''), style: { borderTopColor: tier.col },
       title: st === 'locked' ? unlockHint(maskLockId(k)) : i.name + ' · ' + tier.name + (st === 'shop' ? ' · ' + fmtM(i.price) : ''),
       onclick: () => {
         if (st === 'locked') return toast(unlockHint(maskLockId(k)), 4200);
         if (st === 'own') return equip(k);
-        confirmDlg(`Buy the ${i.name} mask (${tier.name.toLowerCase()}) for ${fmtM(i.price)}? Any keeper on your team can wear it once it's yours. Funds: ${fmtM(fin.cash)}.`, 'BUY ' + fmtM(i.price), () => {
-          const err = spend(save, team, i.price, 'Keeper mask: ' + i.name); if (err) return toast(err);
+        confirmDlg(`Buy the ${i.name} keeper shirt (${tier.name.toLowerCase()}) for ${fmtM(i.price)}? Any keeper on your team can wear it once it's yours. Funds: ${fmtM(fin.cash)}.`, 'BUY ' + fmtM(i.price), () => {
+          const err = spend(save, team, i.price, 'Keeper shirt: ' + i.name); if (err) return toast(err);
           maskOwnedList(team).push(k); equip(k); toast(`${i.name} is yours. ${pname(p)} is wearing it.`);
         });
       } }, cv, h('div', { class: 'mtname' }, i.name), h('div', { class: 'mtstat', style: { color: on ? 'var(--gold)' : st === 'shop' ? '#7fd07a' : st === 'locked' ? '#9aa3c7' : tier.col } }, status));
@@ -245,7 +256,7 @@ function maskPaintDlg(p, team, done) {
   const save = UI.save, C = teamPalette(teamIdentity(team), false), G0 = gearOf(p), m = G0.mask === 'team' ? 'split' : G0.mask;
   const base = maskSpec0(m, C), paint = Object.assign({}, maskCustom(G0, m) || {});
   const teamCols = [['TEAM', C.main], ['TEAM DARK', C.dark], ['TEAM TRIM', C.trim || '#ffffff']];
-  const slots = maskSlots(m, C), names = Object.fromEntries(MASK_SLOTS);
+  const slots = maskSlots(m, C).filter(k => ['L', 'R', 'ridge', 'a', 'a2'].includes(k)), names = Object.assign(Object.fromEntries(MASK_SLOTS), { L: 'SHIRT', R: 'SECOND', ridge: 'TRIM' });   // SOCCER: the shirt's colours
   modal(close => {
     const box = h('div', { class: 'paintdlg' });
     const draw = () => {

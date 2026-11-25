@@ -298,7 +298,7 @@ function modeResult(mode, res) {
   }
   const c = QP_CHALLENGES[mode.id], won = mode.game ? res.winner === 0 : !!res.modeWon;
   if (won) { qpFeat('ch_' + mode.id); }
-  if (won && mode.id === 'pkgame') toast('THE LAST STAND! You unlocked the Last Stand mask and jersey.');
+  if (won && mode.id === 'pkgame') toast('THE LAST STAND! You unlocked the Last Stand keeper shirt and jersey.');
   const unlockedHidden = won && Object.entries(QP_CHALLENGES).filter(([k, x]) => x.secret && x.needs === 'ch_' + mode.id).map(([k, x]) => x.name);
   return { title: c.name, big: won ? 'CHALLENGE COMPLETE' : 'CHALLENGE FAILED', won, line: mode.kind === 'pp' ? 'You scored ' + res.score[0] + (mode.game ? ', they scored ' + res.score[1] : ' of ' + mode.goals) : (mode.game ? 'Final ' + res.score[0] + ' - ' + res.score[1] : res.score[1] ? 'They scored.' : 'Not a single goal against.'),
     extra: unlockedHidden && unlockedHidden.length ? 'SECRET UNLOCKED: ' + unlockedHidden.join(', ').toUpperCase() : null };
