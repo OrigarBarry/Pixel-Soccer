@@ -102,7 +102,7 @@ const TAC_BAL = { pokeCap: 0.022, checkCap: 0.02, checkBase: 0.3, checkReach: 16
 const DEFAULT_TAC = () => ({ lines: ['balanced', 'balanced', 'balanced'], tempo: ['mixed', 'mixed', 'mixed'], pp: 'umbrella', pk: 'box' });
 // TEMPO (per line): how long a line holds the puck in the attacking zone
 const TEMPOS = {
-  rush:  { name: 'Rush', short: 'RSH', desc: 'Attack fast: shoot early, hunt odd-man rushes. More shots, more chances against.',
+  rush:  { name: 'Rush', short: 'RSH', desc: 'Attack fast: shoot early, hunt counter-attacks. More shots, more chances against.',
            plain: 'Go straight at the net the moment you get the ball. Shoot early and look for 2-on-1s. More shots for you, but more chances against too.' },
   mixed: { name: 'Mixed', short: 'MIX', desc: 'Take the rush when it is there; otherwise settle in and work it.',
            plain: 'Attack fast when there is open pitch; if not, slow down and set up in their end. A safe middle ground.' },

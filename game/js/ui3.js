@@ -173,7 +173,7 @@ function tacticsPanel(tac, onChange, opts = {}) {
 // the opponent's tactics as a short scouting line
 const tacSummary = tac => { tac = validTac(tac); return tac.lines.map((k, i) => 'L' + (i + 1) + ' ' + STRATEGIES[k].short + '/' + TEMPOS[tac.tempo[i]].short).join(' · ') + ' · PP ' + PP_TACTICS[tac.pp].name + ' · PK ' + PK_TACTICS[tac.pk].name; };
 
-const tacLong = tac => { tac = validTac(tac); return tac.lines.map((k, i) => 'Line ' + (i + 1) + ': ' + STRATEGIES[k].name).join(' · ') + ' · Power play: ' + PP_TACTICS[tac.pp].name + ' · Man down: ' + PK_TACTICS[tac.pk].name; };
+const tacLong = tac => { tac = validTac(tac); return tac.lines.map((k, i) => 'Line ' + (i + 1) + ': ' + STRATEGIES[k].name).join(' · ') + ' · Man advantage: ' + PP_TACTICS[tac.pp].name + ' · Man down: ' + PK_TACTICS[tac.pk].name; };
 // what the strategy codes mean (BAL, FCK, SHL, CTR...), with their strengths and weaknesses
 function tacticsHelp() {
   modal(close => h('div', null, h('h2', null, 'TEAM TACTICS EXPLAINED'),

@@ -507,7 +507,7 @@ const TRAITS = {
   comeback:      { name: 'Comeback Artist', pos: 'S', rarity: 2, icon: '↑', desc: 'When his team trails: +Speed, +Accuracy, +Passing.', when: 'trailing', mods: { spd: 0.5, acc: 0.5, pas: 0.3 } },
   enforcer:      { name: 'Hard man', pos: 'S', rarity: 2, icon: '✊', desc: 'Throws heavy: +Tackling, stronger punches, steadier in scuffles.', mods: { chk: 0.6 }, fight: { pow: 0.2, bal: 0.1 } },
   protector:     { name: 'Protector', pos: 'S', rarity: 2, icon: '⛉', desc: 'Has his teammates\' backs: linemates +Defense; scuffles harder for them.', onIce: { def: 0.25 }, fight: { pow: 0.1, bal: 0.1 } },
-  hotheaded:     { name: 'Hotheaded', pos: 'S', rarity: 1, icon: '♨', desc: 'Plays on the edge: +Tackling, harder punches. Minor drawback: takes more penalties.', mods: { chk: 0.6 }, fight: { pow: 0.15 }, penMul: 1.3 },
+  hotheaded:     { name: 'Hotheaded', pos: 'S', rarity: 1, icon: '♨', desc: 'Plays on the edge: +Tackling, harder challenges. Minor drawback: takes more penalties.', mods: { chk: 0.6 }, fight: { pow: 0.15 }, penMul: 1.3 },
   disciplined:   { name: 'Disciplined', pos: 'S', rarity: 1, icon: '⚖', desc: 'Clean and smart: far fewer penalties, +Defense.', mods: { def: 0.3 }, penMul: 0.55 },
   iron_chin:     { name: 'Iron Ankles', pos: 'S', rarity: 2, icon: '◆', desc: 'Shrugs off knocks: fewer injuries, back up quicker.', fight: { chin: 0.35 }, injMul: 0.8, stunMul: 0.85 },
   counterpuncher:{ name: 'Aerial Threat', pos: 'S', rarity: 2, icon: '⤺', desc: 'Dominant in the air: wins more headers and crosses.', fight: { dodge: 0.25, counter: 0.5 } },

@@ -672,7 +672,7 @@ Object.assign(COSMETICS, {
   star_mask: { name: 'All-Star Keeper Mask', kind: 'gear', desc: 'The star-studded keeper mask.' },
   arena_show: { name: 'Arena Light Show', kind: 'arena', desc: 'Light-show lighting, goal fireworks and pyro jets for your arena.' },
   the_works: { name: 'The Works', kind: 'arena', desc: 'The full light show for your arena: lasers, pitch projection, pyro, mirror ball.' },
-  led_boards: { name: 'Digital LED Hoardings', kind: 'arena', desc: 'Animated LED dasher hoardings that cycle your sponsors and flash GOAL!' },
+  led_boards: { name: 'Digital LED Hoardings', kind: 'arena', desc: 'Animated LED hoardings that cycle your sponsors and flash GOAL!' },
   premium_ads: { name: 'Premium Sponsors', kind: 'arena', desc: 'Big-name (made-up) sponsors on your hoardings.' },
   emblem_tiger: { name: 'Tiger Emblem', kind: 'emblem', emblem: 'tiger', desc: 'A roaring tiger crest.' },
   emblem_mask: { name: 'Keeper Mask Emblem', kind: 'emblem', emblem: 'mask', desc: 'A classic cage-and-mask crest.' },

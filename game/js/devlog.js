@@ -184,7 +184,7 @@ function devlogBtnTick() {
   const c = document.getElementById('c'); if (!c) return;
   const r = c.getBoundingClientRect(), k = r.width / 640;
   el.style.display = 'block';
-  const cw = c.width || 640; el.style.left = Math.round(r.left + (cw / 2 + 46) * (r.width / cw)) + 'px';   // just right of the period clock (drawn centred on the canvas)
+  el.style.left = Math.round(r.left + r.width / 2 + 62 * k) + 'px';   // just right of the period clock (drawn centred on the canvas); 62 (clear of an 8-letter label like OVERLOAD) in the 640-wide layout units k scales (c.width is the sharp-screen backing size, which put it on top of the label)
   el.style.top = Math.round(r.top + 7 * k) + 'px';
   el.style.width = el.style.height = Math.max(18, Math.round(24 * k)) + 'px';
   el.style.fontSize = Math.max(11, Math.round(15 * k)) + 'px';

@@ -225,7 +225,7 @@ const ACH_BY_ID = Object.fromEntries(ACHIEVEMENTS.map(a => [a.id, a]));
 const MEMO_KINDS = {
   banner: { name: 'Championship Banner', icon: 'banner' }, ring: { name: 'Dynasty Ring', icon: 'ring' }, plaque: { name: 'MVP Award Display', icon: 'plaque' },
   mask: { name: 'Legendary Keeper Mask', icon: 'mask' }, stick: { name: 'Game-Used Boot', icon: 'stick' }, jersey: { name: 'Commemorative Jersey', icon: 'jersey' },
-  gloves: { name: 'Heavyweight Gloves', icon: 'gloves' }, puck: { name: 'Golden Goal Ball', icon: 'puck' }, capstick: { name: "The Captain's Boot", icon: 'stick' },
+  gloves: { name: 'Golden Keeper Gloves', icon: 'gloves' }, puck: { name: 'Golden Goal Ball', icon: 'puck' }, capstick: { name: "The Captain's Boot", icon: 'stick' },
 };
 // the player a piece of memorabilia honours (attribution survives retirement: name, id, number, seasons, team)
 function memoSubject(save, def, e) {

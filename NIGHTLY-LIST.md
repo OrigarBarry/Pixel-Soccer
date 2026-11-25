@@ -3,7 +3,6 @@
 The nightly run takes the top unticked item under "Next up". Barry and his chats edit this list. Anything under "Ask Barry first" is never built until Barry decides.
 
 ## Next up
-- [ ] **Taken (24 Nov 20:30, Pixel Soccer project chat; skip it unless this line says it stopped unfinished).** **Commentary that still reads like hockey:** rewrite it properly, a batch a night, until none is left. Most player-facing text was swept on 24 Nov (see notes/conversion-notes.md); what's left is mostly long-tail commentary lines. *(from the old list)*
 - [ ] **From Pixel Hockey (compared 24 Nov with hockey page version 1795563867-b742), one at a time:**
   - [x] **Real-name guard:** *(done 24 Nov, version 1795570671-461c)* generated players never share a full name with a famous real player. Hockey uses NHL names; soccer needs a list of famous footballers (realnames.js).
   - [x] **Small screen fixes:** *(done 24 Nov, version 1795570671-461c)* coach tips sized to the real text, never more than two pop-up messages piled up, help lines as "plain sentence, details underneath", side-screen captions and star card text that no longer wrap or get cut off (coach.js, broadcast.js, help.js, index.html).
@@ -11,7 +10,7 @@ The nightly run takes the top unticked item under "Next up". Barry and his chats
   - [x] **Highlights kept until you delete them:** *(done 24 Nov, version 1795571007-98ff)* with DELETE and SELECT in League History > Highlights (legacy.js, present.js, league.js).
   - [x] **"While you were away" card:** *(done 24 Nov, version 1795571054-dfe0)* everything that happened since you last looked, biggest moments first (ui2.js).
   - [ ] **Jersey backs:** a player's shirt back with his name and number on cards, captions and the scoreboard; each kit picks its number style (plain, shadow, outline) and colour (clubjersey.js, sprites.js, art.js, scenery.js, broadcast.js, present.js).
-  - [ ] **The Look Studio:** one screen for everything your team wears (identity, colours, kits, player gear, saved looks with share codes), replacing three editors. Needs soccer gear (boots, shin pads, keeper gloves) instead of sticks, skates and goalie masks (studio.js, a big job).
+  - [ ] **The Look Studio:** *(also: hockey gear is still in the cosmetics: keeper masks and cages, visors, e.g. the "Gold Visor" challenge reward)* one screen for everything your team wears (identity, colours, kits, player gear, saved looks with share codes), replacing three editors. Needs soccer gear (boots, shin pads, keeper gloves) instead of sticks, skates and goalie masks (studio.js, a big job).
   - [ ] **Broadcast desk:** hockey's PUCK TALK show has grown a lot (much more banter and audio). Check what soccer's desk shows today and port what fits, rewritten for soccer (desk.js, deskaudio.js, deskbanter.js, a big job).
   - Skipped (hockey only): fight changes (players fired up / rattled after a fight).
 
@@ -27,6 +26,7 @@ The nightly run takes the top unticked item under "Next up". Barry and his chats
 - 24 Nov 2026: **Cup extra time stays as it is**: full extra time, then penalties (no golden goal).
 
 ## Found by the nightly run
+- 24 Nov 2026 (chat): the in-match REPORT button (flag) sat on top of the scoreboard's middle label on sharp screens, covering it. It now sits just right of it on every screen. Fixed.
 - 24 Nov 2026 (chat): the half-time mowing machine left the drawing state stacked up every frame (a line of code joined onto a note). Fixed.
 - 24 Nov 2026 (chat): a restart could wait for ever if the big-screen replay or a referee never got set. Each wait now has a limit (12 s and 3 s).
 - 24 Nov 2026: half-time clock not reset at the start of a match. Fixed.
@@ -35,6 +35,7 @@ The nightly run takes the top unticked item under "Next up". Barry and his chats
 - 24 Nov 2026: main-menu backdrop and Settings camera preview still showed an ice rink. Fixed (grass pitch).
 
 ## Done
+- [x] **Commentary that still read like hockey:** a full sweep of every commentary line and the big-screen ads. About 25 lines rewritten (e.g. "blue paint", "pad save", "lost the handle", "what a snipe", the Winter Classic, "sharper every shift"), plus menu labels (PP/PK challenge, organ, harder punches, odd-man rushes). The broadcast desk's chat is left for its own item. (24 Nov evening, version 1795577594-2097)
 - [x] **Hoardings:** square corners, a dark steel frame round the ad panels, no hockey kickplate; Arena option renamed "Steel frame" (24 Nov evening, version 1795575974-d33a).
 - [x] 24 Nov 2026: Merged the old soccer list from the pixel-hockey repo (its soccer/ folder has since been removed there).
 - [x] 24 Nov 2026 (project chat, version 1795563851-4b63): Hockey glass replaced by a straight ball-stop net on posts behind the far goal that ripples when a shot flies over; White / Black / Gold in the Arena menu.

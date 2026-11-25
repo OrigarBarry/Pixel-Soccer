@@ -726,7 +726,7 @@ function changeGoalie(t, why) {
   refreshEff();
   S.banner = { text: 'KEEPER CHANGE', sub: `${TEAM[t].abbr}: #${nb.num} ${(nb.last || '').toUpperCase()} IN FOR #${old.num} ${(old.last || '').toUpperCase()}`, life: 200 };
   if (S.phase === 'faceoff') S.timer += 120;
-  say([`${TEAM[t].abbr} IS MAKING A CHANGE IN NET.`, `THAT'S THE NIGHT FOR ${(old.last || '').toUpperCase()}. ${(nb.last || '').toUpperCase()} COMES IN.`], 2, 0.9);
+  say([`${TEAM[t].abbr} IS CHANGING HIS KEEPER.`, `THAT'S THE NIGHT FOR ${(old.last || '').toUpperCase()}. ${(nb.last || '').toUpperCase()} COMES IN.`], 2, 0.9);
   rsLog(`${TEAM[t].abbr} pulled #${old.num} ${plName(old)} for #${nb.num} ${plName(nb)}${why ? ' (' + why + ')' : ''}`);
   return true;
 }

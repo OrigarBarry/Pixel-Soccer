@@ -10,14 +10,14 @@ const JB_VW = 300, JB_VH = 188;                   // world units shown on the sc
 const JB = { el: null, cv: null, c: null, head: null, cap: null, state: 'off', mode: null, item: null, frames: null, f: 0, end: 0,
   queue: [], seen: new Set(), list: [], li: 0, adI: 0, matchRef: null, stopId: 0, adStop: -1, ghosts: [], gRefs: [], cam: null, last: 0, pl: null, liftAt: 0 };
 const JB_ADS = [
-  { brand: 'PIXEL COLA', line: 'TASTE THE PITCH!', bg: ['#b8262b', '#7a1018'], fg: '#ffffff', ac: '#ffd23f', icon: 'bottle' },
-  { brand: 'PITCH KING', line: 'SHARPER EVERY SHIFT', bg: ['#1b3a8a', '#0e1f4f'], fg: '#ffffff', ac: '#7ec8ff', icon: 'skate' },
+  { brand: 'PIXEL COLA', line: 'TASTE THE GAME!', bg: ['#b8262b', '#7a1018'], fg: '#ffffff', ac: '#ffd23f', icon: 'bottle' },
+  { brand: 'PITCH KING', line: 'SHARPER EVERY MATCH', bg: ['#1b3a8a', '#0e1f4f'], fg: '#ffffff', ac: '#7ec8ff', icon: 'skate' },
   { brand: 'NORTH AIR', line: 'FLY THE TRUE NORTH', bg: ['#0e5a6a', '#06323b'], fg: '#ffffff', ac: '#ffd23f', icon: 'plane' },
   { brand: 'MAPLE BANK', line: 'SAVING SINCE 1898', bg: ['#2a6a3a', '#123a1e'], fg: '#ffffff', ac: '#ff6a4a', icon: 'maple' },
   { brand: 'POWER SHOT TV', line: 'EVERY GAME. LIVE.', bg: ['#3a1a5a', '#1a0a2a'], fg: '#ffffff', ac: '#ff3ea5', icon: 'tv' },
   { brand: 'STUDS CO.', line: 'BOOTS FOR SNIPERS', bg: ['#2a2a2a', '#0e0e0e'], fg: '#ffd23f', ac: '#ffffff', icon: 'stick' },
-  { brand: 'RINKSIDE PIZZA', line: 'HOT SLICE. COLD PITCH.', bg: ['#d9701f', '#8a3a0e'], fg: '#ffffff', ac: '#ffd23f', icon: 'pizza' },
-  { brand: 'GLIDE WASH', line: 'SMOOTH AS FRESH PITCH', bg: ['#2a7ad7', '#123a7a'], fg: '#ffffff', ac: '#e8f4ff', icon: 'drop' },
+  { brand: 'RINKSIDE PIZZA', line: 'HOT SLICE. HALF-TIME HERO.', bg: ['#d9701f', '#8a3a0e'], fg: '#ffffff', ac: '#ffd23f', icon: 'pizza' },
+  { brand: 'GLIDE WASH', line: 'SMOOTH AS A FRESH-CUT PITCH', bg: ['#2a7ad7', '#123a7a'], fg: '#ffffff', ac: '#e8f4ff', icon: 'drop' },
 ];
 function jbEnsure() {
   if (JB.el) return;

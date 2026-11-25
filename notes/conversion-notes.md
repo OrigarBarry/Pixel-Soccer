@@ -95,6 +95,12 @@ Compared file by file with the hockey page (version 1795563867-b742; read throug
 - Corners: R.cr 16 → 7. The corners sit behind the goal lines (out of play), so in-play ball physics is unchanged; 7 stays above the keeper's radius (6.2), which the corner collision maths in constrain() needs. The boards, grass clip and pitch edge are drawn with HOARD_R = 1.5, so they meet at square corners.
 - Default board style "classic" is now a dark steel frame round the ad panels (no white hockey boards). No style draws the yellow kickplate any more; only LED keeps its dark base strip. The Arena label is "Steel frame" ("Classic hoardings" was cut off in the dropdown).
 
+## Round 11: commentary sweep (Nov 24 evening, version 1795577594-2097)
+- Every upper-case commentary line in engine, rules, broadcast, hlgen, crowd, present, jumbo, modes and daily was read. Rewritten: blue paint, fakes him out of his jock, what a snipe, past the glove, lights out on that hit, what a hit, loses the handle, "we'll have a kickoff" after a smother, glove saves, pad save, off the iron, "over the net and off the back hoardings" (now into the ball-stop net), change in net. Big screen: taste the pitch, sharper every shift, cold pitch, fresh pitch. Tournament: The Winter Classic is now The Boxing Day Classic.
+- Labels: the PP/PK challenge HUD labels are now OVERLOAD / HOLD OUT (the menu names; longer text ran under the report button); "Power play:" in tactics; organ loft / organ stings are now band stand / band stings; "harder punches" is now "harder challenges"; odd-man rushes are now counter-attacks; "dasher" removed; Heavyweight Gloves are now Golden Keeper Gloves; "never body checked" is now "never shoulder-charged".
+- Deliberately left: lines that can't fire any more (offside, icing "long ball", pulling the keeper, keeper freezing the ball); move names Dangle/Feint; "hat trick", "shootout", "breakaway", "rebound".
+- devlog.js: the report button's x used c.width (the sharp-screen backing size), which put it on the scoreboard label; it now uses the 640-unit layout scale, 62 units right of centre.
+
 ## Known leftovers / ideas
 The live to-do list is NIGHTLY-LIST.md in the Pixel-Soccer repo. Background:
 - Goal rate about 4–5 a match: Barry is happy with it (24 Nov). Levers if that changes: GK_REACH (1.9), GK.chal (26), ADDED.

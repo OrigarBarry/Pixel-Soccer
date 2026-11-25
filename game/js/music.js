@@ -82,7 +82,7 @@ const Music = {
     career: { bpm: 108, len: 128, fn: 'playCareer', name: 'FRONT OFFICE' },
     cruise: { bpm: 124, len: 128, fn: 'playCruise', name: 'OPEN PITCH' },
     neon:   { bpm: 100, len: 128, fn: 'playNeon', name: 'NEON NIGHTS' },
-    rink:   { bpm: 132, len: 128, fn: 'playRink', name: 'ORGAN LOFT' },
+    rink:   { bpm: 132, len: 128, fn: 'playRink', name: 'BAND STAND' },
     intense: { bpm: 172, len: 128, fn: 'playIntense', name: 'SUDDEN DEATH' },
     pump1:  { bpm: 92, len: 64, fn: 'playPump1', name: 'STOMP THE HOARDINGS' },
     pump2:  { bpm: 150, len: 64, fn: 'playPump2', name: 'LET\'S GO!' },

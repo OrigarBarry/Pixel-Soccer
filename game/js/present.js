@@ -153,7 +153,7 @@ function paintTourneyIce(c) {
 // tournament's colours on the seats and boards, its emblem at centre ice and its own sponsors
 const TOURNEY_ARENA = {
   inv:     { name: 'INVITATIONAL DOME',        venue: 'modern',   lighting: 'bright', deco: 'flags',     emblem: 'shield', ads: ['INVITE', 'NORTH AIR', 'PIXEL COLA', 'PITCH KING'] },
-  classic: { name: 'THE WINTER CLASSIC',      venue: 'outdoor',  lighting: 'classic', deco: 'streamers', emblem: 'puck',   ads: ['CLASSIC', 'MAPLE BANK', 'HOT COCOA', 'STUDS CO'] },
+  classic: { name: 'THE BOXING DAY CLASSIC',      venue: 'outdoor',  lighting: 'classic', deco: 'streamers', emblem: 'puck',   ads: ['CLASSIC', 'MAPLE BANK', 'HOT COCOA', 'STUDS CO'] },
   winter:  { name: 'WINTER CUP CENTRE',        venue: 'downtown', lighting: 'bright', deco: 'confetti',  emblem: 'flake',  ads: ['WINTER CUP', 'GLIDE WASH', 'SNOWLINE', 'NORTH AIR'] },
   finale:  { name: 'FINALE PALACE',            venue: 'palace',   lighting: 'dim',    deco: 'fireworks', emblem: 'star',   ads: ['FINALE CUP', 'SCREAMERTV', 'PIXEL COLA', 'MAPLE BANK'] },
   toc:     { name: 'HALL OF CHAMPIONS',        venue: 'palace',   lighting: 'disco',  deco: 'fireworks', emblem: 'crown',  ads: ['CHAMPIONS', 'GOLD STAR', 'SCREAMERTV', 'PITCH KING'] },

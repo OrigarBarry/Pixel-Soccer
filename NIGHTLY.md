@@ -2,6 +2,37 @@
 
 The two reports below were written before this repository existed and were first kept in the Claude project (claude/pixel-soccer-nightly.md). From 25 Nov 2026 the nightly run writes here.
 
+## 24 Nov 2026, later evening (Pixel Soccer project chat, not a nightly run)
+
+**Short version:** the commentary no longer sounds like hockey. I read every commentary line and big-screen ad and rewrote about 25 that still did, plus a few menu labels. I also fixed the in-match report button, which was covering the middle of the scoreboard. Published, zero errors.
+
+### What I did
+- Took the commentary item on the list and marked it taken first.
+- Rewrote, for example:
+  - "he was in the blue paint" is now "he went through the keeper"
+  - "kicks it away with the pad" is now "saved with his feet"
+  - "what a snipe" is now "what a strike"
+  - "he loses the handle" is now "heavy touch! He loses it!"
+  - "over the net and off the back hoardings" is now "over the bar and into the net behind"
+- Big screen: "sharper every shift", "cold pitch" and "taste the pitch" now read like football ads. The Winter Classic tournament is now The Boxing Day Classic.
+- Menus:
+  - "PP / PK challenge" (in football PK means penalty kick) is now Overload / Hold Out.
+  - "Organ" sound options are now "Band".
+  - "Harder punches" is now "harder challenges".
+  - "Odd-man rushes" are now "counter-attacks".
+- **Bug fixed:** the little report flag in matches sat on top of the scoreboard's middle label on sharp screens. It now sits just to the right. [Picture](nightly/2026-11-24/scoreboard-report-button.png).
+- Noticed, left for the Look Studio item: hockey gear in the cosmetics (keeper masks, cages, a "Gold Visor" reward).
+
+### Health
+- 7 computer-vs-computer matches, a real-time match with intro, goal card and three-stars outro, a 115-game season sim, the Overload challenge, and the Challenges, Arena, main menu and Settings screens: no page errors.
+
+### What Barry should check
+- Play a match and listen to the commentary.
+- Start a challenge from Challenges & Drills: the scoreboard should read OVERLOAD with the flag button beside it, not on top.
+
+### Page versions
+- Started from **1795575974-d33a**, published **1795577594-2097**. To roll back, republish 1795575974-d33a.
+
 ## 24 Nov 2026, evening (Pixel Soccer project chat, not a nightly run)
 
 **Short version:** the pitch is now edged like a football ground: straight advertising hoardings that meet at square corners, in a dark steel frame, with no yellow hockey kick strip. Published, zero errors.

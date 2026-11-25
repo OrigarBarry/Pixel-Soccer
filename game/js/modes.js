@@ -268,8 +268,8 @@ function modeHudPeriod() {
   if (m.kind === 'drill' && m.id === 'spar') return 'SPARRING';
   if (m.kind === 'drill') return (isFightDrill(m) ? 'BOUT ' : 'REP ') + Math.min(m.reps, m.rep + 1) + '/' + m.reps;
   if (m.kind === 'practice') return 'PRACTICE';
-  if (m.kind === 'pp' && !m.game) return 'PP CHALLENGE';
-  if (m.kind === 'pk' && !m.game) return 'PK CHALLENGE';
+  if (m.kind === 'pp' && !m.game) return 'OVERLOAD';
+  if (m.kind === 'pk' && !m.game) return 'HOLD OUT';
   return null;
 }
 function drawModeHud() {

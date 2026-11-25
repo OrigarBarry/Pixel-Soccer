@@ -586,7 +586,7 @@ function deskScript(save) {
     `Welcome to BALL TALK LIVE, I'm ${H}. And let's all take a breath before we look at ${B}. Okay. Now.`,
     `Soccer night, everybody! I'm ${H}. Here's ${B}, who I'm pretty sure raided a magician's closet.`,
     `BALL TALK LIVE is on! I'm ${H}, and next to me is ${B}. Bone, that tie has a heartbeat.`,
-    `Welcome in, folks. I'm ${H}, and joining me, wearing the loudest thing in the building tonight, including the horn: ${B}.`,
+    `Welcome in, folks. I'm ${H}, and joining me, wearing the loudest thing in the building tonight, including the drums: ${B}.`,
     `Good evening and welcome. I'm ${H}, and as promised in the ads, here's ${B}. We did not promise the suit.`,
     `It's BALL TALK LIVE. I'm ${H}, and with me, the only man in soccer with a tailor on retainer AND a lawyer for him: ${B}.`,
     `Welcome to the show. I'm ${H}. And sitting beside me, our resident fashion emergency: ${B}.`,

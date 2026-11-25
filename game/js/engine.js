@@ -760,7 +760,7 @@ function scoreGoal(team) {
       g.interfT = null; puck.inNet = false;
       floaters.push({ x: CX, y: isUp(team) ? GL_TOP + 40 : GL_BOT - 60, text: 'NO GOAL!', life: 120, big: true, color: '#ff7a6e' });
       rsLog(`NO GOAL - FOUL ON THE KEEPER (${TEAM[team].abbr}${g.interfBy.pl ? ', ' + plTagPl(g.interfBy.pl) : ''})`);
-      say(['NO GOAL! HE WAS IN THE BLUE PAINT!', 'THE REF WAVES IT OFF. FOUL ON THE KEEPER.'], 3);
+      say(['NO GOAL! HE WENT THROUGH THE KEEPER!', 'THE REF WAVES IT OFF. FOUL ON THE KEEPER.'], 3);
       if (team === (S.match ? S.match.home : 0)) sfx.boo(); else sfx.cheer(0.6);   // the home crowd's view of it
       whistle('NO GOAL', 'FOUL ON THE KEEPER', () => setupFaceoff(CX + (puck.x < CX ? -DOT_DX : DOT_DX), isUp(team) ? NEU_DOT_Y[0] : NEU_DOT_Y[1]));
       return;
@@ -786,14 +786,14 @@ function scoreGoal(team) {
     else if (ls && ls.tip) lines = ['DEFLECTED IN! WHAT A TOUCH IN FRONT!', `#${n} GETS A PIECE OF IT... AND IT'S IN!`, 'A DEFLECTION AND THE KEEPER IS HANDCUFFED!'];
     else if (ls && ls.oneT) lines = puck.otLat > 0.5 ? ['ACROSS THE SIX-YARD BOX AND HIT FIRST TIME HOME!', 'THE KEEPER COULDN\'T GET ACROSS IN TIME!', `#${n} HAMMERS THE FIRST-TIME SHOT HOME!`] : ['FIRST-TIME SHOT! THE KEEPER NEVER SAW IT!', `#${n} HAMMERS THE FIRST-TIME SHOT HOME!`];
     else if (ls && ls.reb) lines = ['HE BANGS HOME THE REBOUND!', 'SECOND CHANCE... AND IT GOES IN!'];
-    else if (ls && ls.dk) lines = ['HE DANGLES... AND SHOOTS IT IN BEFORE THE KEEPER RECOVERS!', `#${n} FAKES HIM OUT OF HIS JOCK AND SCORES!`, 'OFF THE FEINT, QUICK RELEASE, GOAL!'];
+    else if (ls && ls.dk) lines = ['HE DANGLES... AND SHOOTS IT IN BEFORE THE KEEPER RECOVERS!', `#${n} SENDS HIM THE WRONG WAY AND SCORES!`, 'OFF THE FEINT, QUICK RELEASE, GOAL!'];
     else if (ls && ls.kind === 'slap') lines = ls.scr ? ['A BOMB FROM THE EDGE OF THE BOX THROUGH TRAFFIC!', 'HE NEVER SAW THE POWER SHOT!'] : ['A CANNON FROM THE EDGE OF THE BOX!', `#${n} WINDS UP AND BLASTS IT HOME!`];
     else if (ls && ls.kind === 'snap') lines = ls.unset ? ['SNAPPED IT IN BEFORE THE KEEPER WAS SET!', 'QUICK SNAP SHOT CATCHES HIM MOVING!'] : ['WHAT A SNAP SHOT!', `#${n} SNAPS IT HOME!`];
     else if (ls && ls.kind === 'back') lines = ['ON THE WEAK FOOT! WHAT A FINISH!', `#${n} ROOFS THE WEAK FOOT!`, 'WEAK FOOT, IN TIGHT, AND IT\'S IN!'];
     else if (ls && ls.unset) lines = ['HE CAUGHT THE KEEPER MOVING!', 'THE KEEPER WASN\'T SET AND HE MAKES HIM PAY!'];
-    else if (ls && ls.zone === 'high') lines = ['TOP CORNER, WHERE MOM KEEPS THE COOKIES!', 'PICKED THE CORNER! TOP CORNER!', 'UNDER THE BAR! WHAT A SNIPE!'];
+    else if (ls && ls.zone === 'high') lines = ['TOP CORNER, WHERE MOM KEEPS THE COOKIES!', 'PICKED THE CORNER! TOP CORNER!', 'UNDER THE BAR! WHAT A STRIKE!'];
     else if (ls && ls.zone === 'five') lines = ['RIGHT THROUGH THE NUTMEG!', 'NUTMEG! RIGHT BETWEEN THE LEGS!'];
-    else if (ls && ls.zone === 'mid') lines = ['OFF THE HIP AND IN!', 'HALFWAY UP, PAST THE GLOVE!', 'HE FINDS THE GAP UNDER THE ARM!'];
+    else if (ls && ls.zone === 'mid') lines = ['OFF THE HIP AND IN!', 'HALFWAY UP, PAST HIS DIVE!', 'HE FINDS THE GAP UNDER THE ARM!'];
     else if (ls && ls.zone === 'low') lines = ['LOW AND HARD, JUST INSIDE THE POST!', 'BOTTOM CORNER! PERFECT PLACEMENT!'];
     else lines = ['HE SHOOTS... HE SCORES!', `#${n} FINDS THE NET!`];
     if (team !== homeT) lines = lines.concat([`THE ${T.nick.toUpperCase()} SCORE. YOU COULD HEAR A PIN DROP.`]);
@@ -2043,7 +2043,7 @@ function resolveLunge(p) {
       sfx.bigHit(); sfx.oof(); if (S.pres && S.pres.voice === false) sfx.ooh(); excite(0.7); S.hitFlash = 8; typeof voiceCue === 'function' && voiceCue('hit');
       clipEvent('hit', { text: 'BIG TACKLE! ' + plTag(p) + ' LEVELS ' + (t.pl ? t.pl.last.toUpperCase() : ''), team: p.team, players: [p.pl && p.pl.id, t.pl && t.pl.id].filter(Boolean) }, 16);
       if (S.cheer < 70) { S.cheer = 70; S.cheerKind = 'all'; }
-      say(['OH! HE GOT LEVELED!', "HE'LL FEEL THAT ONE IN THE MORNING!", 'LIGHTS OUT ON THAT HIT!', 'WHAT A HIT! THE CROWD LOVES IT!', `#${p.num} JUST FLATTENED HIM!`], 2);
+      say(['OH! HE GOT LEVELED!', "HE'LL FEEL THAT ONE IN THE MORNING!", 'WHAT A SHOULDER CHARGE!', 'WHAT A CHALLENGE! THE CROWD LOVES IT!', `#${p.num} JUST FLATTENED HIM!`], 2);
       const words = ['OOF!', 'UGH!', 'OUCH!', 'OW!', 'OOMPH!'];
       floaters.push({ x: t.x, y: t.y - 30, text: flat ? words[(Math.random() * words.length) | 0] : 'ROCKED!', life: 70, bubble: true });
     } else sfx.check();
@@ -2366,7 +2366,7 @@ function startDeke(p, dir, kind = 'drag') {
     p.slow = 22; p.dkTarget = 0; p.dkOff = 0; p.dkHead = null; p.side = 1;
     floaters.push({ x: p.x, y: p.y - 30, text: 'FUMBLE!', life: 40, color: '#ff7a6e' });
     if (MS && p.pl) { pst(p.pl, p.team).gv++; if (typeof chillEv === 'function') chillEv(p, 'gv'); }
-    say(['HE LOSES THE HANDLE!', 'TOO CUTE! HE COUGHS IT UP!'], 1, 0.6);
+    say(['HEAVY TOUCH! HE LOSES IT!', 'TOO CUTE! HE COUGHS IT UP!'], 1, 0.6);
     return false;
   }
   return true;
@@ -2476,7 +2476,7 @@ function coverPuck(g, forced) {
     return; }
   g.covering = 70; g.gCharge = null; g.gpT = 0; g.inx = g.iny = 0; g.vx = g.vy = 0;
   if (forced) floaters.push({ x: g.x, y: g.y - 34, text: 'HELD TOO LONG', life: 60, color: '#ffd23f' });
-  say(forced ? ['THE KEEPER HANGS ON TOO LONG... WHISTLE.'] : ['HE COVERS IT UP. WHISTLE.', 'THE KEEPER FREEZES THE BALL.', 'SMOTHERED. WE\'LL HAVE A KICKOFF.'], 1, 0.7);
+  say(forced ? ['THE KEEPER HANGS ON TOO LONG... WHISTLE.'] : ['HE COVERS IT UP. WHISTLE.', 'THE KEEPER FREEZES THE BALL.', 'SMOTHERED. HE GATHERS IT UP.'], 1, 0.7);
   const end = isUp(g.team) ? END_DOT_Y[1] : END_DOT_Y[0];
   whistle('COVERED', TEAM[g.team].abbr + ' KEEPER FREEZES IT', () => setupFaceoff(CX + (g.x < CX ? -DOT_DX : DOT_DX), end), 90);
 }
@@ -3264,7 +3264,7 @@ function puckNets(prevX, prevY) {
       puck.y = n.lineY + n.front * (PUCK_R + 0.5); puck.vy = -puck.vy * 0.6; puck.vx += rand(-0.6, 0.6);
       sfx.post(); excite(0.6); puck.shot = null;
       floaters.push({ x: puck.x, y: n.lineY - 18, text: 'POST!', life: 45, color: '#ffffff' });
-      say(['DING! OFF THE IRON!', 'OFF THE POST! SO CLOSE!', 'HE RINGS IT OFF THE POST!'], 2);
+      say(['DING! OFF THE WOODWORK!', 'OFF THE POST! SO CLOSE!', 'HE RINGS IT OFF THE POST!'], 2);
       continue;
     }
     if (prevX <= n.x0 - PUCK_R) { puck.x = n.x0 - PUCK_R - 0.1; puck.vx = -Math.abs(puck.vx) * 0.5; }
@@ -3401,9 +3401,9 @@ function goalieSave(g) {
     }
     if (hard && zone && S.phase === 'live') clipEvent('save', { text: 'SAVE! ' + plTag(g) + (puck.shooterPl ? ' STOPS ' + puck.shooterPl.last.toUpperCase() : ''), team: g.team, goalie: g.pl ? g.pl.id : null, players: [g.pl && g.pl.id, puck.shooterPl && puck.shooterPl.id].filter(Boolean) }, sp > 6.6 ? 30 : 22);
     if (hard && zone && Math.random() < 0.45) typeof voiceCue === 'function' && voiceCue('save');
-    if (hard && zone) say(zone === 'high' ? ['FLASHES THE LEATHER! GLOVE SAVE!', `ROBBED BY #${g.num}!`, 'WHAT A GLOVE SAVE!']
+    if (hard && zone) say(zone === 'high' ? ['AT FULL STRETCH! WHAT A SAVE!', `ROBBED BY #${g.num}!`, 'FINGERTIP SAVE!']
                                           : zone === 'five' ? ['CLOSES THE NUTMEG JUST IN TIME!', 'SHUTS THE DOOR DOWN LOW!']
-                                          : ['KICKS IT AWAY WITH THE PAD!', 'WHAT A SAVE!', 'THE KEEPER SAYS NO!'], 1, 0.45);
+                                          : ['SAVED WITH HIS FEET!', 'WHAT A SAVE!', 'THE KEEPER SAYS NO!'], 1, 0.45);
     sfx.save(zone === 'high' ? 'glove' : zone === 'five' ? 'pad' : null);
     return true;
   }
@@ -3623,8 +3623,8 @@ function updatePuck() {
           say(['CROSSBAR! INCHES AWAY!', 'OFF THE BAR AND OUT!', 'DING! HE HITS THE CROSSBAR!'], 2);
           continue;
         }
-        if (sh.cat === 'over') { puck.air = true; say(['HE MISSES HIGH. OFF THE STANDS.', 'OVER THE NET AND OFF THE BACK HOARDINGS.'], 1, 0.5); }
-        if (sh.cat === 'wide') say(['WIDE OF THE NET.', 'JUST MISSES THE FAR SIDE.'], 1, 0.35);
+        if (sh.cat === 'over') { puck.air = true; say(['HE MISSES HIGH. OFF THE STANDS.', 'OVER THE BAR AND INTO THE NET BEHIND.'], 1, 0.5); }
+        if (sh.cat === 'wide') say(['WIDE OF THE POST.', 'JUST MISSES THE FAR SIDE.'], 1, 0.35);
       }
     }
     if (puck.h > AIR.foot && i === n - 1 && aerialContact()) return;   // SOCCER: headers, volleys, the keeper's hands
