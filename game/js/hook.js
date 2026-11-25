@@ -14,11 +14,11 @@
 
 // ---------- 1. early unlocks
 Object.assign(COSMETICS, {
-  first_goal: { name: 'Lucky Orange Tape', kind: 'gear', hint: 'Score your first goal in any game you play.', desc: 'Bright orange boot tape for the goal that started it all.' },
-  first_win:  { name: 'Victory Boot', kind: 'gear', hint: 'Win your first game (any mode).', desc: 'A royal-purple boot for your first win.' },
+  first_goal: { name: 'Lucky Orange Tape', kind: 'gear', hint: 'Score your first goal in any game you play.', desc: 'Bright orange sock tape for the goal that started it all.' },
+  first_win:  { name: 'Victory Stripes', kind: 'gear', hint: 'Win your first game (any mode).', desc: 'Royal-purple boot stripes for your first win.' },
 });
 GEAR_OPTS.tape.lucky = 'Lucky orange ★';
-GEAR_OPTS.stick.victory = 'Victory purple ★';
+GEAR_OPTS.stick.victory = 'Victory purple stripes ★';
 GEAR_LOCK['tape:lucky'] = 'first_goal';
 GEAR_LOCK['stick:victory'] = 'first_win';
 { const _gc = gearCol;

@@ -5,6 +5,30 @@
 //  one sprite pixel = PSS world units. Origin at the skater's feet; x right, y down.
 // ====================================================================
 const PSS = SS / 1.5;
+// SOCCER (Nov 24): footballers' build: a little taller and slimmer than the hockey players the art was drawn for.
+// Applied at the feet (the sprite origin), so everyone still stands on the same spot; keepers, refs and the bench too.
+const BODY_SX = 0.86, BODY_SY = 1.12;
+// Squeezing pixel art by a fraction would smear each pixel over two screen pixels, so a body is drawn at its native
+// pixel size on a small canvas and stretched onto the screen with sharp (nearest-neighbour) scaling: crisp, and one
+// image copy per figure. drawShadowed's dark pass (a patched fillRect on the screen canvas) is carried over.
+const BODY_BOX = { w: 84, h: 76, ox: 42, oy: 58 };   // sprite x -42..42, y -58..18 (arms up, a dive, the shadow)
+const BODY_OC = { cv: null, c: null };
+const bodyScale = () => {};
+function drawBodyFit(x, y, draw) {
+  const keep = ctx, keepTo = toPSprite;
+  if (typeof document === 'undefined' || !keep || !keep.getTransform) return draw();
+  toPSprite(x, y); const m = keep.getTransform();                                                // where he stands on the real canvas
+  if (!BODY_OC.cv) { BODY_OC.cv = document.createElement('canvas'); BODY_OC.cv.width = BODY_BOX.w; BODY_OC.cv.height = BODY_BOX.h; BODY_OC.c = BODY_OC.cv.getContext('2d'); }
+  const oc = BODY_OC.c; oc.setTransform(1, 0, 0, 1, 0, 0); oc.globalAlpha = 1; oc.globalCompositeOperation = 'source-over'; oc.clearRect(0, 0, BODY_BOX.w, BODY_BOX.h); oc.imageSmoothingEnabled = false;
+  const dark = Object.prototype.hasOwnProperty.call(keep, 'fillRect');                          // drawShadowed's dark pass
+  try { ctx = oc; toPSprite = () => oc.setTransform(1, 0, 0, 1, BODY_BOX.ox, BODY_BOX.oy); draw(); }
+  finally { ctx = keep; toPSprite = keepTo; }
+  if (dark) { oc.setTransform(1, 0, 0, 1, 0, 0); oc.globalAlpha = 1; oc.globalCompositeOperation = 'source-atop'; oc.fillStyle = '#04050c'; oc.fillRect(0, 0, BODY_BOX.w, BODY_BOX.h); oc.globalCompositeOperation = 'source-over'; }
+  const sm = keep.imageSmoothingEnabled;
+  keep.setTransform(m.a * BODY_SX, m.b, m.c, m.d * BODY_SY, m.e, m.f); keep.imageSmoothingEnabled = false;
+  keep.drawImage(BODY_OC.cv, -BODY_BOX.ox, -BODY_BOX.oy);
+  keep.imageSmoothingEnabled = sm; keep.setTransform(m);
+}
 let toPSprite = (x, y) => ctx.setTransform(K * PSS, 0, 0, K * PSS, Math.round(x * K) + camOffX(), Math.round(y * K) + camOff());
 
 const skinOf = LK => (LK && LK.alien ? '#7be36a' : null) || (LK && typeof SKIN_COL !== 'undefined' ? SKIN_COL[LK.skin] : null) || '#f0c49b';
@@ -200,7 +224,7 @@ function keeperShirt(G, C, team) {
 }
 
 // ---------- skater
-function drawSkater(p) { return drawSkaterBody(p); }
+function drawSkater(p) { return drawBodyFit(p.x, p.y, () => drawSkaterBody(p)); }
 function drawSkaterBody(p, K) {   // K: a keeper's kit ({ C, glove, hands }): the same body as everyone else, in his own colours
   const C = K ? K.C : TEAM[p.team];
   toPSprite(p.x, p.y);
@@ -221,7 +245,7 @@ function drawSkaterBody(p, K) {   // K: a keeper's kit ({ C, glove, hands }): th
   drawArms.lk = LK; drawArms.glove = K ? K.glove : null; drawArms.oglove = !K && G && G.gloves && G.gloves !== 'team' ? gearCol(G, 'gloves', C) : null;
   drawArms.gback = K && G ? ({ pro: C.trim, logo: TEAM[p.team] && TEAM[p.team].main, split: darker(K.glove || '#f4f4f6', 0.4), retro: '#d8c7a0' })[G.blocker] || null : null;   // a keeper's glove backs
   const geo = stickUp || fighting || K ? null : stickGeo(p, pokeBoost);
-  if (geo) p._blade = { dx: (geo.rest.x + geo.dir * 2) * PSS, dy: geo.rest.y * PSS, t: S.t };   // where the tape is, for the puck (relative to him, so it never lags a frame)
+  if (geo) p._blade = { dx: (geo.rest.x + geo.dir * 2) * PSS * BODY_SX, dy: geo.rest.y * PSS * BODY_SY, t: S.t };   // where the tape is, for the puck (relative to him, so it never lags a frame)
   const windUp = !!(geo && geo.wind > 0.3), stickBehind = geo && (windUp ? !!geo.behindUs : back);   // wound up: hidden behind him going up the ice, across his chest coming down it
   if (stickBehind) drawStick(p, pokeBoost, geo);
   // SOCCER: boots, long socks, bare knees, shorts (the kicking foot lifts as he winds up a shot)
@@ -398,7 +422,8 @@ function keeperKit(C, team) {
   const m = opts.find(far) || opts[0];
   return { main: m, dark: darker(m, 0.3), light: darker(m, -0.15), trim: C.main, pants: C.dark || '#1d1f27' };
 }
-function drawGoalie(p) {
+function drawGoalie(p) { return drawBodyFit(p.x, p.y, () => drawGoalieRaw(p)); }
+function drawGoalieRaw(p) {
   const C = TEAM[p.team], G = typeof gearOf === 'function' ? gearOf(p.pl) : null, KK = keeperShirt(G, C, p.team);   // SOCCER: his shirt design
   const LK = p.pl && typeof lookOf === 'function' ? lookOf(p.pl) : null, sk = skinOf(LK), hc = hairOf(LK);
   toPSprite(p.x, p.y);
@@ -696,7 +721,8 @@ function drawGoalieMask(G, C, ox, oy) {
 const MASK_KEEP = new Set(['split', 'bucket', 'white', 'skull', 'tiger', 'flame', 'shark', 'lightning', 'star', 'galaxy', 'laststand', 'chrome', 'gold', 'retro', 'checkers', 'wolf']);
 
 // ---------- referee
-function drawRef(r) {
+function drawRef(r) { return drawBodyFit(r.x, r.y, () => drawRefRaw(r)); }
+function drawRefRaw(r) {
   toPSprite(r.x, r.y);
   ctx.fillStyle = 'rgba(30,50,90,.25)'; px(-8, 0, 16, 1); px(-6, 1, 12, 1);
   const sp = hyp(r.vx, r.vy), la = sp > 0.3 ? Math.round(Math.sin(r.anim) * 2) : 0;
@@ -807,7 +833,8 @@ function drawAttendant(x, y, dir, arm, wave, skin) {
 // head (helmet colour and style, visor or cage, hair, beard). Only the pose differs: knees toward us, shins down.
 // (drawBenchie.pose, set by the caller for one draw: 'slump' = head down after a goal against, 'tap' = stick
 // banging on the floor of the penalty box, frame drawBenchie.tapK 0..1)
-function drawBenchie(x, y, T, pl, bob, cheer, faceLeft) {
+function drawBenchie(x, y, T, pl, bob, cheer, faceLeft) { return drawBodyFit(x, y + (bob || 0), () => drawBenchieRaw(x, y, T, pl, bob, cheer, faceLeft)); }
+function drawBenchieRaw(x, y, T, pl, bob, cheer, faceLeft) {
   toPSprite(x, y + bob);
   const C = T, G = typeof gearOf === 'function' ? uniformGear(gearOf(pl), T, pl && pl.pos === 'G') : null, LK = pl && typeof lookOf === 'function' ? lookOf(pl) : null;
   const d = faceLeft ? -1 : 1, pose = drawBenchie.pose || null;
@@ -875,7 +902,8 @@ function drawOfficial(x, y, o = {}) {
   if (typeof staffHead === 'function') staffHead((x0, y0, w, h, c) => R(-4 + x0, -28 + y0, w, h, c), { skin: sk, hair: o.hair || '#2b1d12', hs: o.hs || 0, look: d, mouth: o.mouth || null });
   if (o.phone) { const hx = d < 0 ? 3 : -6; R(hx, -27, 3, 8, o.phoneCol || '#d9342b'); R(hx, -27, 3, 1, shade(o.phoneCol || '#d9342b', 0.3)); R(hx + (d < 0 ? 0 : 1), -22, 2, 3, sk); }   // the receiver at his ear, hand on it
 }
-function drawBenchGoalie(x, y, T, bob, cheer) {
+function drawBenchGoalie(x, y, T, bob, cheer) { return drawBodyFit(x, y + (bob || 0), () => drawBenchGoalieRaw(x, y, T, bob, cheer)); }
+function drawBenchGoalieRaw(x, y, T, bob, cheer) {
   toPSprite(x, y + bob);
   ctx.fillStyle = 'rgba(0,0,0,.3)'; px(-6, 5, 13, 1);
   for (let j = 0; j < 7; j++) for (let i = 0; i < 13; i++) { ctx.fillStyle = jerseyColor(T, i, j, 13, 7); ctx.fillRect(-6 + i, -2 + j, 1, 1); }

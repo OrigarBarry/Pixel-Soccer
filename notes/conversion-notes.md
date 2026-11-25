@@ -111,6 +111,13 @@ Compared file by file with the hockey page (version 1795563867-b742; read throug
 - **Previews.** Gear option previews zoom in on the legs (boots, stripes, pads with socks rolled, tape) and the upper body (extras).
 - **Known, not changed:** the Dream Builder screen errors when opened without a player (it was already like that); the dropdown text "Shoulder Strip..." is cut off on the kit editor.
 
+## Round 13: taller, slimmer bodies (Nov 24 night, version 1795580776-74a0)
+- Barry asked for taller, slimmer players, keepers included (same build as players, plus gloves). sprites.js BODY_SX 0.86 / BODY_SY 1.12.
+- drawBodyFit(x, y, draw) draws a figure at native sprite-pixel size on a small offscreen canvas (BODY_BOX: sprite x -42..42, y -58..18), then stretches it onto the screen with nearest-neighbour scaling from the feet. It keeps the pixels crisp; a plain fractional ctx.scale would smear them. drawShadowed's dark pass (a patched fillRect on the screen canvas) is carried over with a source-atop fill.
+- Wrapped entry points: drawSkater, drawGoalie (drawGoalieRaw), drawRef (drawRefRaw), drawBenchie (drawBenchieRaw), drawBenchGoalie (drawBenchGoalieRaw). Officials and attendants are unchanged. The ball-at-feet offset (p._blade) is scaled to match.
+- Cost: about 1 to 3 ms a frame in headless tests (14.3 ms becomes 15.8 to 17 ms). A first attempt that snapped every rectangle to the pixel grid cost about 15 ms and was dropped.
+- Also: the Lucky Orange Tape unlock is described as sock tape, Victory Boot became Victory Stripes (boot stripes), and the legend screen says "Keeper shirt:" instead of "Mask:".
+
 ## Known leftovers / ideas
 The live to-do list is NIGHTLY-LIST.md in the Pixel-Soccer repo. Background:
 - Goal rate about 4–5 a match: Barry is happy with it (24 Nov). Levers if that changes: GK_REACH (1.9), GK.chal (26), ADDED.

@@ -2,6 +2,25 @@
 
 The two reports below were written before this repository existed and were first kept in the Claude project (claude/pixel-soccer-nightly.md). From 25 Nov 2026 the nightly run writes here.
 
+## 24 Nov 2026, late night (Pixel Soccer project chat, not a nightly run)
+
+**Short version:** as Barry asked, players are now a little taller and slimmer, and keepers have exactly the same build, just with gloves. Referees and bench players match. The pixels stay sharp. Published, zero errors.
+
+### What I did
+- Every player, keeper, referee and bench player is about 12% taller and 14% slimmer, standing on the same spot. [Before (left) and after (right)](nightly/2026-11-24/taller-slimmer.png).
+- The ball still sits at the player's feet.
+- Small wording fixes: the first-goal unlock is orange **sock** tape, the first-win unlock is purple **boot stripes**, and the legends screen says "Keeper shirt" instead of "Mask".
+
+### Health
+- 4 computer-vs-computer matches, a real-time match with intro, goal card and three stars, a 115-game season sim, every menu screen and the gear screens: no page errors (the Dream Builder note from earlier still applies).
+- Speed: about 1 to 3 thousandths of a second more per frame in testing, too little to notice.
+
+### What Barry should check
+- Play a match and see if the new build feels right. It's one setting, so it's easy to make them even taller or slimmer.
+
+### Page versions
+- Started from **1795579059-7bca**, published **1795580776-74a0**. To roll back, republish 1795579059-7bca.
+
 ## 24 Nov 2026, night (Pixel Soccer project chat, not a nightly run)
 
 **Short version:** every player and all the customisation are now football kit. Player cards show footballers instead of hockey helmets and goalie masks. The gear menus offer boots, socks, shorts, shirts, shin pads, sock tape and extras, and keepers get shirt designs (52 of them) instead of masks. Published, zero errors.
