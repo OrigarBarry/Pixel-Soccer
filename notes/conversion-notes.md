@@ -6,7 +6,7 @@ The user knows hockey well but not soccer, and has given creative liberty on soc
 
 Nightly runs (from Nov 24): two a night, run 1 at 11:09 pm and run 2 at 4:09 am America/Dawson_Creek. Both prompts were rewritten on Nov 24 (about 10:15 Whitehorse) for the new repo below; they no longer mention the sin bin.
 
-Repository: **OrigarBarry/Pixel-Soccer** (Barry, Nov 24: Pixel Soccer should not depend on Pixel Hockey). It holds game/ (copy of the live page, synced at version 1795533811-0755), NIGHTLY-LIST.md (the to-do list), NIGHTLY.md (the nightly reports), notes/conversion-notes.md (this doc) and CLAUDE.md (working rules). Earlier on Nov 24 another chat had put a soccer/ folder inside OrigarBarry/pixel-hockey (commit 2e90712) with its own soccer/NIGHTLY-LIST.md; that folder is now retired. Its list couldn't be read from the chat that made the move (no access to pixel-hockey there), so its open items still need merging into the new NIGHTLY-LIST.md: a chat that can open pixel-hockey should copy any items missing from the new list, then mark soccer/ as moved.
+Repository: **OrigarBarry/Pixel-Soccer** (Barry, Nov 24: Pixel Soccer should not depend on Pixel Hockey). It holds game/ (copy of the live page, synced at version 1795533811-0755), NIGHTLY-LIST.md (the to-do list), NIGHTLY.md (the nightly reports), notes/conversion-notes.md (this doc) and CLAUDE.md (working rules). Earlier on Nov 24 another chat had put a soccer/ folder inside OrigarBarry/pixel-hockey (commit 2e90712) with its own list and reports. That folder has since been removed from pixel-hockey (commit f2913eb); its list items, done items, afternoon report and screenshots were merged into this repo on Nov 24 evening.
 
 ## Design decisions
 - Stays 3-on-3 with rolling line changes (the AI, tactics and league are built around it). No offside.
@@ -97,4 +97,3 @@ The live to-do list is NIGHTLY-LIST.md in the Pixel-Soccer repo. Background:
 - Keepers rarely catch crosses cleanly (they collect on the bounce); could tune the claim reach if crosses feel too strong.
 - fight.js is still loaded (other files call it) but never triggers.
 - Overload and Hold Out challenges keep 4v3 / 3v2 as optional arcade modes.
-- The old soccer list in the pixel-hockey repo still needs merging (top of NIGHTLY-LIST.md).
