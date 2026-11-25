@@ -73,17 +73,38 @@ function devPanel(p, rerender) {
 // ---------- notices: legacy items, achievements, traits, distinctions
 function showNotices() {
   const save = UI.save; if (!save || !(save.notices || []).length || document.querySelector('.modal')) return;
-  const list = save.notices.splice(0, 14); Store.autosave(save);   // simultaneous unlocks are grouped into one notice
-  const legacy = list.filter(n => n.kind === 'legacy'), rest = list.filter(n => n.kind !== 'legacy');
+  // (Nov 23) WHILE YOU WERE AWAY: everything since the last look in one card, sorted. Big moments first, then sponsor
+  // offers (one row per player, newest offer only: a new offer replaces the old one), then the rest of the club news.
+  const list = save.notices.splice(0, save.notices.length); Store.autosave(save);
+  const isOffer = n => n.kind === 'offer' || (typeof n.text === 'string' && n.text.startsWith('SPONSOR OFFER:'));
+  const legacy = list.filter(n => n.kind === 'legacy');
+  const big = list.filter(n => ['ach', 'trait', 'distinction', 'unlock'].includes(n.kind) || n.s2);
+  const offers = [], seen = new Map();
+  for (const n of list.filter(isOffer)) { const k = n.pid || String(n.text).replace(/\(.*$/, '').split(' wants ')[1] || n.text; seen.set(k, n); }
+  for (const n of seen.values()) { const p = n.pid && typeof Pl === 'function' ? Pl(n.pid) : null;   // only offers still open (they expire)
+    if (!n.pid || (p && p.spon && p.spon.offer && p.teamId === save.userTeamId)) offers.push(n); }
+  const other = list.filter(n => !legacy.includes(n) && !big.includes(n) && !isOffer(n) && n.text);
+  const row = n => h('div', { style: { fontSize: '9px', lineHeight: 2, margin: '6px 0' } },
+    n.kind === 'ach' ? ['★ ACHIEVEMENT: ', h('span', { class: 'gold' }, (ACH_BY_ID[n.ach] || {}).name), n.test ? ' (test)' : '', h('div', { class: 'muted', style: { fontSize: '7px' } }, (ACH_BY_ID[n.ach] || {}).desc)]
+      : n.kind === 'trait' ? ['✚ NEW TRAIT: ', h('span', { class: 'gold' }, (Pl(n.pid) ? Pl(n.pid).first + ' ' + Pl(n.pid).last : '') + ' — ' + (TRAITS[n.trait] || {}).name), h('div', { class: 'muted', style: { fontSize: '7px' } }, n.why || '')]
+        : n.kind === 'distinction' ? ['♛ LEADERSHIP DISTINCTION: ', h('span', { class: 'gold' }, (Pl(n.pid) ? Pl(n.pid).last : '') + ' — ' + (LEAD_STYLES[n.style] || {}).name)]
+          : n.text || '');
+  const head = t => h('div', { class: 'muted', style: { fontSize: '7px', letterSpacing: '1px', margin: '10px 0 2px', borderBottom: '1px solid #ffffff22', paddingBottom: '3px' } }, t);
+  const MAXO = 6, MAXN = 8;
+  const offerRow = n => { const t = String(n.text).replace(/^SPONSOR OFFER:\s*/, '').replace(/\.\s*See his profile\.?$/, '');
+    return h('div', { style: { fontSize: '8px', lineHeight: 1.9 } }, '• ' + t); };
+  const many = list.length >= 3;
   modal(close => h('div', null,
+    many ? h('h2', { class: 'gold', style: { margin: '0 0 4px' } }, 'WHILE YOU WERE AWAY') : null,
     legacy.map(n => { const it = save.memorabilia.find(m => m.id === n.memo); return it ? h('div', { class: 'legacynote' }, h('div', { class: 'muted', style: { fontSize: '8px' } }, 'LEGACY ITEM UNLOCKED'), memoCanvas(it, 112), h('h2', { class: 'gold' }, it.name.toUpperCase()), h('div', { class: 'sub' }, it.text), it.playerName ? h('div', { class: 'muted', style: { fontSize: '7px' } }, `#${it.num} ${it.playerName} made his picks. Want to change anything?`) : null,
       typeof memoCustomizeDlg === 'function' ? h('button', { class: 'small', style: { marginTop: '6px' }, onclick: () => { close(); memoCustomizeDlg(it, () => showNotices()); } }, '🎨 CUSTOMIZE WITH ' + (it.playerName ? it.playerName.split(' ').slice(-1)[0].toUpperCase() : 'THE CLUB')) : null) : null; }),
-    rest.map(n => h('div', { style: { fontSize: '9px', lineHeight: 2, margin: '6px 0' } },
-      n.kind === 'ach' ? ['★ ACHIEVEMENT: ', h('span', { class: 'gold' }, (ACH_BY_ID[n.ach] || {}).name), n.test ? ' (test)' : '', h('div', { class: 'muted', style: { fontSize: '7px' } }, (ACH_BY_ID[n.ach] || {}).desc)]
-        : n.kind === 'trait' ? ['✚ NEW TRAIT: ', h('span', { class: 'gold' }, (Pl(n.pid) ? Pl(n.pid).first + ' ' + Pl(n.pid).last : '') + ' — ' + (TRAITS[n.trait] || {}).name), h('div', { class: 'muted', style: { fontSize: '7px' } }, n.why || '')]
-          : n.kind === 'distinction' ? ['♛ LEADERSHIP DISTINCTION: ', h('span', { class: 'gold' }, (Pl(n.pid) ? Pl(n.pid).last : '') + ' — ' + (LEAD_STYLES[n.style] || {}).name)]
-            : n.text || '')),
-    h('div', { class: 'row' }, h('button', { class: 'primary', onclick: close }, 'NICE!'), legacy.length ? h('button', { onclick: () => { close(); go(scrLegacy); } }, 'OPEN CABINET') : null)));
+    big.map(row),
+    offers.length ? [head(`SPONSOR OFFERS · ${offers.length} PLAYER${offers.length === 1 ? '' : 'S'}`), offers.slice(0, MAXO).map(offerRow),
+      offers.length > MAXO ? h('div', { class: 'muted', style: { fontSize: '7px' } }, `+ ${offers.length - MAXO} more`) : null,
+      h('button', { class: 'small', style: { marginTop: '4px' }, onclick: () => { close(); UI.tabMem = UI.tabMem || {}; UI.tabMem.sponsorside = 1; typeof push === 'function' ? push(scrSponsors) : go(scrSponsors); } }, 'SEE PLAYER DEALS ▶')] : null,
+    other.length ? [many && (big.length || offers.length) ? head('CLUB NEWS') : null, other.slice(0, MAXN).map(row),
+      other.length > MAXN ? h('div', { class: 'muted', style: { fontSize: '7px' } }, `+ ${other.length - MAXN} more`) : null] : null,
+    h('div', { class: 'row', style: { marginTop: '10px' } }, h('button', { class: 'primary', onclick: close }, many ? 'GOT IT' : 'NICE!'), legacy.length ? h('button', { onclick: () => { close(); go(scrLegacy); } }, 'OPEN CABINET') : null)));
 }
 
 // ---------- memorabilia drawing (simple pixel objects in the franchise colours)
