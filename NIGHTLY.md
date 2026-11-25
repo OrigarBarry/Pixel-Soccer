@@ -2,6 +2,31 @@
 
 The two reports below were written before this repository existed and were first kept in the Claude project (claude/pixel-soccer-nightly.md). From 25 Nov 2026 the nightly run writes here.
 
+## 24 Nov 2026, afternoon (Pixel Soccer project chat, not a nightly run)
+
+**Short version:** the hockey glass is gone. Behind the far goal there's now a football-style ball-stop net: a straight run of netting on posts, standing in front of the fans, and it ripples when a shot flies over the bar. Published, zero errors.
+
+### What I did
+- Took the top item on the list (the hockey glass) and marked it taken first.
+- The old "glass" (already drawn as netting) curved round the rink's corners on posts like hockey glass, and sat behind the crowd, so only a dark band showed. Now:
+  - **One straight net behind the far goal**, about as wide as the penalty box, on seven posts with a sagging top cable. Nothing round the corners or down the sides.
+  - **It stands in front of the fans** behind that goal, so you see them through the mesh.
+  - **A shot over the bar ripples it.**
+  - **Arena menu > Ball-stop nets** (White / Black / Gold) changes its colour, and the menu's preview shows it.
+- Pictures: [the net, still and rippling](nightly/2026-11-24/ball-stop-net.png), [the Arena menu preview](nightly/2026-11-24/arena-preview.png).
+- Added a new item to the list: the hoardings still have the rink's rounded corners and white hockey boards.
+
+### Health
+- 5 computer-vs-computer matches, a real-time match with intro, goal card and three-stars outro, a 115-game season sim, and the Arena, main menu and Settings screens: no page errors.
+- Goals were about 5 a match, as the nightly run found. That question is still under "Ask Barry first".
+
+### What Barry should check
+- Play a match and look at the far end: the net behind the goal, and blaze one over the bar.
+- Season > Arena > Ball-stop nets: try White, Black and Gold.
+
+### Page versions
+- Started from **1795533811-0755**, published **1795563851-4b63**. To roll back, republish 1795533811-0755.
+
 ## Night of 24 Nov 2026 (run at 04:10 Dawson Creek time)
 
 **Short version:** published a fixed build. The half-time clock bug from last night is fixed (every match now starts its first half on the full time, and your very first game really gets one-minute halves). I also fixed two wording slips and replaced two leftover hockey pictures: the main-menu backdrop and the Settings camera preview now show a grass pitch instead of an ice rink. Zero errors in testing. Goals are running high (about 5 a match), which needs your call.

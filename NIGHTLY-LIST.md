@@ -3,7 +3,8 @@
 The nightly run takes the top unticked item under "Next up". Barry and his chats edit this list. Anything under "Ask Barry first" is never built until Barry decides.
 
 ## Next up
-- [ ] **Merge the old list.** (24 Nov evening: the chat was refused access to pixel-hockey three times; a nightly run or Barry may have more luck.) Before 24 Nov another chat kept a soccer to-do list at soccer/NIGHTLY-LIST.md inside the OrigarBarry/pixel-hockey repo. If you can open that repo, copy any of its open items that are missing here (keep their order, above the items below), then stop using it. If you can't open it, say so in the report and carry on.
+- [ ] **Hoardings:** the pitch is still edged by the rink's rounded corners and white hockey boards with a yellow kick strip. A football ground has straight advertising hoardings with square corners. Visual only: keep the pitch and ball physics as they are. *(from the old list in pixel-hockey)*
+- [ ] **Commentary that still reads like hockey:** rewrite it properly, a batch a night, until none is left. Most player-facing text was swept on 24 Nov (see notes/conversion-notes.md); what's left is mostly long-tail commentary lines. *(from the old list)*
 - [ ] **From Pixel Hockey (compared 24 Nov with hockey page version 1795563867-b742), one at a time:**
   - [x] **Real-name guard:** *(done 24 Nov, version 1795570671-461c)* generated players never share a full name with a famous real player. Hockey uses NHL names; soccer needs a list of famous footballers (realnames.js).
   - [x] **Small screen fixes:** *(done 24 Nov, version 1795570671-461c)* coach tips sized to the real text, never more than two pop-up messages piled up, help lines as "plain sentence, details underneath", side-screen captions and star card text that no longer wrap or get cut off (coach.js, broadcast.js, help.js, index.html).
@@ -14,6 +15,8 @@ The nightly run takes the top unticked item under "Next up". Barry and his chats
   - [ ] **The Look Studio:** one screen for everything your team wears (identity, colours, kits, player gear, saved looks with share codes), replacing three editors. Needs soccer gear (boots, shin pads, keeper gloves) instead of sticks, skates and goalie masks (studio.js, a big job).
   - [ ] **Broadcast desk:** hockey's PUCK TALK show has grown a lot (much more banter and audio). Check what soccer's desk shows today and port what fits, rewritten for soccer (desk.js, deskaudio.js, deskbanter.js, a big job).
   - Skipped (hockey only): fight changes (players fired up / rattled after a fight).
+
+- [ ] **Football feel:** ball physics, first touch, keeper positioning and saves, set pieces, crowd and chants. *(from the old list)*
 
 ## Ask Barry first
 (Nothing waiting. Barry answered the four questions on 24 Nov, see "Barry's decisions" below.)
@@ -33,13 +36,16 @@ The nightly run takes the top unticked item under "Next up". Barry and his chats
 - 24 Nov 2026: main-menu backdrop and Settings camera preview still showed an ice rink. Fixed (grass pitch).
 
 ## Done
+- [x] 24 Nov 2026: Merged the old soccer list from the pixel-hockey repo (its soccer/ folder has since been removed there).
+- [x] 24 Nov 2026 (project chat, version 1795563851-4b63): Hockey glass replaced by a straight ball-stop net on posts behind the far goal that ripples when a shot flies over; White / Black / Gold in the Arena menu.
+- [x] 23 Nov 2026: Golden Boot trophy drawn as a gold boot.
+- [x] 23–24 Nov 2026: Team crests and board icons with puck or stick designs now show a ball or a boot.
 - [x] 24 Nov 2026 (chat, page version 1795564774-6935): **Keeper goes up for a last-minute corner.** Losing side, last 15% of the second half, added time or late extra time. He sprints up, the corner waits for him (defenders keep their distance), the cross often goes to him, and he races back if it's cleared. In 16 test corners the trailing side equalised 5 times and conceded into the empty net once.
 - [x] 24 Nov 2026: **Added time and advantage tested** in 48 full CPU matches: added time +1 to +4 a half, no freezes, no errors. Advantage was too rare (1 foul in 15): now allowed anywhere outside the fouled side's own third, with a teammate as close to the ball as any opponent; it now comes up on about 1 foul in 4.
 - [x] 24 Nov 2026: Head-to-head record now shows wins-draws-losses.
 - [x] 24 Nov 2026: Today's Challenge: "Extra Attacker" became "Last Gasp" (no pulled keeper, 1:00 to play); "the third" → "the second half"; "they will pull their keeper" → "they will throw everyone forward".
 - [x] 24 Nov 2026: "The Hammer" award is for the best tackler (it counts the TKL stat).
 - [x] 24 Nov 2026: Browser tab icon: a little pixel soccer ball.
-- [x] 24 Nov 2026: Glass behind the goals: already netting on every setting; another chat is drawing a proper ball-stop net (page version 1795563851-4b63).
 - [x] 24 Nov 2026: Wording pass: hockey terms players could see replaced with soccer ones.
 - [x] 24 Nov 2026: Added time and advantage rules; three unwinnable achievements replaced; help updated.
 - [x] 24 Nov 2026: Moved to its own repository (OrigarBarry/Pixel-Soccer).
