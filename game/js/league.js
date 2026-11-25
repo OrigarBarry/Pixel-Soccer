@@ -1984,7 +1984,11 @@ function archiveGameClips(save, g, res, opts = {}) {
   return out.filter(id => save.clips[id]);
 }
 const clipPinned = (save, c) => !c.auto || c.legendary || save.trophies.some(t => (t.clipIds || []).includes(c.id));
+// Nov 23: every clip is kept until the player deletes it (LEAGUE HISTORY > HIGHLIGHTS, or the post-game highlights).
+// The old recycling (lowest-importance automatic clips beyond CLIP_AUTO_CAP deleted) is off; CLIP_RECYCLE = true brings it back.
+const CLIP_RECYCLE = false;
 function pruneClips(save) {
+  if (!CLIP_RECYCLE) return;
   const auto = Object.values(save.clips).filter(c => !clipPinned(save, c));
   if (auto.length <= CLIP_AUTO_CAP) return;
   auto.sort((a, b) => (a.imp - b.imp) || (a.created - b.created));

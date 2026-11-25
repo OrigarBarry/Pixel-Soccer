@@ -418,7 +418,7 @@ function outroNext() {
   }
   if (it.clip) { jbDrop('outro', it); if (JB.head) JB.head.textContent = 'TOP HIGHLIGHTS · ' + (it.n + 1) + ' OF ' + it.of; }
   else jbDrop('outro', it);
-  if (it.clip && S.match.season && JB.cap) JB.cap.textContent += ' · K = KEEP';
+  // (Nov 23 in Pixel Hockey, ported Nov 24: no 'K = KEEP' hint any more: every clip is kept until the player deletes it)
 }
 // SPACE: on to the next part of the outro (one at a time), not straight out of it
 function outroSkip() {

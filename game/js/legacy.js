@@ -400,25 +400,49 @@ function scrTeam(tid) {
 //  HIGHLIGHT ARCHIVE (League History tab)
 // ====================================================================
 function highlightArchive() {
+  // Nov 23: every clip is kept until you delete it. Delete one with DELETE, or many with SELECT (filter first, then
+  // SELECT ALL SHOWN). Pages instead of a long list, so the screen never scrolls.
   const save = UI.save, box = h('div');
-  const F = UI.archF = UI.archF || { kind: 'all', comp: 'all' };
+  const F = UI.archF = UI.archF || { kind: 'all', comp: 'all', season: 'all' }; if (!F.season) F.season = 'all';
+  const sel = UI.archSel = UI.archSel || { on: false, ids: new Set() };
+  const kb = n => n >= 1024 * 1024 ? (n / 1024 / 1024).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB';
+  const per = Math.max(3, Math.floor((innerHeight < 700 ? 4 : 5) / Math.max(1, (TEXT_SIZES[S.textSize] || 1) * 0.85)));
+  const delMany = ids => {
+    const cs = ids.map(id => save.clips[id]).filter(Boolean); if (!cs.length) return;
+    const leg = cs.filter(c => c.legendary).length, trs = cs.filter(c => save.trophies.some(t => (t.clipIds || []).includes(c.id))).length;
+    const warn = (leg ? ` ${leg} of them ${leg > 1 ? 'are Legendary Moments' : 'is a Legendary Moment'}.` : '') + (trs ? ` ${trs} ${trs > 1 ? 'are' : 'is'} attached to a trophy (the trophy stays, the link is removed).` : '');
+    confirmDlg(`Delete ${cs.length} clip${cs.length > 1 ? 's' : ''} from your archive for good?${warn} This can't be undone.`, 'DELETE ' + cs.length, () => {
+      for (const c of cs) deleteClip(save, c.id); sel.ids.clear(); Store.autosave(save); render(); toast(`Deleted ${cs.length} clip${cs.length > 1 ? 's' : ''}.`); }, true);
+  };
   const render = () => {
     box.innerHTML = '';
     const clips = Object.values(save.clips || {});
+    for (const id of [...sel.ids]) if (!save.clips[id]) sel.ids.delete(id);
     const used = clips.reduce((a, c) => a + (c.frames ? c.frames.d.length : 0), 0);
-    box.appendChild(h('div', { class: 'row', style: { justifyContent: 'flex-start' } },
-      h('select', { onchange: e => { F.kind = e.target.value; render(); } }, [['all', 'All events']].concat(Object.entries(CLIP_KIND_NAMES)).map(([v, l]) => h('option', { value: v, selected: v === F.kind }, l))),
-      h('select', { onchange: e => { F.comp = e.target.value; render(); } }, [['all', 'All competitions'], ['reg', 'Regular season'], ['exh', 'Exhibition']].concat(Object.keys(COMP_INFO).map(k => [k, COMP_INFO[k].name])).map(([v, l]) => h('option', { value: v, selected: v === F.comp }, l))),
-      h('span', { class: 'muted', style: { fontSize: '7px' } }, `${clips.length} clips · ${Math.round(used / 1024)} KB · automatic clips beyond ${CLIP_AUTO_CAP} are recycled (kept, legendary and trophy clips never are)`)));
-    const list = clips.filter(c => (F.kind === 'all' || c.kind === F.kind) && (F.comp === 'all' || (c.ctx.comp || c.ctx.type) === F.comp))
-      .sort((a, b) => (b.legendary - a.legendary) || (b.ctx.season - a.ctx.season) || (b.created - a.created));
-    if (!list.length) box.appendChild(h('div', { class: 'panel sub' }, 'No highlights yet. Goals, big saves, big tackles and feints from games you play are recorded automatically.'));
-    for (const c of list.slice(0, 80)) {
-      const pinned = clipPinned(save, c), tr = save.trophies.filter(t => (t.clipIds || []).includes(c.id));
-      box.appendChild(clipRow(c, h('span', { style: { display: 'flex', gap: '6px' } },
-        c.auto ? h('button', { class: 'small', title: 'Keep forever (never recycled)', onclick: () => { c.auto = false; Store.autosave(save); render(); } }, '★ KEEP') : (!c.legendary && !tr.length ? h('button', { class: 'small ghost', title: 'Let it be recycled', onclick: () => { c.auto = true; Store.autosave(save); render(); } }, 'UNKEEP') : null),
-        h('button', { class: 'small danger', onclick: () => confirmDlg(`Delete this clip from the archive?${tr.length ? ' It is attached to ' + tr.length + ' trophy record(s); the trophies stay, the link is removed.' : ''} This can't be undone.`, 'DELETE CLIP', () => { deleteClip(save, c.id); Store.autosave(save); render(); }, true) }, 'DELETE'))));
-    }
+    const seasons = [...new Set(clips.map(c => (c.ctx && c.ctx.season) || 0))].sort((a, b) => b - a);
+    const opt = (v, l, cur) => h('option', { value: v, selected: String(v) === String(cur) }, l);
+    box.appendChild(h('div', { class: 'row', style: { justifyContent: 'flex-start', flexWrap: 'wrap', gap: '6px' } },
+      h('select', { onchange: e => { F.kind = e.target.value; UI.pageMem && (UI.pageMem.archPg = 0); render(); } }, [['all', 'All events']].concat(Object.entries(CLIP_KIND_NAMES)).map(([v, l]) => opt(v, l, F.kind))),
+      h('select', { onchange: e => { F.comp = e.target.value; UI.pageMem && (UI.pageMem.archPg = 0); render(); } }, [['all', 'All competitions'], ['reg', 'Regular season'], ['exh', 'Exhibition']].concat(Object.keys(COMP_INFO).map(k => [k, COMP_INFO[k].name])).map(([v, l]) => opt(v, l, F.comp))),
+      h('select', { onchange: e => { F.season = e.target.value; UI.pageMem && (UI.pageMem.archPg = 0); render(); } }, [opt('all', 'All seasons', F.season)].concat(seasons.map(n => opt(n, n ? 'Season ' + n + (save.season && save.season.num === n ? ' (this season)' : '') : 'No season', F.season)))),
+      h('button', { class: 'small' + (sel.on ? ' primary' : ''), 'data-help': 'Pick clips to delete several at once', onclick: () => { sel.on = !sel.on; if (!sel.on) sel.ids.clear(); render(); } }, sel.on ? '✓ SELECTING' : 'SELECT')));
+    const list = clips.filter(c => (F.kind === 'all' || c.kind === F.kind) && (F.comp === 'all' || ((c.ctx && (c.ctx.comp || c.ctx.type)) === F.comp)) && (F.season === 'all' || String((c.ctx && c.ctx.season) || 0) === String(F.season)))
+      .sort((a, b) => (b.legendary - a.legendary) || ((b.ctx && b.ctx.season) - (a.ctx && a.ctx.season)) || (b.created - a.created));
+    const stored = Store.lastStored ? ` · your whole save is stored as ${kb(Store.lastStored)}` : '';
+    box.appendChild(h('div', { class: 'muted', style: { fontSize: '7px', margin: '4px 0' } }, `${clips.length} clip${clips.length === 1 ? '' : 's'} (${kb(used)})${stored} · Every clip is kept until you delete it.`));
+    if (sel.on) box.appendChild(h('div', { class: 'row', style: { justifyContent: 'flex-start', gap: '6px', margin: '2px 0 4px' } },
+      h('button', { class: 'small', disabled: !list.length, onclick: () => { const all = list.every(c => sel.ids.has(c.id)); for (const c of list) all ? sel.ids.delete(c.id) : sel.ids.add(c.id); render(); } }, list.length && list.every(c => sel.ids.has(c.id)) ? 'UNSELECT ALL SHOWN' : `SELECT ALL SHOWN (${list.length})`),
+      h('button', { class: 'small danger', disabled: !sel.ids.size, onclick: () => delMany([...sel.ids]) }, `DELETE SELECTED (${sel.ids.size})`),
+      sel.ids.size ? h('button', { class: 'small ghost', onclick: () => { sel.ids.clear(); render(); } }, 'CLEAR') : null));
+    if (!list.length) { box.appendChild(h('div', { class: 'panel sub' }, clips.length ? 'No clips match these filters.' : 'No highlights yet. Goals, big saves, big tackles and feints from games you play are recorded automatically.')); return; }
+    box.appendChild(pages('archPg', list, per, page => h('div', null, page.map(c => {
+      const tr = save.trophies.filter(t => (t.clipIds || []).includes(c.id));
+      const pick = sel.on ? h('label', { class: 'clippick', style: { display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' } },
+        h('input', { type: 'checkbox', checked: sel.ids.has(c.id), onchange: e => { e.target.checked ? sel.ids.add(c.id) : sel.ids.delete(c.id); render(); } }), 'PICK') : null;
+      return clipRow(c, h('span', { style: { display: 'flex', gap: '6px', alignItems: 'center' } }, pick,
+        sel.on ? null : h('button', { class: 'small danger', onclick: () => delMany([c.id]) }, 'DELETE')));
+    }))));
+    setTimeout(() => typeof fitZoomEl === 'function' && fitZoomEl(box), 0);
   };
   render();
   return box;
