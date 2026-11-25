@@ -3,7 +3,7 @@
 The nightly run takes the top unticked item under "Next up". Barry and his chats edit this list. Anything under "Ask Barry first" is never built until Barry decides.
 
 ## Next up
-- [ ] **Commentary that still reads like hockey:** rewrite it properly, a batch a night, until none is left. Most player-facing text was swept on 24 Nov (see notes/conversion-notes.md); what's left is mostly long-tail commentary lines. *(from the old list)*
+- [ ] **Taken (24 Nov 20:30, Pixel Soccer project chat; skip it unless this line says it stopped unfinished).** **Commentary that still reads like hockey:** rewrite it properly, a batch a night, until none is left. Most player-facing text was swept on 24 Nov (see notes/conversion-notes.md); what's left is mostly long-tail commentary lines. *(from the old list)*
 - [ ] **From Pixel Hockey (compared 24 Nov with hockey page version 1795563867-b742), one at a time:**
   - [x] **Real-name guard:** *(done 24 Nov, version 1795570671-461c)* generated players never share a full name with a famous real player. Hockey uses NHL names; soccer needs a list of famous footballers (realnames.js).
   - [x] **Small screen fixes:** *(done 24 Nov, version 1795570671-461c)* coach tips sized to the real text, never more than two pop-up messages piled up, help lines as "plain sentence, details underneath", side-screen captions and star card text that no longer wrap or get cut off (coach.js, broadcast.js, help.js, index.html).
