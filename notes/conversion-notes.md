@@ -91,6 +91,10 @@ Compared file by file with the hockey page (version 1795563867-b742; read throug
 - **While You Were Away:** showNotices() is hockey's: big moments, sponsor offers grouped (one per player, still-open only) with SEE PLAYER DEALS, then club news, capped lists.
 - Not yet ported (big jobs, on the list): jersey backs and kit number styles, the Look Studio, the broadcast desk expansion.
 
+## Round 10: football hoardings (Nov 24 evening, version 1795575974-d33a)
+- Corners: R.cr 16 → 7. The corners sit behind the goal lines (out of play), so in-play ball physics is unchanged; 7 stays above the keeper's radius (6.2), which the corner collision maths in constrain() needs. The boards, grass clip and pitch edge are drawn with HOARD_R = 1.5, so they meet at square corners.
+- Default board style "classic" is now a dark steel frame round the ad panels (no white hockey boards). No style draws the yellow kickplate any more; only LED keeps its dark base strip. The Arena label is "Steel frame" ("Classic hoardings" was cut off in the dropdown).
+
 ## Known leftovers / ideas
 The live to-do list is NIGHTLY-LIST.md in the Pixel-Soccer repo. Background:
 - Goal rate about 4–5 a match: Barry is happy with it (24 Nov). Levers if that changes: GK_REACH (1.9), GK.chal (26), ADDED.

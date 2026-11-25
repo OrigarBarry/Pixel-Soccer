@@ -3,7 +3,6 @@
 The nightly run takes the top unticked item under "Next up". Barry and his chats edit this list. Anything under "Ask Barry first" is never built until Barry decides.
 
 ## Next up
-- [ ] **Taken (24 Nov 20:05, Pixel Soccer project chat; skip it unless this line says it stopped unfinished).** **Hoardings:** the pitch is still edged by the rink's rounded corners and white hockey boards with a yellow kick strip. A football ground has straight advertising hoardings with square corners. Visual only: keep the pitch and ball physics as they are. *(from the old list in pixel-hockey)*
 - [ ] **Commentary that still reads like hockey:** rewrite it properly, a batch a night, until none is left. Most player-facing text was swept on 24 Nov (see notes/conversion-notes.md); what's left is mostly long-tail commentary lines. *(from the old list)*
 - [ ] **From Pixel Hockey (compared 24 Nov with hockey page version 1795563867-b742), one at a time:**
   - [x] **Real-name guard:** *(done 24 Nov, version 1795570671-461c)* generated players never share a full name with a famous real player. Hockey uses NHL names; soccer needs a list of famous footballers (realnames.js).
@@ -36,6 +35,7 @@ The nightly run takes the top unticked item under "Next up". Barry and his chats
 - 24 Nov 2026: main-menu backdrop and Settings camera preview still showed an ice rink. Fixed (grass pitch).
 
 ## Done
+- [x] **Hoardings:** square corners, a dark steel frame round the ad panels, no hockey kickplate; Arena option renamed "Steel frame" (24 Nov evening, version 1795575974-d33a).
 - [x] 24 Nov 2026: Merged the old soccer list from the pixel-hockey repo (its soccer/ folder has since been removed there).
 - [x] 24 Nov 2026 (project chat, version 1795563851-4b63): Hockey glass replaced by a straight ball-stop net on posts behind the far goal that ripples when a shot flies over; White / Black / Gold in the Arena menu.
 - [x] 23 Nov 2026: Golden Boot trophy drawn as a gold boot.

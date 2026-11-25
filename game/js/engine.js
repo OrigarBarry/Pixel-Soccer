@@ -10,7 +10,7 @@ const HUDH = 26;             // HUD strip height (world units)
 // benches, the tunnels and the stands around it did not. RINK_S converts old rink distances to the new rink.
 const RINK_S = 1.15, RINK_GEO = 2;
 const W = 532, H = 821;
-const R = { l: 100, r: 432, t: 116, b: 707, cr: 16 };   // deep stands all around (SOCCER: the hoardings round the pitch, nearly square at the corners)
+const R = { l: 100, r: 432, t: 116, b: 707, cr: 7 };    // SOCCER: cr 7 (was 16): the corners are behind the goal lines, out of play; 7 stays above the keeper's radius (6.2) so the corner collision maths holds   // deep stands all around (SOCCER: the hoardings round the pitch, nearly square at the corners)
 const CX = (R.l + R.r) / 2, CY = (R.t + R.b) / 2;
 const GL_TOP = R.t + 46, GL_BOT = R.b - 46;
 const TL_L = R.l + 7, TL_R = R.r - 7;     // SOCCER: the touchlines (the goal lines are GL_TOP / GL_BOT); beyond them, the run-off grass to the hoardings
@@ -4152,7 +4152,7 @@ function clearMarks() {
   if (!marksCvs) { marksCvs = mkCanvas(W * K, H * K); marksCtx = marksCvs.getContext('2d'); }
   marksCtx.setTransform(1, 0, 0, 1, 0, 0); marksCtx.clearRect(0, 0, marksCvs.width, marksCvs.height);
   marksCtx.setTransform(K, 0, 0, K, 0, 0);
-  marksCtx.save(); roundRectPath(marksCtx, R.l, R.t, R.r - R.l, R.b - R.t, R.cr); marksCtx.clip();
+  marksCtx.save(); roundRectPath(marksCtx, R.l, R.t, R.r - R.l, R.b - R.t, HOARD_R); marksCtx.clip();
   for (const p of players) { p.mx = p.x; p.my = p.y; }
 }
 function drawMarks() {
@@ -4176,8 +4176,8 @@ function markSpray(x, y) {
 
 // ---------- BOARDS, GLASS AND ADS (arena options: boards = classic / wood / black / led, glass = clear / tinted / netting)
 const BOARD_STYLES = {
-  classic: { face: '#f4f6fa', seam: '#d3d9e4', cap: '#eef1f7', capLo: '#d4dae6', edge: '#5d6480', kick: '#f2c230', rivet: '#b9c1d0' },
-  wood:    { face: '#9a6a3c', seam: '#5e3c1f', cap: '#7a4f2a', capLo: '#5e3c1f', edge: '#3a2412', kick: '#c9a14a', rivet: '#d9b25a', grain: ['#86592f', '#a8754a'] },
+  classic: { face: '#262c3c', seam: '#363e54', cap: '#3a4256', capLo: '#2a3042', edge: '#0e1119', kick: null, rivet: '#5a6480' },   // SOCCER: football hoardings: a dark steel frame round the ad panels, no hockey kickplate
+  wood:    { face: '#9a6a3c', seam: '#5e3c1f', cap: '#7a4f2a', capLo: '#5e3c1f', edge: '#3a2412', kick: null, rivet: '#d9b25a', grain: ['#86592f', '#a8754a'] },
   black:   { face: '#1b1e2c', seam: '#2e3348', cap: '#2a2e40', capLo: '#151826', edge: '#05060d', kick: null, rivet: '#454b66' },
   led:     { face: '#0a0d1a', seam: '#1b2036', cap: '#1f2336', capLo: '#101322', edge: '#05060d', kick: '#2a2f48', rivet: '#3c4260', led: true },
 };
@@ -4236,7 +4236,7 @@ function drawAdArt(c, sl, br, opt = {}) {
   c.restore();
 }
 // the far boards stand BOARD_FACE tall (the face we see at the top end); the glass above them is GLASS_UP tall
-const BOARD_FACE = 12, GLASS_UP = 12;   // art audit (Nov 22): 8 / 10 before; taller far boards so their ads can be read
+const BOARD_FACE = 12, GLASS_UP = 12, HOARD_R = 1.5;   // SOCCER: HOARD_R: football hoardings meet at square corners (visual radius)   // art audit (Nov 22): 8 / 10 before; taller far boards so their ads can be read
 // the glass round the top end: flat panes on posts, angled round the two corners and narrowing to an edge-on line
 // down the sides (seen from above). Returns the panes as quads [base0, base1, top1, top0] (base hidden under the rail)
 function glassPanes() {
@@ -4280,11 +4280,11 @@ function drawBoardsStatic(c, AC, H0, H1, ads, adWords, tAds) {
   const B = boardStyleOf(AC), netCol = AC.glass === 'tinted' ? 'rgba(15,18,26,.55)' : AC.glass === 'netting' ? 'rgba(255,214,120,.32)' : 'rgba(235,240,250,.34)', glass = 'netting', kick = B.kick || H0.trim, BF = BOARD_FACE, BU = BF - 6;   // SOCCER: no glass, ball-stop nets behind the hoardings (the arena option picks their colour)
   // SOCCER: no glass. The ball-stop net behind the far goal is drawn live, in front of the crowd (drawBoardsLive)
   // BOARDS: the rail tops all round (outer edge, cap, inner lip)
-  roundRectPath(c, R.l - 6, R.t - 8 - BU, R.r - R.l + 12, R.b - R.t + 18 + BU, R.cr + 6); c.fillStyle = B.edge; c.fill();
-  roundRectPath(c, R.l - 6, R.t - 8 - BU, R.r - R.l + 12, R.b - R.t + 13 + BU, R.cr + 6); c.fillStyle = B.cap; c.fill();
-  roundRectPath(c, R.l - 3, R.t - 5 - BU, R.r - R.l + 6, R.b - R.t + 8 + BU, R.cr + 3); c.fillStyle = B.capLo; c.fill();
+  roundRectPath(c, R.l - 6, R.t - 8 - BU, R.r - R.l + 12, R.b - R.t + 18 + BU, HOARD_R + 2); c.fillStyle = B.edge; c.fill();
+  roundRectPath(c, R.l - 6, R.t - 8 - BU, R.r - R.l + 12, R.b - R.t + 13 + BU, HOARD_R + 2); c.fillStyle = B.cap; c.fill();
+  roundRectPath(c, R.l - 3, R.t - 5 - BU, R.r - R.l + 6, R.b - R.t + 8 + BU, HOARD_R + 1); c.fillStyle = B.capLo; c.fill();
   // the far boards' face: panels with seams and rivets (wood: planks with grain)
-  roundRectPath(c, R.l, R.t - BF, R.r - R.l, R.b - R.t + BF, R.cr); c.fillStyle = B.face; c.fill();
+  roundRectPath(c, R.l, R.t - BF, R.r - R.l, R.b - R.t + BF, HOARD_R); c.fillStyle = B.face; c.fill();
   c.fillStyle = 'rgba(255,255,255,.22)'; c.fillRect(R.l + R.cr - 8, R.t - BF, R.r - R.l - 2 * R.cr + 16, 0.5);          // the cap rail's lip
   if (B.grain) for (let y = R.t - BF + 0.5; y < R.t; y += 1.1) { c.fillStyle = B.grain[(y * 10 | 0) % 2]; c.fillRect(R.l + R.cr - 8, y, R.r - R.l - 2 * R.cr + 16, 0.35); }
   for (let x = R.l + R.cr - 8 + 24; x < R.r - R.cr + 8; x += 24) {
@@ -4308,7 +4308,7 @@ function drawBoardsStatic(c, AC, H0, H1, ads, adWords, tAds) {
     drawAdArt(c, sl, br);
   }
   // the kickplate along the bottom of the far boards
-  c.fillStyle = kick; c.fillRect(R.l + R.cr - 8, R.t - 1.7, R.r - R.l - 2 * R.cr + 16, 1.7);
+  if (B.kick) { c.fillStyle = B.kick; c.fillRect(R.l + R.cr - 8, R.t - 1.7, R.r - R.l - 2 * R.cr + 16, 1.7); }   // SOCCER: only the LED boards keep a (dark) base strip
   c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(R.l + R.cr - 8, R.t - 1.7, R.r - R.l - 2 * R.cr + 16, 0.35);
 }
 // ---------- the live parts of the boards (each frame): LED dasher boards, glints running across the glass,
@@ -4425,7 +4425,7 @@ function buildRink() {
   drawBoardsStatic(c, AC, H0, H1, ads, adWords, tAds);
 
   // SOCCER: THE PITCH. Mown grass in stripes out to the hoardings, the white lines, the home crest in the centre circle
-  c.save(); roundRectPath(c, R.l, R.t, R.r - R.l, R.b - R.t, R.cr); c.clip();
+  c.save(); roundRectPath(c, R.l, R.t, R.r - R.l, R.b - R.t, HOARD_R); c.clip();
   const STRIPE = (GL_BOT - GL_TOP) / 18;
   for (let i = -3; i < 22; i++) { const y0 = GL_TOP + i * STRIPE; c.fillStyle = i % 2 ? '#3f9a3a' : '#48a843'; c.fillRect(R.l, y0, R.r - R.l, STRIPE + 0.5); }
   for (let i = 0; i < 3200; i++) { c.fillStyle = Math.random() < 0.5 ? 'rgba(20,70,20,.22)' : 'rgba(170,230,140,.18)'; c.fillRect(R.l + Math.random() * (R.r - R.l), R.t + Math.random() * (R.b - R.t), 0.5, rand(0.8, 2)); }
@@ -4469,9 +4469,9 @@ function buildRink() {
     const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, 'rgba(255,255,230,.10)'); g.addColorStop(1, 'rgba(255,255,230,0)');
     c.fillStyle = g; c.fillRect(x - r, y - r, r * 2, r * 2);
   }
-  for (let i = 1; i <= 4; i++) { c.strokeStyle = `rgba(10,40,10,${0.05 * (5 - i) / 4 * 2})`; c.lineWidth = i * 2; roundRectPath(c, R.l, R.t, R.r - R.l, R.b - R.t, R.cr); c.stroke(); }
+  for (let i = 1; i <= 4; i++) { c.strokeStyle = `rgba(10,40,10,${0.05 * (5 - i) / 4 * 2})`; c.lineWidth = i * 2; roundRectPath(c, R.l, R.t, R.r - R.l, R.b - R.t, HOARD_R); c.stroke(); }
   c.restore();
-  c.strokeStyle = 'rgba(255,255,255,.5)'; c.lineWidth = 0.6; roundRectPath(c, R.l - 0.5, R.t - 0.5, R.r - R.l + 1, R.b - R.t + 1, R.cr); c.stroke();
+  c.strokeStyle = 'rgba(255,255,255,.5)'; c.lineWidth = 0.6; roundRectPath(c, R.l - 0.5, R.t - 0.5, R.r - R.l + 1, R.b - R.t + 1, HOARD_R); c.stroke();
   // the players' gate in the left boards (opposite centre ice), between the two benches
   c.fillStyle = '#c9d0de'; c.fillRect(R.l - 6, GATE.y0, 6, GATE.y1 - GATE.y0);
   c.fillStyle = '#8a93a8'; c.fillRect(R.l - 6, GATE.y0, 6, 1); c.fillRect(R.l - 6, GATE.y1 - 1, 6, 1); c.fillRect(R.l - 4, CY - 0.5, 4, 1);

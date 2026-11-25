@@ -12,7 +12,7 @@ const ARENA_OPTS = {
   venue:    { classic: 'Classic Arena', modern: 'Modern Dome', palace: 'Grand Soccer Palace' },
   logo:     { emblem: 'Team emblem', wordmark: 'Team wordmark', classic: 'Classic centre circle', crest: 'Crest + stripes' },
   ads:      { classic: 'Classic sponsors', retro: 'Retro arcade', local: 'Local businesses', team: 'Team slogans', premium: 'Premium sponsors', charity: 'Charity night' },
-  boards:   { classic: 'Classic white', wood: 'Vintage wood', black: 'All black', led: 'Digital LED' },
+  boards:   { classic: 'Steel frame', wood: 'Vintage wood', black: 'All black', led: 'Digital LED' },
   glass:    { clear: 'White nets', tinted: 'Black nets', netting: 'Gold nets' },
   seats:    { steel: 'Steel blue', red: 'Arena red', team: 'Team colours', black: 'Blackout', gold: 'Gold' },
   crowd:    { home: 'Home colours', mixed: 'Mixed', whiteout: 'Whiteout', blackout: 'Blackout', gold: 'Gold rush' },

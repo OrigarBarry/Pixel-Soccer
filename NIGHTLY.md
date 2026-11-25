@@ -2,6 +2,27 @@
 
 The two reports below were written before this repository existed and were first kept in the Claude project (claude/pixel-soccer-nightly.md). From 25 Nov 2026 the nightly run writes here.
 
+## 24 Nov 2026, evening (Pixel Soccer project chat, not a nightly run)
+
+**Short version:** the pitch is now edged like a football ground: straight advertising hoardings that meet at square corners, in a dark steel frame, with no yellow hockey kick strip. Published, zero errors.
+
+### What I did
+- Took the top item on the list (hoardings) and marked it taken first.
+- The pitch's corners were the rink's rounded corners. They're now square. They sit behind the goal lines, so nothing changes while the ball is in play.
+- The default boards were white hockey boards with a yellow strip along the bottom. They're now a dark steel frame around the adverts. No board style has the yellow strip any more.
+- In Arena > Hoardings, the default is now called **Steel frame**.
+- Picture: [the far end with the new hoardings and the net](nightly/2026-11-24/hoardings.png).
+
+### Health
+- 4 computer-vs-computer matches, a real-time match with intro, goal card and three-stars outro, a 115-game season sim, and the Arena, main menu and Settings screens: no page errors.
+
+### What Barry should check
+- Play a match and look at the corners and the far end.
+- Season > Arena > Hoardings: Steel frame, Vintage wood, All black and Digital LED should all look right.
+
+### Page versions
+- Started from **1795571054-dfe0**, published **1795575974-d33a**. To roll back, republish 1795571054-dfe0.
+
 ## 24 Nov 2026, afternoon (Pixel Soccer project chat, not a nightly run)
 
 **Short version:** the hockey glass is gone. Behind the far goal there's now a football-style ball-stop net: a straight run of netting on posts, standing in front of the fans, and it ripples when a shot flies over the bar. Published, zero errors.
