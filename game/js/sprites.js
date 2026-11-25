@@ -173,7 +173,8 @@ const LW = 3;   // SOCCER: leg width (slim), boots one wider
 function drawLegsKit(C, G, LK, legs, sockOver) {
   const sk = G ? gearCol(G, 'skates', C) : '#1d1f27', K = sockKit(C, G), sc = sockOver || K.col;
   const stripe = G ? gearCol(G, 'stick', C) : '#eef1f6', tape = G ? gearCol(G, 'tape', C) : null, pad = G ? gearCol(G, 'pads', C) : '#f2f2f2';
-  for (const [lx, up] of legs) {
+  legs.forEach(([lx, up], li) => {
+    const toe = li === 0 ? -1 : 1;   // the toes point a little outward (left boot left, right boot right)
     if (K.so === 'high') { ctx.fillStyle = sc; px(lx, -8 - up, LW, 6); ctx.fillStyle = K.band; px(lx, -8 - up, LW, 1); }      // over the knee
     else {
       ctx.fillStyle = skinOf(LK); px(lx, -8 - up, LW, 2);                                                                      // knee
@@ -188,13 +189,25 @@ function drawLegsKit(C, G, LK, legs, sockOver) {
       }
     }
     if (tape && K.so !== 'rolled') { ctx.fillStyle = G.tape === 'candy' ? ((S.t >> 3) & 1 ? '#ffffff' : '#d9342b') : tape; px(lx, (K.so === 'high' ? -5 : -4) - up, LW, 1); }   // sock tape below the knee
-    // the boot: upper, a lighter top edge, the stripes on its side, the sole
-    ctx.fillStyle = sk; px(lx, -2 - up, LW + 1, 2);
-    ctx.fillStyle = G && G.skates === 'twotone' ? '#eef1f6' : darker(sk, -0.25); px(lx, -2 - up, LW + 1, 1);
-    if (stripe) { ctx.fillStyle = G && G.skates === 'retro' ? '#eef1f6' : stripe; px(lx + 1, -1 - up, 1, 1); px(lx + 3, -1 - up, 1, 1); }
-    if (G && G.skates === 'gold' && ((S.t >> 4) & 1)) { ctx.fillStyle = '#fff6c0'; px(lx + 2, -2 - up, 1, 1); }
-    ctx.fillStyle = 'rgba(20,30,20,.35)'; px(lx, -up, LW + 1, 1);                                                                    // studs / sole
-  }
+    drawBoot(lx, up, toe, sk, stripe, G);
+  });
+}
+// SOCCER (Nov 24): a proper football boot, 5 wide and 3 tall: ankle collar, laces, a toe pointing outward, the
+// stripes on its side, and a sole with studs. lx = the leg's left edge (LW wide), up = how far the foot is lifted.
+function drawBoot(lx, up, toe, sk, stripe, G) {
+  const y = -up, x0 = toe < 0 ? lx - 2 : lx, w = LW + 2;                                         // the boot reaches 2 past the leg on the toe side
+  const two = G && G.skates === 'twotone', retro = G && G.skates === 'retro', gold = G && G.skates === 'gold';
+  const upC = two ? '#eef1f6' : sk, loC = sk, hi = darker(sk, -0.3), dk = darker(sk, 0.35);
+  ctx.fillStyle = dk; px(lx, y - 3, LW, 1);                                                      // the ankle collar
+  ctx.fillStyle = upC; px(lx, y - 2, LW, 1); px(toe < 0 ? lx - 1 : lx + LW, y - 2, 1, 1);        // the upper, over the instep
+  ctx.fillStyle = retro ? '#eef1f6' : two ? '#c9ced8' : (lum(sk) > 0.6 ? '#3a3d48' : '#eef1f6');
+  px(lx + 1, y - 2, 1, 1);                                                                       // the laces
+  ctx.fillStyle = loC; px(x0, y - 1, w, 1);                                                      // the foot, toe to heel
+  ctx.fillStyle = hi; px(toe < 0 ? x0 : x0 + w - 1, y - 1, 1, 1);                                // the shine on the toe
+  if (stripe || retro) { ctx.fillStyle = retro ? '#eef1f6' : stripe; px(toe < 0 ? lx : lx + 1, y - 1, 2, 1); }   // the stripes on its side
+  ctx.fillStyle = darker(sk, 0.55); px(x0, y, w, 1);                                             // the sole
+  ctx.fillStyle = up ? '#c9ced8' : 'rgba(255,255,255,.35)'; px(x0 + 1, y, 1, 1); px(x0 + 3, y, 1, 1);   // studs (they flash when the foot is up)
+  if (gold && ((S.t >> 4) & 1)) { ctx.fillStyle = '#fff6c0'; px(toe < 0 ? x0 + 1 : x0 + w - 2, y - 1, 1, 1); }
 }
 // how far the shirt comes in at row j (of h): full at the chest, 3 pixels in on each side at the waist (the shorts' width)
 const waistIn = (j, h) => Math.max(0, Math.min(3, Math.round((j - (h - 6)) * 0.75)));

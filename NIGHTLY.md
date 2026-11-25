@@ -2,6 +2,11 @@
 
 The two reports below were written before this repository existed and were first kept in the Claude project (claude/pixel-soccer-nightly.md). From 25 Nov 2026 the nightly run writes here.
 
+## 24 Nov 2026, last thing (Pixel Soccer project chat, not a nightly run)
+
+**Short version:** bigger, more detailed boots, as Barry asked: an ankle collar, laces, a toe pointing outward, the stripes down the side and a studded sole. [Picture](nightly/2026-11-24/boots.png). Published, zero errors (3 computer matches, a real-time match with intro and celebrations, gear screens).
+- Page versions: started from **1795581487-cef7**, published **1795583122-8d57**. To roll back, republish 1795581487-cef7.
+
 ## 24 Nov 2026, later still (Pixel Soccer project chat, not a nightly run)
 
 **Short version:** slimmer waists, as Barry asked. The shirt now tapers from the chest to a narrow waist, and the shorts and legs are slimmer too, so players have an athletic V shape. Keepers match. Published, zero errors.

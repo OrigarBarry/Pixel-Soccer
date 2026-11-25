@@ -121,6 +121,9 @@ Compared file by file with the hockey page (version 1795563867-b742; read throug
 ## Round 14: slim waist (Nov 24 night, version 1795581487-cef7)
 - Barry: "still too thick in the waist". The shirt now tapers: waistIn(j, h) brings each side in by up to 3 pixels over the bottom rows (14 wide at the chest, 8 at the waist). drawShortsKit is 8 wide (x -4..3). Legs are LW = 3 wide at x -4..-2 and 1..3, with boots one pixel wider. The bench players' shirt uses the same taper. The sliding, lying and dive poses are unchanged.
 
+## Round 15: boots (Nov 24 night, version 1795583122-8d57)
+- drawBoot(lx, up, toe, sk, stripe, G) in sprites.js: 5 wide (2 past the leg on the toe side; the toes point outward) and 3 rows plus the sole: ankle collar (dark), upper with a lace pixel and the toe, the foot row with the toe shine and 2-pixel side stripes, the sole with two studs (light when the foot is lifted). Two-tone, retro (white stripes) and gold (shine) are handled there. Sliding, lying and dive poses keep their own simple boots.
+
 ## Known leftovers / ideas
 The live to-do list is NIGHTLY-LIST.md in the Pixel-Soccer repo. Background:
 - Goal rate about 4–5 a match: Barry is happy with it (24 Nov). Levers if that changes: GK_REACH (1.9), GK.chal (26), ADDED.
