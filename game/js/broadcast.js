@@ -50,6 +50,7 @@ function addTag(p, txt, color, life = 60) {
   const keep = 1; let n = 0;
   for (let i = TAGS.length - 1; i >= 0; i--) if (TAGS[i].life > 10 && ++n > keep) TAGS[i].life = 10;
   TAGS.push({ p, txt, color, life, max: life });
+  while (TAGS.length > 2) TAGS.shift();   // (Nov 24, from Pixel Hockey) never more than two on screen: in a goalmouth scramble the fading ones piled up
 }
 function onPossessionChange(o) {
   if (o && o.pl) addTag(o, (o.team === 0 && o === ctrl ? '' : '') + '#' + o.num + ' ' + lastName(o), ringCol(TEAM[o.team]) === TEAM[o.team].main && lum(TEAM[o.team].main) < 0.25 ? '#9fd0ff' : '#ffffff', 60);
@@ -111,8 +112,8 @@ function drawTagBoxes() {
     if (S.banner || S.phase === 'fight' || S.phase === 'ask') continue;                       // (Nov 22) under a whistle banner or a fight they printed over its text   // (Nov 22) out of the way of the referee's READY? and the drop
     toWorld();
     ctx.globalAlpha = Math.min(1, t.life / 15);
-    ctx.font = "6px 'PH Pixel', monospace";
-    const w = t.txt.length * 6 + 4, x = t.p.x - w / 2;
+    ctx.font = (6 * CTS).toFixed(1) + "px 'PH Pixel', monospace";
+    const w = Math.ceil(ctx.measureText(t.txt).width) + 6, x = t.p.x - w / 2;   // (Nov 24, from Pixel Hockey) measured at the real text size: the first letter used to stick out
     let y = t.p.y - 38;
     for (let k = 0; k < 4; k++) { const hit = placed.find(b => x < b.x + b.w && b.x < x + w && y < b.y + 10 && b.y < y + 10); if (!hit) break; y = hit.y - 10; }
     placed.push({ x, y, w });

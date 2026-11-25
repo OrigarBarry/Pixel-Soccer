@@ -5429,6 +5429,7 @@ function drawAim(p) {
   }
   ctx.globalAlpha = 1;
 }
+function textW(str, size = 8) { const f = ctx.font; ctx.font = (size * CTS).toFixed(1) + "px 'PH Pixel', monospace"; const w = ctx.measureText(String(str)).width; ctx.font = f; return w; }   // (from Pixel Hockey, Nov 24)
 function text(str, x, y, color = '#fff', size = 8, align = 'center', shadow = '#000') {
   ctx.font = (size * CTS).toFixed(1) + "px 'PH Pixel', monospace"; ctx.textAlign = align; ctx.textBaseline = 'top';
   if (shadow) { ctx.fillStyle = shadow; ctx.fillText(str, x + 1, y + 1); }

@@ -58,13 +58,25 @@ function coachTick() {
 function coachDraw() {
   if (!C2.cur || !coachLive()) return;
   if (S.phase === 'goal' || S.goalCard) return;                     // (Nov 23) the goal card sits there
-  const msg = COACH_TIPS[C2.cur].text(), SW = viewW(), w = Math.min(SW - 16, msg.length * 4.2 + 26), x = SW / 2 - w / 2, y = HUDH + viewH() - 30;
+  if (typeof jbVisible === 'function' && jbVisible()) return;         // (Nov 23 UI) or the replay screen is down over it
+  // (Nov 24 nightly) sized from the real text widths: long tips ran out of the bar and into the COACH label.
+  // A tip too long for one line wraps onto two (the bar grows upward), so nothing is ever cut off.
+  const msg = COACH_TIPS[C2.cur].text(), SW = viewW(), lw = textW('COACH', 4) + 10, room = SW - 16 - lw - 14;
+  let lines = [msg];
+  if (textW(msg, 5) > room) {
+    const ws = msg.split(' '); let best = null;
+    for (let k = 1; k < ws.length; k++) { const l1 = ws.slice(0, k).join(' '), l2 = ws.slice(k).join(' '), m = Math.max(textW(l1, 5), textW(l2, 5)); if (!best || m < best.m) best = { m, l: [l1, l2] }; }
+    if (best) lines = best.l;
+  }
+  const fs = Math.max(...lines.map(l => textW(l, 5))) <= room ? 5 : 4, bh = lines.length > 1 ? 23 : 15,
+    w = Math.min(SW - 16, Math.max(...lines.map(l => textW(l, fs))) + lw + 14), x = SW / 2 - w / 2, y = HUDH + viewH() - 15 - bh;
   const a = Math.min(1, C2.t / 20);
   ctx.save(); ctx.globalAlpha = a;
-  ctx.fillStyle = 'rgba(11,14,30,.9)'; ctx.fillRect(x, y, w, 15);
-  ctx.fillStyle = '#5ee07a'; ctx.fillRect(x, y, 2, 15);
-  text('COACH', x + 6, y + 5, '#5ee07a', 4, 'left', null);
-  text(msg, x + 30, y + 5, '#ffffff', 5, 'left', null);
+  ctx.fillStyle = 'rgba(11,14,30,.9)'; ctx.fillRect(x, y, w, bh);
+  ctx.fillStyle = '#5ee07a'; ctx.fillRect(x, y, 2, bh);
+  text('COACH', x + 6, y + bh / 2 - 2.5, '#5ee07a', 4, 'left', null);
+  ctx.beginPath(); ctx.rect(x + lw, y, w - lw - 4, bh); ctx.clip();
+  lines.forEach((l, k) => text(l, x + lw + 2, y + (fs === 5 ? 5 : 5.5) + k * 8, '#ffffff', fs, 'left', null));
   ctx.restore();
 }
 { const _dmh = drawModeHud; drawModeHud = function () { const r = _dmh.apply(this, arguments); try { coachDraw(); } catch (e) {} return r; }; }

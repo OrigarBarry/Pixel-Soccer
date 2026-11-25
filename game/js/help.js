@@ -46,7 +46,12 @@ const helpTier = p => { const k = p.tierV || p.tier; return k ? (p.pos === 'G' &
   const show = el => {
     const txt = el.getAttribute('data-help'); if (!txt) return;
     if (!tip) { tip = document.createElement('div'); tip.className = 'helptip'; tip.setAttribute('role', 'tooltip'); document.body.appendChild(tip); }
-    tip.textContent = txt; tip.style.display = 'block'; cur = el;
+    // (Nov 23, from Pixel Hockey) 'plain sentence\ndetails': the first line reads on its own, the numbers sit underneath, dimmer
+    const cut = txt.indexOf('\n');
+    if (cut > 0) { tip.textContent = ''; const a = document.createElement('div'), b = document.createElement('div'); a.className = 'ht-lead'; b.className = 'ht-more';
+      a.textContent = txt.slice(0, cut); b.textContent = txt.slice(cut + 1); tip.append(a, b); }
+    else tip.textContent = txt;
+    tip.style.display = 'block'; cur = el;
     const r = el.getBoundingClientRect(), w = tip.offsetWidth, hh = tip.offsetHeight;
     let x = r.left + r.width / 2 - w / 2, y = r.top - hh - 8;
     if (y < 6) y = r.bottom + 8;
