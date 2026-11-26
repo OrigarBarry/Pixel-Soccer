@@ -15,16 +15,16 @@ const CX = (R.l + R.r) / 2, CY = (R.t + R.b) / 2;
 const GL_TOP = R.t + 46, GL_BOT = R.b - 46;
 const TL_L = R.l + 7, TL_R = R.r - 7;     // SOCCER: the touchlines (the goal lines are GL_TOP / GL_BOT); beyond them, the run-off grass to the hoardings
 const PEN_HW = 98, PEN_D = 80, SIX_HW = 44, SIX_D = 27, PEN_SPOT = 54, CIRCLE_R = 44;   // penalty area, goal area, spot, centre circle
-const GOAL_HW = 28, NET_D = 15, NET_H = 16;          // half-width of the mouth, depth, crossbar height (SOCCER: a full-size goal, about four players wide)
+const GOAL_HW = 34, NET_D = 15, NET_H = 19;   // (Nov 25, Barry: 'a good bit bigger': 28 x 16 -> 34 x 19)          // half-width of the mouth, depth, crossbar height (SOCCER: a full-size goal, about four players wide)
 const GOAL_SC = GOAL_HW / 17.25;
-var GK_REACH = 1.9;   // tuned in simulated matches: about 2.5 goals a game, as before the goals grew                         // how much bigger than the hockey net it was tuned on: the keeper's reach scales with it
+var GK_REACH = 2.3;   // (Nov 25: 1.9 -> 2.3, in step with the bigger goal: keepers reach about as far, relative to the goal, as before)   // tuned in simulated matches: about 2.5 goals a game, as before the goals grew                         // how much bigger than the hockey net it was tuned on: the keeper's reach scales with it
 const BLUE_TOP = CY - 94.3, BLUE_BOT = CY + 94.3;
 const END_DOT_Y = [GL_TOP + 60, GL_BOT - 60], NEU_DOT_Y = [BLUE_TOP + 18.4, BLUE_BOT - 18.4];
 const DOT_DX = 80.5, FO_R = 25.3, CC_R = 30, CREASE_R = 17.25;   // faceoff dots off centre, faceoff circle, centre circle, crease
 const SHOT_FULL_FRAMES = 72;
 const BALL_FRIC = 0.983;
 // SOCCER: THE BALL IN THE AIR. puck.h = height (world units; a player's head is about 21), puck.vh = climb per frame
-const AIR = { grav: 0.16, fric: 0.996, bar: 16, foot: 5, headLo: 11, headHi: 27, keeperReach: 20, bounce: 0.38, aiCross: 0.05, aiCrossPressed: 0.14 };      // SOCCER: rolling friction per frame (the puck glided at 0.986)
+const AIR = { grav: 0.16, fric: 0.996, bar: 19, foot: 5, headLo: 11, headHi: 27, keeperReach: 15, bounce: 0.38, aiCross: 0.05, aiCrossPressed: 0.14 };      // SOCCER: rolling friction per frame (the puck glided at 0.986)
 const halfName = n => n >= 4 ? 'EXTRA TIME' : n >= 3 ? '2ND' : '1ST';   // SOCCER: periods 2 and 3 are the two halves
 const PUCK_R = 1.5, SKATER_R = 5, GOALIE_R = 6.2;
 const STICK = 7.7;            // stick reach (world)
@@ -3793,7 +3793,7 @@ function aerialContact() {
     const sixYd = Math.abs(puck.y - gl) < SIX_D + 6 && Math.abs(puck.x - CX) < SIX_HW;
     const d = hyp(puck.x - g.x, puck.y - g.y), reach = (sixYd ? 16 : 11) + A(g, 'pos') * 0.5;   // he comes for anything into his six-yard box
     const lob = g.lobbed > S.t;                                                  // chipped and scrambling back: only a ball dropping right on him
-    if (!inBox || d > (lob ? 11 : reach) || h > (lob ? 12 : AIR.keeperReach + A(g, 'ref') * 0.6)) continue;
+    if (!inBox || d > (lob ? 11 : reach) || h > (lob ? 12 : AIR.keeperReach + A(g, 'ref') * 0.65)) continue;   // his jump: reflexes 5 reaches 18.25 (just under the bar at 19), 7+ gets to the top
     if (puck.lastTouch && puck.lastTouch.team === g.team && !puck.lastTouch.g) continue;   // (a back-pass in the air: he leaves it)
     puck.h = 0; puck.vh = 0; puck.air = false;
     if (Math.random() < 0.82 + (A(g, 'ref') - 5) * 0.03 - (h > 24 ? 0.15 : 0)) {

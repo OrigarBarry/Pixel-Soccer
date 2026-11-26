@@ -20,6 +20,7 @@ The nightly run takes the top unticked item under "Next up". Barry and his chats
 (Nothing waiting. Barry answered the four questions on 24 Nov, see "Barry's decisions" below.)
 
 ## Barry's decisions
+- 25 Nov 2026: **Bigger goals** ("a good bit bigger"), as long as a good enough keeper can still jump to reach them. Done: 34 x 19.
 - 24 Nov 2026: **Goals stay high** (about 5 a match). Arcade scoring is fine; don't tune it down.
 - 24 Nov 2026: **Keeper goes up for a last-minute corner** when his team is losing: yes, build it.
 - 24 Nov 2026: **No video-review moment** for penalties (keeps the game moving).
@@ -35,6 +36,7 @@ The nightly run takes the top unticked item under "Next up". Barry and his chats
 - 24 Nov 2026: main-menu backdrop and Settings camera preview still showed an ice rink. Fixed (grass pitch).
 
 ## Done
+- [x] **Bigger goals** (Barry, 25 Nov): 34 x 19 (was 28 x 16). Keepers reach further in step, a top keeper still covers the posts by moving across, and only keepers with good reflexes jump high enough to reach the top of the bar. About 6 goals a match (was about 5). (25 Nov, version 1795672662-d6e8)
 - [x] **Bigger, more detailed boots** (Barry, 24 Nov): 5 wide and 3 tall, with an ankle collar, laces, a toe pointing outward, side stripes and a studded sole. (24 Nov night, version 1795583122-8d57)
 - [x] **Slimmer waist** (Barry, 24 Nov): the shirt tapers from the chest to an 8-pixel waist, with slimmer shorts and legs. Keepers too. (24 Nov night, version 1795581487-cef7)
 - [x] **Taller, slimmer players** (Barry, 24 Nov): every player, keeper, referee and bench player is about 12% taller and 14% slimmer. Keepers have the same build as the outfield players, just with gloves. (24 Nov night, version 1795580776-74a0)

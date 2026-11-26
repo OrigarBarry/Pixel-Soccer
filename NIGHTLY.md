@@ -2,6 +2,13 @@
 
 The two reports below were written before this repository existed and were first kept in the Claude project (claude/pixel-soccer-nightly.md). From 25 Nov 2026 the nightly run writes here.
 
+## 25 Nov 2026, evening (Pixel Soccer project chat, not a nightly run)
+
+**Short version:** bigger goals, as Barry asked: about 20% wider and taller. Keepers reach further to match, so a good keeper can still get across to the posts, and only keepers with good reflexes jump high enough for the top of the bar. Goals went from about 5 to about 6 a match. Published, zero errors.
+- [Before (left) and after (right)](nightly/2026-11-25/bigger-goals.png).
+- Tested: 10 computer-vs-computer matches (6.1 goals a match), one-on-one shot tests, a real-time match with intro and celebrations, a season sim.
+- Page versions: started from **1795583122-8d57**, published **1795672662-d6e8**. To roll back, republish 1795583122-8d57.
+
 ## 24 Nov 2026, last thing (Pixel Soccer project chat, not a nightly run)
 
 **Short version:** bigger, more detailed boots, as Barry asked: an ankle collar, laces, a toe pointing outward, the stripes down the side and a studded sole. [Picture](nightly/2026-11-24/boots.png). Published, zero errors (3 computer matches, a real-time match with intro and celebrations, gear screens).

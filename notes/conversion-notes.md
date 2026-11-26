@@ -124,6 +124,12 @@ Compared file by file with the hockey page (version 1795563867-b742; read throug
 ## Round 15: boots (Nov 24 night, version 1795583122-8d57)
 - drawBoot(lx, up, toe, sk, stripe, G) in sprites.js: 5 wide (2 past the leg on the toe side; the toes point outward) and 3 rows plus the sole: ankle collar (dark), upper with a lace pixel and the toe, the foot row with the toe shine and 2-pixel side stripes, the sole with two studs (light when the foot is lifted). Two-tone, retro (white stripes) and gold (shine) are handled there. Sliding, lying and dive poses keep their own simple boots.
 
+## Round 16: bigger goals (Nov 25, version 1795672662-d6e8)
+- Barry: nets "a good bit bigger", but a good enough keeper should still be able to jump and reach them. GOAL_HW 28 -> 34, NET_H and AIR.bar 16 -> 19.
+- Sideways reach: GK_REACH 1.9 -> 2.3, about in step with the goal. Reach is measured from where the keeper stands and keepers shift across to the shooter, so they still reach most shots near the post. Measured from the reach log (window.__gkdbg): average reach about 20 -> 23 at an intermediate 2.15, max about 27.
+- Jump: aerialContact now has AIR.keeperReach 15 + reflexes x 0.65 (was 20 + reflexes x 0.6). Reflexes 5 reaches 18.25, just under the bar at 19; 7 or more reaches the top.
+- Goals: 10 CPU matches at 6.1 a match (was 4.9 over 8). An intermediate 2.15 gave 8.9, too many.
+
 ## Known leftovers / ideas
 The live to-do list is NIGHTLY-LIST.md in the Pixel-Soccer repo. Background:
 - Goal rate about 4–5 a match: Barry is happy with it (24 Nov). Levers if that changes: GK_REACH (1.9), GK.chal (26), ADDED.
